@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Perumahan</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #175b72;
+            color: #333;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #d3c584;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            color: #175b72;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-box {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .summary-title {
+            color: #175b72;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .summary-cards {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e6e8;
+            padding: 1rem;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #d3c584;
+            margin-top: 0.25rem;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 800px;
+        }
+
+        .search-box input {
+            flex-grow: 1;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            flex-grow: 2;
+            align-items: center;
+        }
+        
+        .filter-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .controls label {
+            font-weight: 600;
+            color: #555;
+            margin-right: 0.5rem;
+        }
+        
+        .controls .search-label {
+            font-size: 1.5rem;
+            color: #175b72;
+        }
+
+        .controls .filter-label {
+            font-size: 1rem;
+        }
+
+        .controls input[type="text"],
+        .controls select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .filter-item select {
+            flex-grow: 1;
+            min-width: 120px;
+        }
+
+        .filter-notes {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e6e8;
+        }
+
+        .filter-notes-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .filter-notes-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+        }
+
+        .filter-notes-row label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #444;
+            margin-right: 0;
+        }
+
+        /* tombol export */
+        .export-buttons {
+            margin-left: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .export-buttons button {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #175b72;
+            background-color: #175b72;
+            color: #d5c591;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .export-buttons button:hover {
+            background-color: #0f3f50;
+        }
+
+        /* legend usia perumahan */
+        .age-legend {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem 1rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .age-legend-title {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .age-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .age-new {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .age-mid {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .age-old {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e0e6e8;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 20px;
+            min-width: 20px;
+        }
+
+        thead th {
+            background-color: #175b72;
+            color: #d5c591;
+            font-weight: 600;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-align: center
+        }
+
+        thead th:nth-child(1),
+        tbody td:nth-child(1) {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background-color: #175b72;
+        }
+
+        tbody td:nth-child(1) {
+            background-color: #ffffff;
+        }
+
+        thead th:nth-child(2),
+        tbody td:nth-child(2) {
+            position: sticky;
+            left: 60px;
+            z-index: 19;
+            background-color: #175b72;
+        }
+
+        tbody td:nth-child(2) {
+            background-color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #c7d8e2;
+        }
+
+        .cell-status {
+            font-weight: 600;
+            color: #c0392b;
+        }
+        .cell-success {
+            font-weight: 600;
+            color: #27ae60;
+        }
+
+        .cell-progress {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        .pagination button {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #175b72;
+            color: #d5c591;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: #0f3f50;
+        }
+        
+        .pagination button:disabled {
+            background-color: #e0e6e8;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        
+        .chart-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+        }
+
+        .ranking-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+        }
+
+        .ranking-title {
+            font-family: 'Poppins', sans-serif;
+            color: #175b72;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .cell-notes {
+            font-size: 0.85rem;
+        }
+
+        .note-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin: 2px 4px 2px 0;
+            background-color: #e9ecef;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .note-badge--dev {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .note-badge--flood {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .note-badge--road {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .note-badge--rth {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Peta GIS */
+        .map-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+        }
+
+        #map {
+            width: 100%;
+            height: 420px;
+            border-radius: 10px;
+            border: 1px solid #e0e6e8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+                border-radius: 0;
+            }
+            body {
+                padding: 1rem 0;
+            }
+            .controls {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .controls input, .controls select {
+                width: 100%;
+                max-width: none;
+            }
+            .search-box {
+                max-width: 100%;
+            }
+            .summary-cards {
+                flex-direction: column;
+            }
+            .summary-card {
+                min-width: 100%;
+            }
+            .filter-notes {
+                width: 100%;
+            }
+            .export-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .age-legend {
+                margin-left: 0;
+            }
+        }
+        #map-legend {
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    width: fit-content;
+}
+#map-legend span img {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+    </style>
+
+    <!-- Leaflet CSS (peta tanpa API berbayar, pakai OpenStreetMap) -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+</head>
+<body>
+
+    <h1>DATA PERUMAHAN KOTA PANGKAL PINANG</h1>
+
+    <div class="container">
+        <div class="controls">
+            <div class="search-box">
+                <label for="search-input" class="search-label">&#x1F50D;</label>
+                <input type="text" id="search-input" placeholder="Cari...">
+            </div>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="filter-kategori" class="filter-label">Kategori:</label>
+                    <select id="filter-kategori">
+                        <option value="all">Semua</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filter-status" class="filter-label">Status PSU:</label>
+                    <select id="filter-status">
+                        <option value="all">Semua</option>
+                        <option value="SUDAH DISERAHKAN">SUDAH DISERAHKAN</option>
+                        <option value="BELUM DISERAHKAN">BELUM DISERAHKAN</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filter-kecamatan" class="filter-label">Kecamatan:</label>
+                    <select id="filter-kecamatan">
+                        <option value="all">Semua</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filter-tahun" class="filter-label">Tahun:</label>
+                    <select id="filter-tahun">
+                        <option value="all">Semua</option>
+                    </select>
+                </div>
+
+                <!-- Filter catatan -->
+                <div class="filter-notes">
+                    <div class="filter-notes-title">Filter Catatan:</div>
+                    <div class="filter-notes-row">
+                        <label>
+                            <input type="checkbox" class="note-filter" value="pengembang tidak aktif">
+                            Pengembang tidak aktif
+                        </label>
+                        <label>
+                            <input type="checkbox" class="note-filter" value="masih terjadi banjir">
+                            Masih terjadi banjir
+                        </label>
+                        <label>
+                            <input type="checkbox" class="note-filter" value="jalan belum dibangun">
+                            Jalan belum dibangun
+                        </label>
+                        <label>
+                            <input type="checkbox" class="note-filter" value="rth beralih fungsi">
+                            RTH beralih fungsi
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter usia perumahan (checkbox) -->
+                <div class="filter-notes">
+                    <div class="filter-notes-title">Filter Usia Perumahan:</div>
+                    <div class="filter-notes-row">
+                        <label>
+                            <input type="checkbox" class="age-filter" value="baru">
+                            Baru (≤ 5 tahun)
+                        </label>
+                        <label>
+                            <input type="checkbox" class="age-filter" value="sedang">
+                            Sedang (6–10 tahun)
+                        </label>
+                        <label>
+                            <input type="checkbox" class="age-filter" value="lama">
+                            Lama (> 10 tahun)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- tombol export -->
+                <div class="export-buttons">
+                    <button id="export-excel">Export Excel</button>
+                    <button id="export-pdf">Export PDF</button>
+                </div>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NO</th>
+                        <th>NAMA PERUMAHAN</th>
+                        <th>KATEGORI</th>
+                        <th>TAHUN</th>
+                        <th>ALAMAT</th>
+                        <th>KELURAHAN</th>
+                        <th>KECAMATAN</th>
+                        <th>PENGEMBANG</th>
+                        <th>DIREKTUR / PELAKSANA</th>
+                        <th>ASOSIASI</th>
+                        <th>SITE PLAN</th>
+                        <th>TERBANGUN</th>
+                        <th>TERHUNI</th>
+                        <th>PROGRESS<br>BANGUN (%)</th>
+                        <th>PROGRESS<br>HUNI (%)</th>
+                        <th>STATUS<br>PENYERAHAN PSU</th>
+                        <th>TAHUN<br>PENYERAHAN PSU</th>
+                        <th>CATATAN</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button id="prev-page">Sebelumnya</button>
+            <span id="page-info"></span>
+            <button id="next-page">Berikutnya</button>
+        </div>
+    </div>
+    
+<div class="summary-box">
+    <div class="summary-title">TOTAL UNIT RUMAH</div>
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="summary-label">SITE PLAN</div>
+            <div class="summary-value" id="total-site-plan">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">TERBANGUN</div>
+            <div class="summary-value" id="total-terbangun">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">TERHUNI</div>
+            <div class="summary-value" id="total-terhuni">0</div>
+        </div>
+        <!-- ✅ kartu baru: progress bangun -->
+        <div class="summary-card">
+            <div class="summary-label">PROGRESS BANGUN</div>
+            <div class="summary-value" id="summary-progress-bangun">0%</div>
+        </div>
+        <!-- ✅ kartu baru: progress huni -->
+        <div class="summary-card">
+            <div class="summary-label">PROGRESS HUNI</div>
+            <div class="summary-value" id="summary-progress-huni">0%</div>
+        </div>
+    </div>
+</div>
+
+    <!-- PETA GIS -->
+    <div class="map-container">
+        <div id="map-legend" style="
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    margin-top:0.5rem;
+    font-size:0.85rem;
+    font-weight:600;
+    color:#175b72;
+">
+    <span><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png" width="16"> Sudah Serah Terima PSU</span>
+    <span><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png" width="16"> Belum Serah Terima PSU</span>
+</div>
+
+        <h2>Peta Persebaran Perumahan</h2>
+        <div id="map"></div>
+    </div>
+    <div class="chart-container">
+        <h2>Grafik Jumlah Perumahan per Kecamatan</h2>
+        <div id="total-housing-count" style="text-align:center;font-size:1.1rem;font-weight:600;color:#175b72;margin-bottom:1rem;">
+            Total Perumahan: 0
+        </div>
+        <canvas id="housingChart"></canvas>
+    </div>
+
+
+
+    <div class="ranking-container">
+        <h2 class="ranking-title">Ranking Pengembang Berdasarkan Jumlah Perumahan</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>RANK</th>
+                        <th>PENGEMBANG</th>
+                        <th>JUMLAH PERUMAHAN</th>
+                        <th>SUDAH PSU</th>
+                        <th>BELUM PSU</th>
+                    </tr>
+                </thead>
+                <tbody id="ranking-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <!-- jsPDF & autoTable untuk export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // index:
+            // 0..14 sama seperti sebelumnya
+            // 15 = latitude, 16 = longitude
+            const data = [
+                ["ALAM KAMPAK", "Subsidi", "2019", "Jl. Seniman", "Tua Tunu Indah", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "54", "54", "54", "BELUM DISERAHKAN", "NN", "jalan belum dibangun | masih terjadi banjir", -2.1150, 106.1090],
+                ["ALAM KEMANG PERMATA", "Subsidi", "2023", "Jl. Kemang Permata", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "46", "22", "0", "BELUM DISERAHKAN", "NN", "masih terjadi banjir", -2.1205, 106.1120],
+                ["ALAM PINANG PURA", "Subsidi", "2020", "Jl. Kemang Permata", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "52", "52", "52", "BELUM DISERAHKAN", "NN", "RTH beralih fungsi", -2.1185, 106.1150],
+                ["ALIA HILL RESIDENCE", "Subsidi", "2016", "Jl. Tampuk Pinang Pura", "Tua Tunu Indah", "Gerunggang", "NN", "Rusdianto", "NN", "41", "41", "41", "BELUM DISERAHKAN", "NN", "pengembang tidak aktif | jalan belum dibangun", -2.1220, 106.1070],
+                ["AMIRAH RESIDENCE", "Subsidi", "2015", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "37", "37", "37", "BELUM DISERAHKAN", "NN"],
+["ANJAYA RESIDENCE", "Subsidi", "2023", "Jl. Kemang Permata", "Air Kepala Tujuh", "Gerunggang", "PT. BABEL JAYA KONSTRUKSI", "Ivan Skyler Anjaya S.T", "APERSI", "80", "0", "0", "BELUM DISERAHKAN", "NN"],
+["ANJAYO RESIDENCE 2", "Subsidi", "2015", "Jl. Fatmawati ", "Air Salemba", "Gabek", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "36", "36", "36", "BELUM DISERAHKAN", "NN"],
+["ANJAYO RESIDENCE 4", "Subsidi", "2018", "Jl. Stadion", "Gabek Satu", "Gabek", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "22", "22", "22", "BELUM DISERAHKAN", "NN"],
+["ANJAYO RESIDENCE 10", "Subsidi", "2019", "Jl. Pustu", "Jerambah Gantung", "Gabek", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "45", "45", "45", "SUDAH DISERAHKAN", "2020"],
+["ANJAYO RESIDENCE 12", "Subsidi", "2020", "Jl. Kampak Dalam", "Tua Tunu Indah", "Gerunggang", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "75", "75", "75", "BELUM DISERAHKAN", "NN"],
+["ANJAYO RESIDENCE 15", "Subsidi", "2022", "Jl. Mentangor", "Tua Tunu Indah", "Gerunggang", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "51", "51", "51", "BELUM DISERAHKAN", "NN"],
+["ANJAYO RESIDENCE 16", "Subsidi", "2023", "Jl. Kelompok", "Jerambah Gantung", "Gabek", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "APPERNAS JAYA", "84", "51", "38", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 1", "Subsidi", "2022", "Jl. Air Mangkok", "Bacang", "Bukit Intan", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "112", "98", "98", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 1 TAMBAHAN", "Subsidi", "2023", "Jl. Air Mangkok", "Bacang", "Bukit Intan", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "41", "37", "37", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 2", "Subsidi dan Komersil", "2022", "Jl. Sekolah", "Selindung", "Gabek", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "107", "90", "0", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 2 TAMBAHAN", "Subsidi", "2023", "Jl. Sekolah", "Selindung", "Gabek", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "24", "0", "0", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 3 TAHAP 1", "Subsidi", "2023", "Jl. Sampur", "Sinar Bulan", "Bukit Intan", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "144", "8", "0", "BELUM DISERAHKAN", "NN"],
+["APPLE RESIDENCE 3 TAHAP 2", "Subsidi", "2023", "Jl. Sampur", "Sinar Bulan", "Bukit Intan", "PT. BANGKA JESSTINDO LESTARI", "Rince", "REI", "82", "0", "0", "BELUM DISERAHKAN", "NN"],
+["AROMA RESIDENCE", "Subsidi", "2023", "Jl. Selar", "Ketapang", "Pangkal Balam", "PT. CAHAYA KEMULIAAN BERSAMA", "NN", "NN", "34", "11", "0", "BELUM DISERAHKAN", "NN"],
+["ARTHA USAHA MANDIRI", "Subsidi", "2017", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. ARTHA USAHA MANDIRI INDAH", "Dahri", "REI", "75", "75", "75", "BELUM DISERAHKAN", "NN"],
+["ARTHA USAHA MANDIRI 2", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. ARTHA USAHA MANDIRI INDAH", "Dahri", "REI", "42", "28", "28", "BELUM DISERAHKAN", "NN"],
+["ARTISTIK RESIDENCE ", "Subsidi", "2020", "Gg. Warisan Budaya Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "35", "35", "35", "SUDAH DISERAHKAN", "2023"],
+["ARTISTIK RESIDENCE 2", "Subsidi", "2023", "NN", "Air Kepala Tujuh", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "46", "46", "46", "SUDAH DISERAHKAN", "2024"],
+["ARTISTIK RESIDENCE 3", "Subsidi", "2023", "Jl. Haji Bakir", "Jerambah Gantung", "Gabek", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "57", "5", "0", "BELUM DISERAHKAN", "NN"],
+["ARTISTIK RESIDENCE 5", "Subsidi", "2024", "Jl. Pikas", "Air Salemba", "Gabek", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "37", "26", "13", "BELUM DISERAHKAN", "NN"],
+["ARTISTIK RESIDENCE 6", "Subsidi", "2025", "Jl. Kurma", "Tua Tunu Indah", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "51", "0", "0", "BELUM DISERAHKAN", "NN"],
+["AYRA SRIWIJAYA RESIDENCE", "Subsidi", "2020", "Jl. Pantai Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "71", "71", "71", "SUDAH DISERAHKAN", "2024"],
+["AYRA SRIWIJAYA RESIDENCE 2", "Subsidi", "2022", "Jl. Cempaka Putih", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "48", "48", "44", "SUDAH DISERAHKAN", "2024"],
+["AYRA SRIWIJAYA RESIDENCE 3", "Subsidi", "2022", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "42", "42", "37", "SUDAH DISERAHKAN", "2024"],
+["AYRA SRIWIJAYA RESIDENCE 4", "Subsidi", "2023", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "118", "113", "113", "BELUM DISERAHKAN", "NN"],
+["AZKA SQUARE", "Subsidi", "2021", "Jl. Al-Mizan", "Tua Tunu Indah", "Gerunggang", "PT. AZKA CAHAYA GEMILANG", "Anggun", "REI", "37", "37", "37", "BELUM DISERAHKAN", "NN"],
+["AZURA", "Subsidi", "2019", "Gg. Vanila", "Taman Bunga", "Gerunggang", "NN", "NN", "NN", "7", "7", "7", "BELUM DISERAHKAN", "NN"],
+["AZZAHRA RESIDENCE", "Subsidi", "2021", "Gg. Palapa", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "81", "81", "81", "SUDAH DISERAHKAN", "NN"],
+["AZZAHRA RESIDENCE II", "Subsidi", "2022", "Jl. Mawar Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "102", "102", "102", "SUDAH DISERAHKAN", "NN"],
+["AZZZAHRAH RESIDENCE IV", "Subsidi", "2025", "Jl. Air Ketapik ", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "39", "0", "0", "BELUM DISERAHKAN", "NN"],
+["BABEL RESIDENCE", "Subsidi", "2021", "Jl. Kurma Dalam", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "115", "115", "115", "BELUM DISERAHKAN", "NN"],
+["BABEL RESIDENCE II", "Subsidi", "2023", "Jl. Kurma Dalam", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "36", "36", "36", "BELUM DISERAHKAN", "NN"],
+["BABEL RESIDENCE III", "Subsidi", "2024", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "92", "0", "0", "BELUM DISERAHKAN", "NN"],
+["BABEL RESIDENCE IV", "Subsidi", "2024", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "136", "34", "10", "BELUM DISERAHKAN", "NN"],
+["BERKAH MANDIRI", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "122", "122", "NN", "SUDAH DISERAHKAN", "2022"],
+["BERKAH SYARIAH MANDIRI", "Subsidi", "2017", "Jl. Kelompok", "Jerambah Gantung", "Gabek", "NN", "NN", "NN", "50", "50", "50", "BELUM DISERAHKAN", "NN"],
+["BHAYANGKARA RESIDENCE", "Subsidi", "2019", "Jl. Komp Sampur", "Sinar Bulan", "Bukit Intan", "PT. TJEMARA MENTARI", "Tan Tok Khian", "REI", "228", "140", "140", "BELUM DISERAHKAN", "NN"],
+["BINTANG SAMRATULANGI 3", "Subsidi", "2021", "Jl. Tanjung Bunga", "Sinar Bulan", "Bukit Intan", "PT. LIMA BINTANG SEMPURNA", "M. Nomordin", "APPERINDO", "46", "46", "46", "BELUM DISERAHKAN", "NN"],
+["BONA MUTIARA RESIDENCE ", "Komersil", "2015", "Jl. Gandaria 1", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "34", "4", "4", "BELUM DISERAHKAN", "NN"],
+["BRALING INDAH", "Subsidi", "2019", "Jl. Kerabut 2", "Selindung", "Gabek", "PT.GIE SUKSES MANDIRI", "Supriyanto", "APPERINDO", "71", "12", "7", "BELUM DISERAHKAN", "NN"],
+["BUKIT BARU RESIDENCE 1", "Komersil", "2014", "Jl. Delima III", "Taman Bunga", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hartanto", "APPERNAS JAYA", "43", "43", "43", "BELUM DISERAHKAN", "NN"],
+["BUKIT BARU RESIDENCE 2", "Komersil", "2015", "Jl. Rariang", "Taman Bunga", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hartanto", "APPERNAS JAYA", "15", "15", "9", "BELUM DISERAHKAN", "NN"],
+["BUKIT BARU RESIDENCE 3", "Subsidi", "2016", "Jl. Cendrawasih", "Taman Bunga", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hartanto", "APPERNAS JAYA", "86", "86", "86", "BELUM DISERAHKAN", "NN"],
+["BUKIT BARU RESIDENCE 4", "Subsidi", "2017", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hartanto", "APPERNAS JAYA", "95", "95", "95", "BELUM DISERAHKAN", "NN"],
+["BUKIT INTAN ASRI", "Komersil", "NN", "Jl. Nilam Raya No II", "Bacang", "Bukit Intan", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["BUKIT MANGGIS", "Subsidi", "2017", "Jl. Fatmawati", "Bukit Merapin", "Gerunggang", "NN", "Irma Yani", "NN", "10", "6", "6", "BELUM DISERAHKAN", "NN"],
+["BUKIT MAS", "Komersil", "NN", "Jl. Borneo", "Bukit Merapin", "Gerunggang", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["BUKIT PRIMER", "Subsidi", "2017", "Gg. Karet", "Bukit Merapin", "Gerunggang", "PT. PUNDIMAS", "Efran", "HIMPERA", "77", "68", "68", "SUDAH DISERAHKAN", "2020"],
+["BUMI ASRI PERMAI", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. RADHI UTAMA NUSA", "Rudi Kurniawan", "REI", "119", "44", "44", "BELUM DISERAHKAN", "NN"],
+["BUMI ASRI PERMAI  2", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. RADHI UTAMA NUSA", "Rudi Kurniawan", "REI", "131", "37", "37", "BELUM DISERAHKAN", "NN"],
+["BUMI GANADHYA", "Subsidi", "2018", "NN", "Air Itam", "Bukit Intan", "PT. MITRA GUNADHYA MANDIRI", "Novita Lestari", "NN", "70", "0", "0", "BELUM DISERAHKAN", "NN"],
+["BUMI KAMPAK PERMAI", "Subsidi", "2019", "Jl. Mawar Kampak", "Tua Tunu Indah", "Gerunggang", "PT. TIMUR JAYA NUGRAHA", "Beny Ansory", "REI", "199", "150", "140", "BELUM DISERAHKAN", "NN"],
+["BUMI SELINDUNG DAMAI", "Subsidi", "2017", "Jl. Lintas Timur ", "Selindung", "Gabek", "PT. MUZAZI NURFI ABADI", "Nurul Anwar", "PI", "150", "42", "42", "BELUM DISERAHKAN", "NN"],
+["CAHAYA PROPERTI", "Subsidi", "2024", "Jl. Dok Kartini", "Lontong Pancur", "Pangkal Balam", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "39", "34", "29", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE", "Subsidi", "2020", "Jl. Sampur", "Sinar Bulan", "Bukit Intan", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "70", "70", "70", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 1", "Subsidi", "2016", "Jl. Mawar Kampak", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "22", "22", "22", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 2", "Subsidi", "2016", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 3", "Subsidi", "2016", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "32", "32", "32", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 4", "Subsidi", "2017", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "21", "21", "21", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 5", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "CV. CAHAYA JAYA ABADI", "Hendra Wijaya", "PI", "85", "85", "85", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 6", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "CV. CAHAYA JAYA ABADI", "Hendra Wijaya", "PI", "80", "80", "80", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 7", "Subsidi", "2018", "Jl. Stania", "Taman Bunga", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 8", "Subsidi", "2018", "Jl. Kerabut ", "Selindung", "Gabek", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "32", "32", "32", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 9", "Subsidi", "2018", "Jl. Pikas 4", "Jerambah Gantung", "Gabek", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "72", "72", "72", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 10", "Subsidi", "2018", "Jl. Fatmawati Gang Keluarga 1", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "83", "83", "", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 11", "Subsidi", "2018", "Jl. Air Kampak", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "16", "16", "16", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 12", "Subsidi", "2021", "Jl. Ali Asik II", "Jerambah Gantung", "Gabek", "PT.CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "48", "48", "48", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 13", "Subsidi", "2019", "Jl. Kerabut", "Jerambah Gantung", "Gabek", "PT.CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "66", "66", "66", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 15", "Subsidi", "2022", "NN", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "49", "49", "49", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 17", "Subsidi", "2022", "Jl. Anggrek", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "132", "132", "132", "BELUM DISERAHKAN", "NN"],
+["CAHAYA RESIDENCE 18", "Subsidi", "2023", "Jl. H. Umar", "Jerambah Gantung", "Gabek", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "38", "38", "38", "BELUM DISERAHKAN", "NN"],
+["CEMPAKA MAS RESIDENCE ", "Subsidi", "2019", "Jl. Haji Bakir", "Tua Tunu Indah", "Gerunggang", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "86", "86", "86", "SUDAH DISERAHKAN", "2022"],
+["CEMPAKA MAS RESIDENCE 3", "Subsidi", "2022", "Jl. Jalur Dua", "Air Kepala Tujuh", "Gerunggang", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "97", "97", "97", "BELUM DISERAHKAN", "NN"],
+["CEMPAKA MAS RESIDENCE 4", "Subsidi", "2023", "Jl. Ali Asik II", "Jerambah Gantung", "Gabek", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "97", "97", "97", "BELUM DISERAHKAN", "NN"],
+["CEMPAKA MAS RESIDENCE 5", "Subsidi", "2024", "Jl. Ali Asik II", "Jerambah Gantung", "Gabek", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "128", "76", "76", "BELUM DISERAHKAN", "NN"],
+["CERIA VILLAGE", "Subsidi", "2017", "Gg. Mirah Delima", "Air Itam", "Bukit Intan", "PT.INDO BANGKA PROPERTY", "Munawir", "NN", "48", "48", "48", "BELUM DISERAHKAN", "NN"],
+["CIPTA KARYA", "Subsidi", "NN", "Gg. Vanila", "Taman Bunga", "Gerunggang", "NN", "NN", "NN", "12", "12", "12", "BELUM DISERAHKAN", "NN"],
+["CITRALAND", "Komersil", "2019", "Jl. Alexander", "Air Itam", "Bukit Intan", "PT. CIPUTRA SUKSES PROPERTY", "NN", "NN", "", "339", "134", "BELUM DISERAHKAN", "NN"],
+["CITY RESIDENCE", "Komersil", "2021", "NN", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "", "0", "0", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE", "Subsidi dan Komersil", "2018", "Jl. Nilam II", "Bacang", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "156", "156", "156", "SUDAH DISERAHKAN", "2020"],
+["DAMAI LESTARI RESIDENCE 1 TAHAP 1", "Subsidi", "2016", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "147", "147", "147", "SUDAH DISERAHKAN", "2020"],
+["DAMAI LESTARI RESIDENCE 1 TAHAP 2", "Subsidi", "2020", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "43", "36", "36", "SUDAH DISERAHKAN", "2021"],
+["DAMAI LESTARI RESIDENCE 2", "Subsidi", "2021", "Jl. Kartini", "Selindung Baru", "Gabek", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "92", "92", "92", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE 2 B", "Subsidi", "2024", "Jl. Kartini", "Selindung Baru", "Gabek", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "69", "0", "0", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE 6 TAHAP 1", "Subsidi", "2019", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "106", "106", "106", "SUDAH DISERAHKAN", "2021"],
+["DAMAI LESTARI RESIDENCE 6 TAHAP 2", "Subsidi", "2019", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "139", "139", "136", "SUDAH DISERAHKAN", "2023"],
+["DAMAI LESTARI RESIDENCE 10", "Subsidi", "2021", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "112", "90", "90", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE 10 TAHAP 2", "Subsidi", "2024", "Jl. Kampak Serasi", "Tua Tunu Indah", "Gerunggang", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "71", "12", "0", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE 15 TAHAP 1", "Subsidi", "2023", "Jl. Tanjung Bunga 2", "Temberan", "Bukit Intan", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "133", "78", "33", "BELUM DISERAHKAN", "NN"],
+["DAMAI LESTARI RESIDENCE 15 TAHAP 2", "Subsidi", "2023", "Jl. Tanjung Bunga 2", "Temberan", "Bukit Intan", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "130", "46", "18", "BELUM DISERAHKAN", "NN"],
+["DE PURNAMA", "Subsidi", "2016", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "31", "31", "31", "BELUM DISERAHKAN", "NN"],
+["DEALOVA BAHAGIA", "Subsidi", "2017", "Jl. Jalur 2, Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "285", "285", "285", "SUDAH DISERAHKAN", "2020"],
+["DEALOVA BAHAGIA TAHAP 2", "Subsidi", "2020", "Jl. Jalur 2", "Air Kepala Tujuh", "Gerunggang", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "271", "271", "271", "BELUM DISERAHKAN", "NN"],
+["DELANO RESIDENCE", "Subsidi", "2019", "Jl. Fatmawati Gg. Keluarga", "Jerambah Gantung", "Gabek", "PT . DELAN0 JAYA PROPERTI", "Djong Khian Khie", "REI", "50", "50", "50", "SUDAH DISERAHKAN", "2022"],
+["DELANO RESIDENCE 2", "Subsidi", "2022", "Jl. Swadaya", "Air Mawar", "Bukit Intan", "PT . DELAN0 JAYA PROPERTI", "Djong Khian Khie", "REI", "34", "8", "4", "BELUM DISERAHKAN", "NN"],
+["DELIMA BAHAGIA", "Subsidi", "2018", "Jl. Mirah Delima", "Air Itam", "Bukit Intan", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "46", "46", "46", "BELUM DISERAHKAN", "NN"],
+["DERIYASA", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "CV. RIMA JAYA", "Asep Hidayat", "NN", "72", "12", "12", "BELUM DISERAHKAN", "NN"],
+["DIVA RESIDENCE", "Subsidi", "2017", "Jl. Gandaria 1", "Air Kepala Tujuh", "Gerunggang", "CV. ANUGRAH ABADI", "Boy Akbar Anugrah", "PI", "48", "46", "46", "BELUM DISERAHKAN", "NN"],
+["DIVA RESIDENCE 2", "Subsidi", "2019", "Jl. Melangir", "Bukit Sari", "Gerunggang", "PT. ANUGRAH DIVA ABADI ", "Boy Akbar Anugrah", "PI", "46", "40", "40", "BELUM DISERAHKAN", "NN"],
+["DIZA RESIDENCE", "Subsidi", "2019", "Jl. Basuki Rahmat Ujung 1", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["DREAMLAND 1", "Subsidi", "2023", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. BESTINDO PROPERTY", "Ir. Thomas Jusman, MM", "REI", "59", "53", "53", "BELUM DISERAHKAN", "NN"],
+["D'RICH ADYKA RESIDENCE", "Komersil", "2015", "Jl R. Hundani", "Lontong Pancur", "Pangkal Balam", "PT. ANUGRAH HARAPAN BARU REGENCY", "Ady Irawan/Riska Jesika", "APERSI", "45", "21", "21", "BELUM DISERAHKAN", "NN"],
+["D'RICH ADYKA RESIDENCE", "Subsidi", "2021", "Jl R. Hundani", "Lontong Pancur", "Pangkal Balam", "PT. ANUGRAH HARAPAN BARU REGENCY", "Ady Irawan/Riska Jesika", "APERSI", "18", "2", "2", "BELUM DISERAHKAN", "NN"],
+["ELGHANI REGENCY", "Subsidi", "2024", "Jl. Cucak Rowo", "Air Kepala Tujuh", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "62", "62", "62", "SUDAH DISERAHKAN", "NN"],
+["FARRAS RESIDENCE", "Subsidi", "2018", "Jl. Dasalamah", "Tua Tunu Indah", "Gerunggang", "PT. FARRAZY PUTRA CONTRAINDO ", "NN", "HIMPERA", "40", "22", "22", "BELUM DISERAHKAN", "NN"],
+["FEIYAZ RESIDENCE", "Subsidi", "2020", "Jl. Pulau Gelasa", "Air Itam", "Bukit Intan", "PT. KARYA DANISH FAZILA", "Zulfani", "PI", "34", "29", "29", "BELUM DISERAHKAN", "NN"],
+["FEIYAZ RESIDENCE 2", "Subsidi", "2021", "Jl. Fajar", "Air Itam", "Bukit Intan", "PT. KARYA DANISH FAZILA", "Zulfani", "PI", "45", "45", "45", "BELUM DISERAHKAN", "NN"],
+["FERZA BERLIAN RESIDENCE", "Subsidi", "2018", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "CV. BUMI CITRA LESTARI", "Reza Eka Aprilianto", "PI", "43", "43", "42", "BELUM DISERAHKAN", "NN"],
+["FERZA MUTIARA RESIDENCE", "Subsidi", "2018", "Jl. Gandaria 1 Dalam", "Air Kepala Tujuh", "Gerunggang", "CV. BUMI CITRA LESTARI", "Reza Eka Aprilianto", "PI", "68", "63", "63", "BELUM DISERAHKAN", "NN"],
+["FERZA RESIDENCE", "Subsidi", "2017", "Jl. Pahlawan 12", "Bukit Merapin", "Gerunggang", "CV. BUMI CITRA LESTARI", "Reza Eka Aprilianto", "PI", "32", "15", "15", "BELUM DISERAHKAN", "NN"],
+["FLAMENGO RESIDENCE", "Subsidi", "2017", "Jl. Gandaria 1, No. 12", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA INDO PROPERTY", "Sri Devi Agustini", "PI", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
+["FLAMENGO RESIDENCE 2", "Subsidi", "2018", "Jl. Haji Bakri", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA INDO PROPERTI", "Sri Devi Agustini", "PI", "51", "51", "51", "BELUM DISERAHKAN", "NN"],
+["FLAMENGO RESIDENCE 3", "Subsidi", "2019", "Jl . Gandari 1, Gg. Flamengo", "Air Kepala Tujuh", "Gerunggang", "PT. BANGKA INDO PROPERTI", "Sri Devi Agustini", "PI", "29", "29", "29", "BELUM DISERAHKAN", "NN"],
+["GADING HIJAU", "Subsidi", "2018", "Jl. Belakang Sd 60 Girimaya", "Bukit Besar", "Girimaya", "PERUMAHAN GADING HIJAU", "Hasan Basri", "NN", "42", "10", "", "BELUM DISERAHKAN", "NN"],
+["GADING PERMAI", "Subsidi", "2023", "Jl. Fatmawati Gg. H. Hasan", "Tua Tunu Indah", "Gerunggang", "PT. MAESA BANGUN SEJAHTERA", "Andrev Timbong", "NN", "111", "51", "0", "BELUM DISERAHKAN", "NN"],
+["GANDARIA GREEN RESIDENCE", "Subsidi", "2015", "Jl. Gandaria Dalam", "Air Kepala Tujuh", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "86", "86", "86", "BELUM DISERAHKAN", "NN"],
+["GANDARIA MAS 2", "Subsidi", "2019", "Jl. Gandaria 1", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "52", "52", "52", "SUDAH DISERAHKAN", "2023"],
+["GARDEN INDAH RESIDENCE 1", "Subsidi", "2017", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "PI", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
+["GARDEN INDAH RESIDENCE 2", "Subsidi", "2017", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "PI", "137", "57", "30", "BELUM DISERAHKAN", "NN"],
+["GARDEN INDAH RESIDENCE 3", "Subsidi", "2018", "Jl. Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "PI", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
+["GENIO CITY RESIDENCE 1", "Subsidi", "2017", "Jl. Seluang III", "Gabek Satu", "Gabek", "CV. NAGA MAS", "Zulkifli", "APPERNAS JAYA", "44", "34", "34", "BELUM DISERAHKAN", "NN"],
+["GENIO CITY RESIDENCE 2", "Subsidi", "2019", "Jl. Raya Kartini", "Gabek Dua", "Gabek", "CV. NAGA MAS", "Zulkifli", "APPERNAS JAYA", "103", "93", "93", "BELUM DISERAHKAN", "NN"],
+["GOLDEN RESIDENCE 1 TAHAP 1", "Subsidi", "2024", "Jl. Almizan Gang Seniman", "Tua Tunu Indah", "Gerunggang", "PT. CITRA PRATAMA GASINDO", "Emida", "NN", "79", "18", "7", "BELUM DISERAHKAN", "NN"],
+["GOLDEN RESIDENCE 1 TAHAP 2", "Subsidi", "2024", "Jl. Almizan Gang Seniman", "Tua Tunu Indah", "Gerunggang", "PT. CITRA PRATAMA GASINDO", "Emida", "NN", "87", "15", "2", "BELUM DISERAHKAN", "NN"],
+["GRAHA ARTA", "Subsidi", "2020", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. TIRTA LOKA", "NN", "REI", "348", "312", "312", "BELUM DISERAHKAN", "NN"],
+["GRAHA FAMILY", "Komersil", "2022", "Jl. Laksamana Hayati", "Temberan", "Bukit Intan", "PT. ANUGRAH FAJAR MENUMBING", "Wanda Purnama", "NN", "105", "62", "0", "BELUM DISERAHKAN", "NN"],
+["GRAHA FAMILY TAHAP 2", "Komersil", "2023", "Jl. Laksamana Hayati", "Temberan", "Bukit Intan", "PT. ANUGRAH FAJAR MENUMBING", "Wanda Purnama", "NN", "212", "10", "0", "BELUM DISERAHKAN", "NN"],
+["GRAHA GADING MAS", "Subsidi", "2017", "Jl. Alexander, Depan Citraland", "Air Itam", "Bukit Intan", "PT. PINANG MAS DUA", "Sri Hartati", "NN", "109", "15", "6", "BELUM DISERAHKAN", "NN"],
+["GRAHA KORPRI", "Subsidi", "2015", "Jl. Air Geligit", "Tua Tunu Indah", "Gerunggang", "PT. GUNA MITRA PRIMA PROPERTINDO", "NN", "NN", "NN", "47", "35", "BELUM DISERAHKAN", "NN"],
+["GRAHA LOKA", "Subsidi", "2017", "Jl. Jendral Sudirman", "Selindung", "Gabek", "PT. GRAHA LOKA ", "NN", "NN", "13", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRAHA PESONA", "Subsidi", "2017", "Jl. Raya Tua Tunu", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "119", "119", "NN", "BELUM DISERAHKAN", "NN"],
+["GRAHA PINANG MAS 2", "Subsidi", "2017", "Jl. Kampak Dalam", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRAHA PURI", "Komersil", "NN", "Jl. Sungailiat", "Selindung", "Gabek", "PT. GRAHA LOKA ", "NN", "NN", "500", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRAND BANGKA CITY", "Komersil", "2024", "Jl. Batu Kaldera", "Semabung Lama", "Bukit Intan", "PT. PINANG JAYA MURNI", "Ho Har Aty", "NN", "237", "0", "0", "BELUM DISERAHKAN", "NN"],
+["GRAND GANDARIA TAHAP 1", "Subsidi", "2017", "Jl. Kampung Melayu No.16", "Air Kepala Tujuh", "Gerunggang", "PT. MADINA INVESTAMA SEJAHTERA", "Munajat", "APPERINDO", "NN", "80", "80", "BELUM DISERAHKAN", "NN"],
+["GRAND GANDARIA TAHAP 2", "Subsidi", "2017", "Jl. Kampung Melayu", "Air Kepala Tujuh", "Gerunggang", "PT. MADINA INVESTAMA SEJAHTERA", "Munajat", "APPERINDO", "NN", "32", "32", "BELUM DISERAHKAN", "NN"],
+["GRAND GANDARIA TAHAP 3", "Subsidi", "2018", "Jl. Kampung Melayu", "Air Kepala Tujuh", "Gerunggang", "PT. MADINA INVESTAMA SEJAHTERA", "Munajat", "APPERINDO", "80", "58", "35", "BELUM DISERAHKAN", "NN"],
+["GRAND PAPIN'K ESTATE", "Subsidi", "2017", "Jl. Masjid Al Husna", "Air Itam", "Bukit Intan", "PT.PAPINK INDAH PROPERTY", "Rita", "PI", "47", "47", "47", "BELUM DISERAHKAN", "NN"],
+["GRAND PAPINK II", "Subsidi", "2017", "Jl. Raya Pasir Padi", "Air Itam", "Bukit Intan", "PT.GRAHA PAPINK INDAH PROPERTY", "Rita", "PI", "62", "60", "55", "BELUM DISERAHKAN", "NN"],
+["GRAND PAPIN'K III", "Subsidi", "2018", "Jl. Pasir Padi", "Temberan", "Bukit Intan", "PT.GRAHA PAPINK INDAH PROPERTY", "Rita", "PI", "62", "60", "", "BELUM DISERAHKAN", "NN"],
+["GRAND PAPIN'K IV", "Subsidi", "2019", "Jl. Pasir Padi", "Temberan", "Bukit Intan", "PT.GRAHA PAPINK INDAH PROPERTY", "Rita", "PI", "53", "45", "39", "BELUM DISERAHKAN", "NN"],
+["GREEN HILL", "Subsidi", "2019", "Jl. Air Geligit", "Tua Tunu Indah", "Gerunggang", "PT. GUNA MITRA PRIMA PROPERTINDO", "Naser Salim", "APPERNAS JAYA", "130", "63", "63", "BELUM DISERAHKAN", "NN"],
+["GREEN HILL 3", "Subsidi", "2022", "NN", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA MANDIRI PROPERTY", "Edy Susanto", "APPERNAS JAYA", "99", "18", "18", "BELUM DISERAHKAN", "NN"],
+["GREEN HILL TAHAP 2", "Subsidi", "2020", "Jl. Air Geligit", "Tua Tunu Indah", "Gerunggang", "PT. GUNA MITRA PRIMA PROPERTINDO", "Naser Salim", "APPERNAS JAYA", "92", "85", "85", "BELUM DISERAHKAN", "NN"],
+["GREEN PESONA SELINDUNG", "Subsidi", "2018", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT. PRIMASCO GLOBAL DWISTAMA", "Ir. Dwi Herlanto", "PI", "56", "32", "32", "BELUM DISERAHKAN", "NN"],
+["GREEN VILLA", "Subsidi", "2019", "Jl. Haji Umar", "Tua Tunu Indah", "Gerunggang", "PT. PEDS GRUP PROPERTI", "Dedy", "PI", "36", "28", "28", "BELUM DISERAHKAN", "NN"],
+["GRIYA BANGKA POS", "Komersil", "SEBELUM TAHUN 2014", "Jl. Pulau Pelepas", "Bacang", "Bukit Intan", "NN", "NN", "NN", "70", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRIYA BERKAH", "Subsidi", "2017", "Jl. Bukit Tunggal", "Sriwijaya", "Girimaya", "PT.BERKAH ABADI BERJAYA", "Fiter", "NN", "23", "23", "23", "BELUM DISERAHKAN", "NN"],
+["GRIYA Bukit Intan", "Subsidi", "2016", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "NN", "NN", "NN", "25", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRIYA ELANG", "Subsidi", "2019", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT.ELANG PERKASA PROPERTY", "Muhammad Pharevi", "HIMPERA", "56", "56", "53", "SUDAH DISERAHKAN", "2022"],
+["GRIYA ELANG 2", "Subsidi", "2020", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "54", "54", "54", "BELUM DISERAHKAN", "NN"],
+["GRIYA ELANG 3", "Subsidi", "2022", "Jl. Sungai Salim Dalam", "Tua Tunu Indah", "Gerunggang", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "70", "51", "35", "BELUM DISERAHKAN", "NN"],
+["GRIYA ELANG 4", "Subsidi", "2024", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "64", "17", "0", "BELUM DISERAHKAN", "NN"],
+["GRIYA GANDARIA INDAH", "Subsidi", "2017", "Jl. H. Umar", "Air Kepala Tujuh", "Gerunggang", "CV. MADINA INVESTAMA SEJAHTERA", "Munajat", "NN", "25", "25", "NN", "BELUM DISERAHKAN", "NN"],
+["GRIYA INTAN ASRI", "Subsidi", "2018", "Jl. Padang Lama", "Air Itam", "Bukit Intan", "PT.BANGKA INDO PROPERTY", "Sri Devi Agustini", "PI", "45", "43", "NN", "BELUM DISERAHKAN", "NN"],
+["GRIYA KHARISMA", "Subsidi", "2018", "Jl. Kelompok", "Jerambah Gantung", "Gabek", "PT. GANDARIA SUKSES SEJAHTERA", "Zuiyita", "NN", "75", "10", "5", "BELUM DISERAHKAN", "NN"],
+["GRIYA MUSTIKA 1", "Subsidi", "2020", "Jl. Masjid Al-Husna", "Air Itam", "Bukit Intan", "PT. RIZKI AGUNG PROPERTINDO", "Risky Rexcy", "APPERINDO", "55", "26", "26", "BELUM DISERAHKAN", "NN"],
+["GRIYA PANGKALPINANG", "Subsidi", "2018", "Jl. Kartini Utama Raya", "Selindung", "Gabek", "PT. GRAHA KARUNIA PERKASA", "NN", "NN", "129", "129", "129", "BELUM DISERAHKAN", "NN"],
+["GRIYA PAPINKA 1", "Subsidi", "2017", "Jl. Gabek I", "Selindung", "Gabek", "PT. BANGKA INDO PROPERTI", "Sri Devi Agustini", "NN", "18", "18", "16", "BELUM DISERAHKAN", "NN"],
+["GRIYA PAPINKA 2", "Subsidi", "2018", "Jl. Pustu", "Jerambah Gantung", "Gabek", "CV. MANDIRI SUKSES", "Sri Devi Agustini", "NN", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
+["GRIYA PAPINKA 3", "Subsidi", "2019", "Jl. Jebung Dalam", "Selindung", "Gabek", "CV. MANDIRI SUKSES", "Sri Devi Agustini", "NN", "29", "29", "29", "BELUM DISERAHKAN", "NN"],
+["GRIYA PESONA ", "Subsidi", "2014", "Jl. Lintas Timur", "Selindung", "Gabek", "PT. GRAHA KARUNIA PERKASA", "Gunawan", "APERSI", "174", "141", "141", "BELUM DISERAHKAN", "NN"],
+["GRIYA PESONA SELINDUNG", "Subsidi", "2017", "Jl. Bedukang Raya", "Selindung Baru", "Gabek", "NN", "NN", "NN", "24", "24", "24", "BELUM DISERAHKAN", "NN"],
+["GRIYA ROSMANIA RESIDENCE", "Subsidi", "2024", "Jl. Salma", "Jerambah Gantung", "Gabek", "PT. SYAMSI INVES TAMA", "NN", "NN", "26", "17", "4", "BELUM DISERAHKAN", "NN"],
+["GRIYA SAFARIAH", "Subsidi", "2017", "Gg. Mirah Delima", "Air Itam", "Bukit Intan", "NN", "NN", "NN", "56", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["GRIYA SHENA PERMAI", "Subsidi", "2017", "Jl. M. Zainuddin", "Selindung Baru", "Gabek", "Hendry Sujono", "Hendry Sujono", "NN", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
+["GRIYA SYARIAH", "Subsidi", "2019", "Jl. Kelompok", "Selindung", "Gabek", "NN", "NN", "NN", "26", "26", "26", "BELUM DISERAHKAN", "NN"],
+["HARMONI RESIDENCE", "Subsidi", "2020", "Jl. Lingkar Barat", "Tua Tunu Indah", "Gerunggang", "PT. HARMONI CITRA BANGKA", "Susantri", "APPERINDO", "41", "41", "41", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 1", "Subsidi", "2019", "Jl. Padat Karya", "Selindung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "167", "167", "91", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 2", "Subsidi", "2022", "Jl. Padat Karya", "Selindung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "51", "0", "0", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 3", "Subsidi", "2022", "Jl. Jamrud III", "Semabung Lama", "Bukit Intan", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "117", "0", "0", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 5", "Komersil", "2022", "Jl. Gandaria 1", "Tua Tunu Indah", "Gerunggang", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "38", "26", "38", "SUDAH DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 6", "Subsidi", "2023", "Jl. Line Listrik", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "148", "116", "80", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 7", "Subsidi", "2023", "Jl. Line Listrik (Kampak-Kerabut)", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "24", "0", "0", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 8", "Subsidi", "2024", "Jl. Haji Bakir", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "47", "0", "0", "BELUM DISERAHKAN", "NN"],
+["HARVEST RESIDENCE 9", "Subsidi", "2025", "Jl. Bukit Manggis", "Taman Bunga", "Gerunggang", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "58", "0", "0", "BELUM DISERAHKAN", "NN"],
+["INDAH RESIDENCE", "Subsidi", "2020", "Jl. Kenari Rt.03 Rw.01", "Air Kepala Tujuh", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "42", "42", "42", "BELUM DISERAHKAN", "NN"],
+["INDO GRAHA", "Subsidi", "2016", "Jl. Kampak", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "88", "88", "88", "BELUM DISERAHKAN", "NN"],
+["INDO GRIYA", "Subsidi", "2015", "Jl. Kerabut", "Selindung", "Gabek", "NN", "NN", "NN", "249", "249", "249", "BELUM DISERAHKAN", "NN"],
+["INDO RESIDENCE", "Subsidi", "2015", "Jl. Singkur No.83", "Selindung", "Gabek", "NN", "NN", "NN", "151", "151", "151", "BELUM DISERAHKAN", "NN"],
+["INDO WANEKA RESIDENCE 1", "Subsidi", "2017", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "CV.INDO SEJAHTERA", "NN", "APERSI", "44", "44", "44", "SUDAH DISERAHKAN", "2022"],
+["INDO WANEKA RESIDENCE 2", "Subsidi", "2018", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "CV.INDO SEJAHTERA", "NN", "APERSI", "51", "51", "51", "SUDAH DISERAHKAN", "2022"],
+["INDO WANEKA RESIDENCE 3", "Subsidi", "2018", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "CV.INDO SEJAHTERA", "NN", "APERSI", "25", "25", "25", "SUDAH DISERAHKAN", "2022"],
+["INDO WANEKA RESIDENCE 4", "Subsidi", "2019", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "CV.INDO SEJAHTERA", "NN", "APERSI", "84", "84", "84", "SUDAH DISERAHKAN", "2022"],
+["INDO WANEKA RESIDENCE 5", "Subsidi", "2019", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "CV.INDO SEJAHTERA", "NN", "APERSI", "22", "22", "22", "SUDAH DISERAHKAN", "2022"],
+["KALENDRA RESIDENCE", "Subsidi", "2024", "Jl. Pikas IV", "Air Salemba", "Gabek", "PT. TEKNIK KONSTRUKSI PROPERTINDO", "Tri Wibowo", "NN", "35", "33", "12", "BELUM DISERAHKAN", "NN"],
+["KAMPUNG ASRI 3", "Subsidi", "2015", "Jl. Lintas Timur", "Selindung", "Gabek", "NN", "NN", "NN", "61", "61", "61", "BELUM DISERAHKAN", "NN"],
+["KAMPUNG MELAYU ASRI 2", "Komersil", "2018", "Jl. Rumbia", "Bukit Merapin", "Gerunggang", "NN", "NN", "NN", "10", "10", "10", "BELUM DISERAHKAN", "NN"],
+["KORPRI PERMAI", "Subsidi", "NN", "Jl. Tanjung Bunga", "Air Itam", "Bukit Intan", "NN", "PT. Belma", "NN", "NN", "-", "-", "BELUM DISERAHKAN", "NN"],
+["KOTA BARU RESIDENCE", "Subsidi", "2017", "Jl. Gerunggang", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "48", "46", "46", "BELUM DISERAHKAN", "NN"],
+["LEGAVISTA 4 ", "Subsidi", "2018", "Jl. Fatmawati Dalam", "Jerambah Gantung", "Gabek", "PT. LEGA CIPTA PROPERTINDO", "Noviko", "PI", "102", "102", "102", "BELUM DISERAHKAN", "NN"],
+["LEGAVISTA 4 TAHAP 2", "Subsidi", "2018", "Jl. Fatmawati Dalam", "Jerambah Gantung", "Gabek", "PT. LEGA CIPTA PROPERTINDO", "Noviko", "PI", "25", "25", "25", "BELUM DISERAHKAN", "NN"],
+["LENTERA BAHAGIA", "Subsidi", "2022", "Jl. Pustu Kerabut", "Tua Tunu Indah", "Gerunggang", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "NN", "67", "67", "67", "BELUM DISERAHKAN", "NN"],
+["MADANI RESIDENCE", "Subsidi", "2018", "Jl. Fatmawati", "Jerambah Gantung", "Gabek", "PT. GRAHA MADANI SUKSES BERSAMA", "Mardani", "APPERINDO", "42", "33", "33", "BELUM DISERAHKAN", "NN"],
+["MAHARANI RESIDENCE", "Subsidi", "2023", "Jl. Bukit Intan", "Bacang", "Bukit Intan", "PT. MAHARANI BERKAH COI PROPERTI", "Corri Ihsani", "NN", "43", "0", "0", "BELUM DISERAHKAN", "NN"],
+["MATAHARI RESIDENCE", "Subsidi", "2017", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "CV. BANGKA INDO KARYA", "Andri", "PI", "97", "97", "97", "SUDAH DISERAHKAN", "2021"],
+["MATAHARI RESIDENCE 2", "Subsidi", "2020", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA INDO KARYA", "Andri", "PI", "81", "52", "52", "BELUM DISERAHKAN", "NN"],
+["MEGA HARMONI", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "111", "111", "111", "BELUM DISERAHKAN", "NN"],
+["MENARA KAMPAK RESIDENCE", "Subsidi", "2018", "Jl. Air Kampak", "Tua Tunu Indah", "Gerunggang", "CV.MENARA JAYA", "Andri", "NN", "25", "25", "25", "BELUM DISERAHKAN", "NN"],
+["MENTARI RESIDENCE", "Subsidi", "2017", "NN", "Kacang Pedang", "Gerunggang", "CV. BUMI CITRA LESTARI", "Reza Eka Aprilianto", "NN", "15", "", "", "BELUM DISERAHKAN", "NN"],
+["MENTARI RESIDENCE", "Subsidi", "2021", "Jl. Line Listrik (Kampak-Kerabut)", "Jerambah Gantung", "Gabek", "PT. MENTARI BERSAUDARA BABEL", "Muhammad Iqbal", "PI", "43", "42", "42", "BELUM DISERAHKAN", "NN"],
+["MIRACLE LAND", "Komersil", "2015", "Jl. Kerabut 2", "Selindung", "Gabek", "NN", "NN", "NN", "10", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["MONACO RESIDENCE", "Subsidi", "2018", "Jl. Kartini Utama", "Selindung", "Gabek", "PT. GERHANA KARUNIA PERKASA", "Gunawan", "APERSI", "103", "46", "46", "BELUM DISERAHKAN", "NN"],
+["MUTIARA RUBY", "Komersil", "2020", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "NN", "32", "32", "32", "BELUM DISERAHKAN", "NN"],
+["MUTIARA SELINDUNG", "Subsidi", "2018", "Jl. Betutu ", "Selindung Baru", "Gabek", "PT. PBERLY'S JAYA PROPERTI", "Subuadi", "NN", "40", "40", "40", "BELUM DISERAHKAN", "NN"],
+["MUTIARA SELINDUNG TAHAP 2", "Subsidi", "2019", "Jl. Betutu ", "Selindung Baru", "Gabek", "PT. PBERLY'S JAYA PROPERTI", "Subuadi", "NN", "8", "8", "8", "BELUM DISERAHKAN", "NN"],
+["NILAM PERMATA RESIDENCE ", "Subsidi dan Komersil", "2018", "Jl. Nilam Raya", "Bacang", "Bukit Intan", "PT.PLASMA JAYA PERKASA", "Yanto", "REI", "101", "98", "98", "BELUM DISERAHKAN", "NN"],
+["NILAM PERMATA RESIDENCE 2 TAHAP 1", "Subsidi", "2024", "Jl. Alexander", "Air Itam", "Bukit Intan", "PT. PLASMA JAYA PERKASA", "Yanto", "REI", "160", "37", "0", "BELUM DISERAHKAN", "NN"],
+["NILAM PERMATA RESIDENCE 2 TAHAP 2", "Subsidi", "2024", "Jl. Alexander", "Bacang", "Bukit Intan", "PT. PLASMA JAYA PERKASA", "Yanto", "REI", "139", "0", "0", "BELUM DISERAHKAN", "NN"],
+["NILAM PERMATA RESIDENCE 2 TAHAP 3", "Subsidi", "2024", "Jl. Alexander", "Bacang", "Bukit Intan", "PT. PLASMA JAYA PERKASA", "Yanto", "REI", "155", "0", "0", "BELUM DISERAHKAN", "NN"],
+["NILAM PERMATA RESIDENCE 2 TAHAP 4", "Subsidi", "2024", "Jl. Alexander", "Bacang", "Bukit Intan", "PT. PLASMA JAYA PERKASA", "Yanto", "REI", "154", "0", "0", "BELUM DISERAHKAN", "NN"],
+["NIRWANA ASRI", "Subsidi", "2019", "Jl. Padat Karya ", "Selindung", "Gabek", "PT. RIZKI NUGRAHA SEJAHTERA", "Zuyyika Aditama Putra", "NN", "44", "0", "0", "BELUM DISERAHKAN", "NN"],
+["ORIZA PERMAI", "Subsidi", "2016", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "NN", "NN", "NN", "20", "20", "20", "BELUM DISERAHKAN", "NN"],
+["PANORAMA ZAMRUD RESIDENCE", "Subsidi", "2019", "Jl. Masjid Al Husna", "Temberan", "Bukit Intan", "PT. PUTRA LIMBUNG JAYA PROPERTINDO", "Zam Zami", "PI", "57", "55", "55", "BELUM DISERAHKAN", "NN"],
+["PAPINKA VALLEY (JASMINE)", "Komersil", "2015", "Jl. Raya Air Itam", "Air Itam", "Bukit Intan", "PT. TIGA KOTA SEMACANG", "NN", "NN", "88", "22", "22", "BELUM DISERAHKAN", "NN"],
+["PAPINKA VALLEY (ORCHID)", "Komersil", "2016", "Jl. Depati Hamzah", "Semabung Lama", "Bukit Intan", "PT. TIGA KOTA SEMACANG", "NN", "NN", "92", "9", "9", "BELUM DISERAHKAN", "NN"],
+["PARADISE RESIDENCE 1", "Subsidi", "2017", "Jl. Tampak Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "43", "38", "38", "SUDAH DISERAHKAN", "2021"],
+["PARADISE RESIDENCE 2", "Subsidi", "2017", "Jl. Kemang Permata", "Tua Tunu Indah", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "29", "29", "29", "SUDAH DISERAHKAN", "2021"],
+["PARADISE RESIDENCE 3", "Subsidi", "2017", "Jl. Warisan Budaya", "Tua Tunu Indah", "Gerunggang", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "123", "123", "123", "SUDAH DISERAHKAN", "2021"],
+["PARADISE RESIDENCE 4", "Subsidi", "2018", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "110", "110", "110", "SUDAH DISERAHKAN", "2021"],
+["PARADISE RESIDENCE 5 ", "Subsidi", "2018", "Jl. Lingkar Barat Jalur 30 M", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "44", "44", "44", "SUDAH DISERAHKAN", "2021"],
+["PARADISE RESIDENCE 6", "Subsidi", "2018", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "70", "70", "70", "SUDAH DISERAHKAN", "2022"],
+["PARADISE RESIDENCE 7", "Subsidi", "2020", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022"],
+["PARADISE RESIDENCE 8", "Subsidi", "2021", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "58", "58", "58", "BELUM DISERAHKAN", "NN"],
+["PARADISE RESIDENCE 9 GANDARIA", "Subsidi", "2024", "Jl. Dealova Bahagia", "Air Kepala Tujuh", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Tisnu Rehatta", "PI", "42", "1", "0", "BELUM DISERAHKAN", "NN"],
+["PARIS RESIDENCE", "Subsidi", "2015", "Jl. Lintas Timur", "Selindung", "Gabek", "PT. GRAHA KARUNIA PERKASA", "Gunawan", "APERSI", "103", "74", "74", "BELUM DISERAHKAN", "NN"],
+["PASIR MUTIARA RESIDENCE", "Subsidi", "2021", "Jl. Pasir", "Bacang", "Bukit Intan", "PT. BHAKTI AISYAH ATAYA", "M. Aditiya Mebiantara", "NN", "115", "10", "0", "BELUM DISERAHKAN", "NN"],
+["PASIR PADI RESIDENCE", "Subsidi", "2019", "Jl. Pasir Padi", "Temberan", "Bukit Intan", "PT.KARYA PUTRA BANGKA MANDIRI", "Steven Wijaya", "REI", "161", "103", "103", "BELUM DISERAHKAN", "NN"],
+["PEARL RESIDENCE 1", "Subsidi", "2017", "Jl. Bukit Tunggal 1", "Sriwijaya", "Girimaya", "CV. AGRIKULTUR RUMPUT LAUT", "Prigunardi Tjhia", "APERSI", "140", "140", "140", "BELUM DISERAHKAN", "NN"],
+["PEARL RESIDENCE 2", "Subsidi", "2017", "Jl. Perbakin Rt.01 Rw.02 Kel.Sriwijaya Kec. Girimaya", "Sriwijaya", "Girimaya", "CV. AGRIKULTUR RUMPUT LAUT", "Prigunardi Tjhia", "APERSI", "15", "15", "6", "BELUM DISERAHKAN", "NN"],
+["PEARL RESIDENCE 3", "Subsidi", "2018", "Jl. Batu Akik", "Bukit Besar", "Girimaya", "CV. AGRIKULTUR RUMPUT LAUT", "Prigunardi Tjhia", "APERSI", "20", "20", "4", "BELUM DISERAHKAN", "NN"],
+["PEARL RESIDENCE 5", "Subsidi", "2018", "Jl. Basuki Rahmat Ujung II", "Sriwijaya", "Girimaya", "CV. AGRIKULTUR RUMPUT LAUT", "Prigunardi Tjhia", "APERSI", "54", "31", "15", "BELUM DISERAHKAN", "NN"],
+["PELANGI RESIDENCE", "Subsidi", "2015", "Jl. Sungkur Dalam", "Selindung", "Gabek", "NN", "Defri Hartanto", "APPERNAS JAYA", "124", "124", "124", "BELUM DISERAHKAN", "NN"],
+["PERMATA GANDARIA", "Subsidi", "2017", "Gg. Al Mukaromah", "Air Kepala Tujuh", "Gerunggang", "PT. KAYYESA ELMA MAZEA", "Sariati", "NN", "42", "37", "37", "BELUM DISERAHKAN", "NN"],
+["PERMATA INTI KAMPAK", "Subsidi", "2017", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "14", "14", "14", "BELUM DISERAHKAN", "NN"],
+["PERMATA KULAN", "Subsidi", "2021", "Jl. Kulan ", "Tua Tunu Indah", "Gerunggang", "PT. LAUTAN EMAS ADI GRAHA", "Hendri", "APERSI", "40", "26", "26", "BELUM DISERAHKAN", "NN"],
+["PERMATA MANDIRI RESIDENCE 2", "Subsidi", "2019", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. ERFOLG MANDIRI INDONESIA", "Rizky Ady S.", "HIMPERA", "93", "61", "59", "SUDAH DISERAHKAN", "2025"],
+["PERMATA SELINDUNG RESIDENCE", "Subsidi", "2018", "Jl. Lintas Timur No. 18", "Selindung", "Gabek", "PT. MARLINDO BANGUN PERSADA", "Andrian Bong", "NN", "74", "74", "74", "BELUM DISERAHKAN", "NN"],
+["PERMATA SRIWIJAYA", "Komersil", "NN", "Jl. Basuki Rahmat Ujung", "Sriwijaya", "Girimaya", "NN", "Suwandi", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["PESONA ASROBAN INDAH", "Subsidi", "2017", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "CV. PBERLY'S", "Subuadi", "APPERINDO", "43", "22", "22", "BELUM DISERAHKAN", "NN"],
+["PESONA KAMPAK PERMAI", "Subsidi", "2017", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "CV. PBERLY'S", "Subuadi", "APPERINDO", "37", "37", "37", "BELUM DISERAHKAN", "NN"],
+["PESONA SELINDUNG", "Subsidi", "2017", "Jl. Puri Kencana", "Selindung Baru", "Gabek", "CV. PBERLY'S", "Subuadi", "APPERINDO", "20", "12", "12", "BELUM DISERAHKAN", "NN"],
+["PINANG MAS", "Subsidi", "2008", "Jl. Lintas Timur", "Selindung", "Gabek", "NN", "NN", "NN", "102", "102", "102", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH", "Subsidi", "2016", "Jl. Rustam Efendi", "Lontong Pancur", "Pangkal Balam", "NN", "NN", "PI", "NN", "23", "23", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 2", "Subsidi", "2017", "Jl. Rustam Efendi", "Lontong Pancur", "Pangkal Balam", "PT . BANGKA CIPTA MANDIRI", "Yuswan", "PI", "135", "135", "135", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 3", "Subsidi", "2018", "Jl. Tanjung Bunga", "Temberan", "Bukit Intan", "PT.SUMBER MAS PRATAMA", "Selly", "PI", "87", "87", "87", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 5", "Subsidi", "2020", "Jl. Laksamana Hayati", "Temberan", "Bukit Intan", "PT. SUMBER MAS PRATAMA", "Selly", "PI", "90", "78", "67", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 6", "Subsidi", "2020", "Jl. Tanjung Bunga", "Temberan", "Bukit Intan", "PT. SUMBER MAS PRATAMA", "Selly", "PI", "103", "98", "75", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 7", "Subsidi", "2023", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. SUMBER MAS PRATAMA", "Feri Sardani", "PI", "49", "49", "49", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 8", "Subsidi", "2023", "Jl. Gabek Raya", "Lontong Pancur", "Pangkal Balam", "PT. SUMBER MAS PRATAMA", "Muhammad Rizki Ramadhan", "PI", "72", "72", "72", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 9", "Subsidi", "2023", "Jl. Kerikil", "Lontong Pancur", "Pangkal Balam", "PT. SUMBER MAS PRATAMA", "Muhammad Rizki Ramadhan", "PI", "124", "81", "0", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 10", "Subsidi", "2023", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT. SUMBER MAS PRATAMA", "Muhammad Rizki Ramadhan", "PI", "114", "79", "45", "BELUM DISERAHKAN", "NN"],
+["PONDOK INDAH 11", "Subsidi", "2024", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. SUMBER MAS PRATAMA", "NN", "NN", "128", "0", "0", "BELUM DISERAHKAN", "NN"],
+["PRIMA GARDEN 1", "Subsidi", "2017", "Jl. Fatmawati Gg. Kulan", "Tua Tunu Indah", "Gerunggang", "PT. BABELINDO NUSANTARA PRIMA", "Muksen", "NN", "75", "75", "75", "BELUM DISERAHKAN", "NN"],
+["PRIMA GARDEN 1 TAHAP 2", "Subsidi", "2018", "Jl. Fatmawati Gg. Kulan", "Tua Tunu Indah", "Gerunggang", "PT. BABELINDO NUSANTARA PRIMA", "Muksen", "NN", "17", "17", "17", "BELUM DISERAHKAN", "NN"],
+["PURI ARWANA", "Subsidi", "2021", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "PT. GIBSI HMS SEJAHTERA PERSADA", "M. Dollar", "REI", "176", "149", "32", "BELUM DISERAHKAN", "NN"],
+["PURI KENCANA", "Komersil", "2009", "Jl. Puri Kencana", "Lontong Pancur", "Pangkal Balam", "NN", "Edward", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["PURI MANSION", "Subsidi", "2017", "Jl. Gerunggang", "Air Kepala Tujuh", "Gerunggang", "PT. MAHA KARYA KREASI", "Romitama Purwanto Wibowo", "NN", "52", "12", "12", "BELUM DISERAHKAN", "NN"],
+["PURI RESIDENCE", "Komersil", "SEBELUM TAHUN 2014", "Jl. Kartini Utama Raya", "Selindung", "Gabek", "NN", "NN", "NN", "46", "46", "35", "BELUM DISERAHKAN", "NN"],
+["PURI SEMABUNG INDAH", "Komersil", "2013", "Jl. Mustika II", "Semabung Lama", "Bukit Intan", "NN", "Heriyanto", "NN", "12", "12", "12", "BELUM DISERAHKAN", "NN"],
+["PURI SEMABUNG INDAH 1", "Komersil", "2015", "Jl. Semabung Lama", "Semabung Lama", "Bukit Intan", "NN", "Heriyanto", "NN", "", "", "", "BELUM DISERAHKAN", "NN"],
+["RED WOOD", "Komersil", "2014", "Jl. Tayib", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "", "8", "3", "BELUM DISERAHKAN", "NN"],
+["RIVERA RESIDENCE", "Subsidi", "2018", "Jl. Tanjung Bunga II", "Temberan", "Bukit Intan", "PT.ARTISTIK JAYA CONT", "Eko Yuliyanto", "PI", "75", "72", "72", "SUDAH DISERAHKAN", "2022"],
+["RIZKI RESIDENCE ", "Subsidi", "2019", "Jl. Fajar", "Temberan", "Bukit Intan", "PT.SUKMA KARYA ABADI", "Ebit Sugiarto", "APPERINDO", "38", "38", "38", "BELUM DISERAHKAN", "NN"],
+["RIZKY RESIDENCE 2", "Subsidi", "2020", "Jl. Fajar", "Temberan", "Bukit Intan", "PT. SUKMA KARYA ABADI PROPERTI ", "Ebid Sugiarto", "APPERINDO", "62", "57", "57", "BELUM DISERAHKAN", "NN"],
+["ROSE WATER ESTATE", "Subsidi", "2017", "NN", "Bacang", "Bukit Intan", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["ROYAL PERMATA INDAH", "Subsidi", "2024", "Jl. Raya Tua Tunu", "Tua Tunu Indah", "Gerunggang", "PT. BERKAH BERSAMA KONSTRUKSI", "Agustian Safitri", "PI", "36", "8", "0", "BELUM DISERAHKAN", "NN"],
+["SILAM PARI", "Subsidi", "2015", "Jl. Kelompok", "Jerambah Gantung", "Gabek", "PT. TUNGGARA BERKAH PROPERTY", "Rivaldy Oki Rudiansyah", "NN", "51", "23", "15", "BELUM DISERAHKAN", "NN"],
+["SINAR BANGKA INDAH", "Subsidi", "2023", "Jl. Depati Hamzah Gg. Mirah Delima I", "Air Itam", "Bukit Intan", "PT. SINAR BANGKA INDAH", "NN", "NN", "42", "1", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN ANGGREK RESIDENCE 1", "Subsidi", "2015", "Jl. Bukit Tunggal", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "22", "22", "22", "BELUM DISERAHKAN", "NN"],
+["TAMAN ANGGREK RESIDENCE 2", "Subsidi", "2016", "Jl. Parit Lalang", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "11", "11", "11", "BELUM DISERAHKAN", "NN"],
+["TAMAN GANDARIA MAS", "Subsidi", "2017", "Jl. H. Umar", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "21", "21", "21", "SUDAH DISERAHKAN", "2023"],
+["TAMAN GANDARIA MAS 3", "Subsidi", "2019", "Gg. Melati", "Jerambah Gantung", "Gabek", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "43", "23", "18", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 1", "Subsidi", "2017", "Jl. Betutu Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "15", "15", "15", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 2 ", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYATEK PRIMA", "Dwi Pramono", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 3", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "34", "33", "33", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 4", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "50", "50", "49", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 5", "Subsidi", "2017", "Jl. Terubuk Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "26", "26", "24", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 6", "Subsidi", "2018", "Jl. Stadion Depati Amir ", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "55", "54", "54", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 7", "Subsidi", "2018", "Jl. Fatmawati Kampak", "Taman Bunga", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "37", "37", "37", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 8", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "20", "20", "20", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 9 ", "Subsidi", "2018", "Jl. M. Saleh Zainudin", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "32", "32", "SUDAH DISERAHKAN", "2022"],
+["TAMAN JAGUNG RESIDENCE 10", "Subsidi", "2018", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 11", "Subsidi", "2019", "Jl. Lingkar Barat", "Jerambah Gantung", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "39", "31", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 12", "Subsidi", "2019", "Jl. Mawar", "Tua Tunu Indah", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "36", "36", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 14", "Subsidi", "2021", "Jl. Kampak Dalam", "Jerambah Gantung", "Gabek", "PT. KARYA TEKNIK KONSTRUKSI", "Tri Wibowo", "PI", "34", "34", "34", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 15", "Subsidi", "2022", "Jl. Mawar", "Tua Tunu Indah", "Gerunggang", "PT. KARYA TEKNIK KONSTRUKSI", "Rifky Pramana Putra", "PI", "58", "58", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 16", "Subsidi", "2022", "Jl. Pikas 1", "Air Salemba", "Gabek", "PT. KARYA TEKNIK KONSTRUKSI", "Tri Wibowo", "PI", "36", "33", "33", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 17", "Subsidi", "2023", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. KARYA TEKNIK KONSTRUKSI", "Rifky Pramana Putra", "PI", "35", "29", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE 18", "Subsidi", "2024", "Jl. Stadion Dalam", "Gabek", "Gabek", "PT. KARYA TEKNIK KONSTRUKSI", "Rifky Pramana Putra", "PI", "62", "0", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE ICON 1", "Subsidi", "2019", "Jl. Fatmawati", "Taman Bunga", "Gerunggang", "PT. KARYA TEKNIK KONSTRUKSI", "Tri Wibowo", "PI", "115", "115", "115", "BELUM DISERAHKAN", "NN"],
+["TAMAN JAGUNG RESIDENCE ICON 2", "Subsidi", "2019", "Jl. Fatmawati", "Taman Bunga", "Gerunggang", "PT. KARYA TEKNIK KONSTRUKSI", "Tri Wibowo", "PI", "83", "63", "45", "BELUM DISERAHKAN", "NN"],
+["TAMAN KOTA", "Komersil", "NN", "Jl. Pulad Bangka", "Air Itam", "Bukit Intan", "NN", "NN", "NN", "90", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["TAMAN MANGGIS 1", "Subsidi", "2015", "Jl. Raya Tua Tunu", "Tua Tunu Indah", "Gerunggang", "PT. PARAHYANGAN DWI KARYA", "Hendrawan/Anugrah Wiyogo", "REI", "75", "27", "27", "BELUM DISERAHKAN", "NN"],
+["TAMAN MANGGIS 2 ", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "PT. PARAHYANGAN DWI KARYA", "Hendrawan/Anugrah Wiyogo", "REI", "45", "43", "43", "BELUM DISERAHKAN", "NN"],
+["TAMAN MANGGIS 2 TAHAP 2", "Subsidi", "2018", "Jl. Bukit Manggis", "Taman Bunga", "Gerunggang", "PT. PARAHYANGAN DWIKARYA", "Hendrawan/Anugrah Wiyogo", "REI", "58", "0", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN NAZHALEA", "Subsidi", "2021", "Jl. Padang Lama", "Air Itam", "Bukit Intan", "PT. GITA PUTRI BANGKA", "Muhammad Ikhsan Suryaatmaja", "REI", "35", "7", "7", "BELUM DISERAHKAN", "NN"],
+["TAMAN PAPINKA", "Subsidi", "2017", "Jl. Jebung Dalam", "Jerambah Gantung", "Gabek", "CV. TAMAN PAPINKA", "Sri Devi Agustini", "NN", "38", "29", "29", "BELUM DISERAHKAN", "NN"],
+["TAMAN SEMESTA MAS", "Subsidi", "2017", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "100", "98", "98", "BELUM DISERAHKAN", "NN"],
+["TAMAN SRIWIJAYA", "Subsidi", "2016", "Jl. Kubis", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "45", "45", "45", "BELUM DISERAHKAN", "NN"],
+["TAMAN SRIWIJAYA II", "Subsidi", "NN", "Jl. Kubis II", "Sriwijaya", "Girimaya", "NN", "NN", "NN", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
+["TAMAN SURYA", "Subsidi", "2017", "Jl. Fatmawati Gg. Makmur", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA RAYA JAYA", "Julu Wahyono", "REI", "100", "87", "87", "SUDAH DISERAHKAN", "2022"],
+["TAMAN SURYA MAS", "Subsidi", "2016", "Jl. Kampak Gg. Haji Umar", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "36", "36", "36", "SUDAH DISERAHKAN", "2023"],
+["TAMAN SURYA MAS INDAH", "Subsidi", "2015", "Jl. Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "22", "17", "17", "SUDAH DISERAHKAN", "2023"],
+["TAMAN TANJUNG BUNGA CLUSTER ANGGREK", "Komersil", "NN", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "378", "257", "174", "SUDAH DISERAHKAN", "2020"],
+["TAMAN TANJUNG BUNGA CLUSTER DAHLIA", "Subsidi", "2023", "Jl. Perumahan Tanjung Bunga", "Temberan", "Bukit Intan", "PT. CAHAYA INDAH ABADISAKTI", "Ferdinan", "REI", "111", "33", "0", "BELUM DISERAHKAN", "NN"],
+["TAMAN TANJUNG BUNGA CLUSTER LILI", "Komersil", "NN", "Jl. Taman Indah No 212", "Temberan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "313", "112", "70", "SUDAH DISERAHKAN", "2020"],
+["TAMAN TANJUNG BUNGA CLUSTER MAWAR 1", "Komersil", "NN", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "200", "200", "200", "BELUM DISERAHKAN", "NN"],
+["TAMAN TANJUNG BUNGA CLUSTER MAWAR 2", "Subsidi", "2016", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "56", "56", "56", "SUDAH DISERAHKAN", "2020"],
+["TAMAN TANJUNG BUNGA CLUSTER SERUNI", "Subsidi", "2019", "Jl. Taman Indah No 212", "Air Itam", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "305", "305", "26", "BELUM DISERAHKAN", "NN"],
+["TAMARA DREAM LAND 2", "Subsidi", "2020", "Jl. Lintas Timur", "Selindung", "Gabek", "PT. BUSNI IPAH GEMA", "Harini", "ALIANSI PENGEMBANG PERUMAHAN NASIONAL JAYA (APPERNAS JAYA)", "68", "61", "12", "BELUM DISERAHKAN", "NN"],
+["TAMARA DREAM LAND 2 TAHAP 2", "Subsidi", "2023", "Jl. Air Bebar", "Selindung", "Gabek", "PT. BUSNI IPAH GEMA", "Harini", "ALIANSI PENGEMBANG PERUMAHAN NASIONAL JAYA (APPERNAS JAYA)", "25", "6", "0", "BELUM DISERAHKAN", "NN"],
+["TANJUNG MANDIRI", "Subsidi", "2014", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "PT. TJEMARA MENTARI", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["TELAGA TIMUR 1", "Subsidi", "2017", "Jl. Tambak Udang", "Selindung", "Gabek", "PT. CAHAYA VIATINDO PRIMA", "Doddy Primananda", "PI", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
+["TELAGA TIMUR 2", "Subsidi", "NN", "NN", "Selindung", "Gabek", "PT. CAHAYA VIATINDO PRIMA", "NN", "PI", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["TELAGA TIMUR 3", "Subsidi", "2018", "Jl. Lingkar Timur", "Selindung", "Gabek", "PT. CAHAYA VIATINDO PRIMA", "Efviar Said", "PI", "47", "24", "24", "BELUM DISERAHKAN", "NN"],
+["THE GREENLANED CITY", "Komersil", "NN", "Jl. Selindung Raya", "Selindung Baru", "Gabek", "PT. MITRA ANUGRAH PERDANA", "Gunadi", "REI", "468", "468", "468", "BELUM DISERAHKAN", "NN"],
+["THE ZAMRUD LAND", "Subsidi", "2019", "Jl. Perumahan Bhayangkara", "Temberan", "Bukit Intan", "PT. BAPALINDO JAYA PROPERTI", "Zam Zami", "APPERNAS JAYA", "63", "59", "59", "BELUM DISERAHKAN", "NN"],
+["TIRTA KENCANA PERMAI", "Subsidi", "2015", "Jl. Basuki Rahmat Ujung", "Sriwijaya", "Girimaya", "", "Asiong", "", "78", "78", "76", "BELUM DISERAHKAN", "NN"],
+["TUNAS ILALANG", "Subsidi", "2015", "Jl. Kelompok", "Selindung", "Gabek", "PT. PERSLY DONNY SIREGAR", "Kristory Glorius S.", "APERSI", "44", "44", "44", "BELUM DISERAHKAN", "NN"],
+["TUNAS JERAMBAH GANTUNG", "Subsidi", "2019", "Jl. Lingkar Barat", "Jerambah Gantung", "Gabek", "PT. PERSLY DONNY SIREGAR", "Kristory Glorius S.", "APERSI", "39", "39", "39", "BELUM DISERAHKAN", "NN"],
+["TUNAS KAMPAK REGAR", "Subsidi", "2018", "Jl. Haji Umar", "Tua Tunu Indah", "Gerunggang", "PT. PERSLY DONNY SIREGAR", "Kristory Glorius S.", "APERSI", "12", "12", "12", "BELUM DISERAHKAN", "NN"],
+["TUNAS TANJUNG BUNGA", "Subsidi", "2017", "Jl. Tanjung Bunga", "Temberan", "Bukit Intan", "PT. PERSLY DONNY SIREGAR", "Kristory Glorius S.", "APERSI", "21", "21", "21", "BELUM DISERAHKAN", "NN"],
+["VALERI RESIDENCE", "Subsidi dan Komersil", "2021", "Jl. Jeruk", "Asam", "Rangkui", "PT. PRESTIGE LAND PROPERTI", "Warino", "REI", "50", "50", "50", "BELUM DISERAHKAN", "NN"],
+["VALERI RESIDENCE 2", "Subsidi", "2023", "Jl. Swadaya", "Air Mawar", "Bukit Intan", "PT. PRESTIGE LAND PROPERTI", "Warino", "REI", "170", "102", "102", "BELUM DISERAHKAN", "NN"],
+["VILLA BUKIT ASRI", "Subsidi", "2018", "NN", "Tua Tunu Indah", "Gerunggang", "NN", "NN", "NN", "33", "33", "33", "BELUM DISERAHKAN", "NN"],
+["VILLA HARMONI", "Subsidi", "2020", "Jl. Teluk Bayur", "Ampui", "Pangkal Balam", "PT. HARMONI CITRA BANGKA", "Yurita Sari", "APPERINDO", "62", "27", "27", "BELUM DISERAHKAN", "NN"],
+["VILLA JAM'S RESIDENCE", "Subsidi", "2017", "Jl. Padat Karya Dalam", "Selindung", "Gabek", "PT. FARISLA JAYA MAKMUR", "NN", "HIMPERA", "43", "40", "34", "BELUM DISERAHKAN", "NN"],
+["VILLA KAYU MAS", "Subsidi", "2019", "Jl. Tua Tunu Raya", "Tua Tunu Indah", "Gerunggang", "PT. BUMI CITRA LESTARI PROPERTINDO", "Feri Sardani", "PI", "44", "44", "44", "BELUM DISERAHKAN", "NN"],
+["VILLA SAKINAH INDAH", "Subsidi", "2017", "Jl. Galanggang Kapal Selindung", "Lontong Pancur", "Pangkal Balam", "PD. DOK KARTINI", "Jibran Chairozi", "HIMPERA", "48", "42", "33", "BELUM DISERAHKAN", "NN"],
+["VIONA VILLAGE", "Subsidi", "2016", "Jl. Sembilang No. 2", "Selindung", "Gabek", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "56", "56", "56", "BELUM DISERAHKAN", "NN"],
+["WAN RESIDENCE 1", "Subsidi", "2023", "Jl. Puskesmas/Len 30", "Jerambah Gantung", "Gabek", "PT. WAN JANNAH RIA", "Dahlia", "NN", "77", "29", "24", "BELUM DISERAHKAN", "NN"],
+["WATERGATE PARK RESIDENCE", "Komersil", "NN", "Jl. Batin Iso No. 429", "Pintu Air", "Rangkui", "NN", "NN", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
+["ZIKRI RESIDENCE TAHAP 1", "Subsidi", "2018", "Jl. Lintas Timur ", "Selindung", "Gabek", "PT. ROBIATUL RUBIEQA RABBANI", "Zikri", "NN", "128", "128", "128", "BELUM DISERAHKAN", "NN"],
+["ZIKRI RESIDENCE TAHAP 2", "Subsidi", "2018", "Jl. Lintas Timur ", "Selindung", "Gabek", "PT. ROBIATUL RUBIEQA RABBANI", "Zikri", "NN", "116", "59", "59", "BELUM DISERAHKAN", "NN"],
+["ZIKRY RESIDENCE TAHAP 3", "Subsidi", "2019", "Jl. Lintas Timur ", "Selindung", "Gabek", "PT. ROBIATUL RUBIEQA RABBANI", "Zikri", "NN", "105", "9", "9", "BELUM DISERAHKAN", "NN"],
+["ZIKRY RESIDENCE TAHAP 4", "Subsidi", "2019", "Jl. Sungai Liat", "Selindung", "Gabek", "PT. ROBIATUL RUBIEQA RABBANI", "Zikri", "NN", "43", "0", "0", "BELUM DISERAHKAN", "NN", "jalan belum dibangun | pengembang tidak aktif", -2.1100, 106.1155]
+            ];
+
+            const searchInput = document.getElementById('search-input');
+            const filterKategori = document.getElementById('filter-kategori');
+            const filterStatus = document.getElementById('filter-status');
+            const filterKecamatan = document.getElementById('filter-kecamatan');
+            const filterTahun = document.getElementById('filter-tahun');
+            const noteCheckboxes = document.querySelectorAll('.note-filter');
+            const ageCheckboxes = document.querySelectorAll('.age-filter');
+
+            const tableBody = document.getElementById('table-body');
+            const originalData = data;
+            const itemsPerPage = 8;
+            let currentPage = 1;
+            let currentFilteredData = [];
+            
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            const pageInfo = document.getElementById('page-info');
+
+            const exportExcelBtn = document.getElementById('export-excel');
+            const exportPdfBtn = document.getElementById('export-pdf');
+
+            let housingChart = null;
+            const rankingBody = document.getElementById('ranking-body');
+
+            const currentYear = new Date().getFullYear();
+
+            // --- Leaflet Map Init ---
+            const map = L.map('map').setView([-2.12, 106.11], 12); // pusat kira-kira Pangkalpinang
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const markersLayer = L.layerGroup().addTo(map);
+// Icon default Leaflet tapi warna hijau & merah
+const greenIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+const redIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+const greyIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+const renderMap = (dataToMap) => {
+    markersLayer.clearLayers();
+
+    const bounds = [];
+    dataToMap.forEach(row => {
+        const lat = parseFloat(row[15]);
+        const lng = parseFloat(row[16]);
+        if (isNaN(lat) || isNaN(lng)) return;
+
+        const nama = row[0];
+        const pengembang = row[6] || '-';
+        const statusPSU = (row[12] || '-').toUpperCase();
+        const tahun = row[2] || '-';
+
+        // pilih icon berdasarkan status PSU
+        let icon = greyIcon;
+        if (statusPSU === 'SUDAH DISERAHKAN') {
+            icon = greenIcon;
+        } else if (statusPSU === 'BELUM DISERAHKAN') {
+            icon = redIcon;
+        }
+
+        const marker = L.marker([lat, lng], { icon });
+
+        marker.bindPopup(
+            `<strong>${nama}</strong><br>` +
+            `Pengembang: ${pengembang}<br>` +
+            `Tahun: ${tahun}<br>` +
+            `Status PSU: ${statusPSU}`
+        );
+
+        markersLayer.addLayer(marker);
+        bounds.push([lat, lng]);
+    });
+
+    if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [30, 30] });
+    }
+};
+
+            // --- END Map ---
+
+            const renderDeveloperRanking = (dataToRank) => {
+                rankingBody.innerHTML = '';
+
+                const devStats = {};
+
+                dataToRank.forEach(row => {
+                    const rawDev = row[6] ? row[6].trim() : "";
+                    if (!rawDev) return;
+                    const developer = rawDev;
+
+                    const status = (row[12] || '').trim().toUpperCase();
+
+                    if (!devStats[developer]) {
+                        devStats[developer] = {
+                            total: 0,
+                            sudah: 0,
+                            belum: 0
+                        };
+                    }
+
+                    devStats[developer].total += 1;
+
+                    if (status === 'SUDAH DISERAHKAN') {
+                        devStats[developer].sudah += 1;
+                    } else if (status === 'BELUM DISERAHKAN') {
+                        devStats[developer].belum += 1;
+                    }
+                });
+
+                const sorted = Object.entries(devStats)
+                    .sort((a, b) => b[1].total - a[1].total);
+
+                const topDevelopers = sorted.slice(0, 10);
+
+                topDevelopers.forEach(([developer, stats], index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${developer}</td>
+                        <td style="text-align:right;">${stats.total}</td>
+                        <td style="text-align:right;">${stats.sudah}</td>
+                        <td style="text-align:right;">${stats.belum}</td>
+                    `;
+                    rankingBody.appendChild(tr);
+                });
+            };
+
+const updateSummary = (data) => {
+    let totalSitePlan = 0;
+    let totalTerbangun = 0;
+    let totalTerhuni = 0;
+
+    data.forEach(row => {
+        const sitePlan = Number(row[9]) || 0;
+        const terbangun = Number(row[10]) || 0;
+        const terhuni = Number(row[11]) || 0;
+
+        totalSitePlan += sitePlan;
+        totalTerbangun += terbangun;
+        totalTerhuni += terhuni;
+    });
+
+    // total unit
+    document.getElementById('total-site-plan').textContent = totalSitePlan.toLocaleString('id-ID');
+    document.getElementById('total-terbangun').textContent = totalTerbangun.toLocaleString('id-ID');
+    document.getElementById('total-terhuni').textContent = totalTerhuni.toLocaleString('id-ID');
+
+    // ✅ progress global (berdasarkan total)
+    let progressBangun = 0;
+    let progressHuni = 0;
+
+    if (totalSitePlan > 0) {
+        progressBangun = (totalTerbangun / totalSitePlan) * 100;
+        progressHuni = (totalTerhuni / totalTerbangun) * 100;
+    }
+
+    const progressBangunEl = document.getElementById('summary-progress-bangun');
+    const progressHuniEl = document.getElementById('summary-progress-huni');
+
+    if (progressBangunEl) {
+        progressBangunEl.textContent = totalSitePlan > 0 ? progressBangun.toFixed(0) + '%' : '-';
+    }
+    if (progressHuniEl) {
+        progressHuniEl.textContent = totalSitePlan > 0 ? progressHuni.toFixed(0) + '%' : '-';
+    }
+};
+
+
+            const renderChart = (dataToChart) => {
+                if (housingChart) {
+                    housingChart.destroy();
+                }
+
+                const kecamatanCounts = {};
+                dataToChart.forEach(row => {
+                    const rawKecamatan = row[5];
+                    if (rawKecamatan && rawKecamatan !== 'NN') {
+                        const cleanKecamatan = rawKecamatan.trim().split(' ').map(word =>
+                            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                        ).join(' ');
+                        kecamatanCounts[cleanKecamatan] = (kecamatanCounts[cleanKecamatan] || 0) + 1;
+                    }
+                });
+                
+                const labels = Object.keys(kecamatanCounts);
+                const chartData = Object.values(kecamatanCounts);
+
+                const ctx = document.getElementById('housingChart').getContext('2d');
+                housingChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Perumahan',
+                            data: chartData,
+                            backgroundColor: 'rgba(23, 91, 114, 0.8)',
+                            borderColor: 'rgba(23, 91, 114, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Jumlah Perumahan'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const renderTable = () => {
+                tableBody.innerHTML = '';
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const paginatedData = currentFilteredData.slice(start, end);
+                
+                paginatedData.forEach((rowData, index) => {
+                    const row = document.createElement('tr');
+
+                    // NO
+                    const noCell = document.createElement('td');
+                    noCell.textContent = start + index + 1;
+                    row.appendChild(noCell);
+
+                    // 0 NAMA PERUMAHAN
+                    let cell = document.createElement('td');
+                    cell.textContent = rowData[0];
+                    row.appendChild(cell);
+
+                    // 1 KATEGORI
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[1];
+                    row.appendChild(cell);
+
+                    // 2 TAHUN + badge usia
+                    const tahun = rowData[2];
+                    const yearNum = Number(tahun) || null;
+                    const tahunCell = document.createElement('td');
+                    tahunCell.textContent = tahun;
+
+                    if (yearNum) {
+                        const age = currentYear - yearNum;
+                        const badge = document.createElement('span');
+                        badge.classList.add('age-badge');
+
+                        if (age <= 5) {
+                            badge.classList.add('age-new');
+                            badge.textContent = `Baru (${age} th)`;
+                        } else if (age <= 10) {
+                            badge.classList.add('age-mid');
+                            badge.textContent = `Sedang (${age} th)`;
+                        } else {
+                            badge.classList.add('age-old');
+                            badge.textContent = `Lama (${age} th)`;
+                        }
+
+                        tahunCell.appendChild(document.createTextNode(' '));
+                        tahunCell.appendChild(badge);
+                    }
+
+                    row.appendChild(tahunCell);
+
+                    // 3 ALAMAT
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[3];
+                    row.appendChild(cell);
+
+                    // 4 KELURAHAN
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[4];
+                    row.appendChild(cell);
+
+                    // 5 KECAMATAN
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[5];
+                    row.appendChild(cell);
+
+                    // 6 PENGEMBANG
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[6];
+                    row.appendChild(cell);
+
+                    // 7 DIREKTUR / PELAKSANA
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[7];
+                    row.appendChild(cell);
+
+                    // 8 ASOSIASI
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[8];
+                    row.appendChild(cell);
+
+                    // 9 SITE PLAN
+                    const sitePlan = Number(rowData[9]) || 0;
+                    cell = document.createElement('td');
+                    cell.textContent = sitePlan;
+                    row.appendChild(cell);
+
+                    // 10 TERBANGUN
+                    const terbangun = Number(rowData[10]) || 0;
+                    cell = document.createElement('td');
+                    cell.textContent = terbangun;
+                    row.appendChild(cell);
+
+                    // 11 TERHUNI
+                    const terhuni = Number(rowData[11]) || 0;
+                    cell = document.createElement('td');
+                    cell.textContent = terhuni;
+                    row.appendChild(cell);
+
+                    // PROGRESS BANGUN
+                    const progBangun = sitePlan > 0 ? (terbangun / sitePlan * 100) : 0;
+                    const progBangunCell = document.createElement('td');
+                    progBangunCell.classList.add('cell-progress');
+                    progBangunCell.textContent = sitePlan > 0 ? progBangun.toFixed(0) + '%' : '-';
+                    row.appendChild(progBangunCell);
+
+                    // PROGRESS HUNI
+                    const progHuni = sitePlan > 0 ? (terhuni / sitePlan * 100) : 0;
+                    const progHuniCell = document.createElement('td');
+                    progHuniCell.classList.add('cell-progress');
+                    progHuniCell.textContent = sitePlan > 0 ? progHuni.toFixed(0) + '%' : '-';
+                    row.appendChild(progHuniCell);
+
+                    // 12 STATUS PSU
+                    const statusPSU = rowData[12];
+                    const statusCell = document.createElement('td');
+                    statusCell.textContent = statusPSU;
+                    if (statusPSU === "BELUM DISERAHKAN") {
+                        statusCell.classList.add('cell-status');
+                    } else if (statusPSU === "SUDAH DISERAHKAN") {
+                        statusCell.classList.add('cell-success');
+                    }
+                    row.appendChild(statusCell);
+
+                    // 13 TAHUN PENYERAHAN PSU
+                    cell = document.createElement('td');
+                    cell.textContent = rowData[13];
+                    row.appendChild(cell);
+
+                    // 14 CATATAN
+                    const catatanCell = document.createElement('td');
+                    catatanCell.classList.add('cell-notes');
+                    const rawNotes = (rowData[14] || '').trim();
+                    if (!rawNotes || rawNotes === 'NN') {
+                        catatanCell.textContent = '-';
+                    } else {
+                        const notes = rawNotes.split('|');
+                        notes.forEach(n => {
+                            const note = n.trim();
+                            if (!note) return;
+                            const span = document.createElement('span');
+                            let badgeClass = 'note-badge';
+
+                            const lower = note.toLowerCase();
+                            if (lower.includes('banjir')) {
+                                badgeClass += ' note-badge--flood';
+                            } else if (lower.includes('jalan')) {
+                                badgeClass += ' note-badge--road';
+                            } else if (lower.includes('pengembang')) {
+                                badgeClass += ' note-badge--dev';
+                            } else if (lower.includes('rth') || lower.includes('ruang terbuka hijau')) {
+                                badgeClass += ' note-badge--rth';
+                            }
+
+                            span.className = badgeClass;
+                            span.textContent = note;
+                            catatanCell.appendChild(span);
+                        });
+                    }
+                    row.appendChild(catatanCell);
+
+                    tableBody.appendChild(row);
+                });
+
+                renderPagination();
+                renderChart(currentFilteredData);
+                document.getElementById('total-housing-count').textContent =
+                    `Total Perumahan: ${currentFilteredData.length}`;
+
+                updateSummary(currentFilteredData);
+                renderDeveloperRanking(currentFilteredData);
+                renderMap(currentFilteredData); // update peta sesuai filter
+
+            };
+            
+            const renderPagination = () => {
+                const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+                pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages || 1}`;
+                prevButton.disabled = currentPage === 1;
+                nextButton.disabled = currentPage === totalPages || currentFilteredData.length === 0;
+            };
+
+            const populateFilters = () => {
+                const uniqueKategori = new Set(originalData.map(row => row[1]));
+                uniqueKategori.forEach(kategori => {
+                    const option = document.createElement('option');
+                    option.value = kategori;
+                    option.textContent = kategori;
+                    filterKategori.appendChild(option);
+                });
+
+                filterStatus.innerHTML = '<option value="all">Semua</option>';
+                const standardStatus = ["SUDAH DISERAHKAN", "BELUM DISERAHKAN"];
+                standardStatus.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    filterStatus.appendChild(option);
+                });
+                
+                const standardKecamatan = ["Gabek", "Gerunggang", "Bukit Intan", "Pangkal Balam", "Rangkui", "Girimaya"];
+                filterKecamatan.innerHTML = '<option value="all">Semua</option>';
+                standardKecamatan.forEach(kecamatan => {
+                    const option = document.createElement('option');
+                    option.value = kecamatan;
+                    option.textContent = kecamatan;
+                    filterKecamatan.appendChild(option);
+                });
+
+                const uniqueTahun = new Set(originalData.map(row => row[2]));
+                const sortedTahun = Array.from(uniqueTahun).sort();
+                sortedTahun.forEach(tahun => {
+                    const option = document.createElement('option');
+                    option.value = tahun;
+                    option.textContent = tahun;
+                    filterTahun.appendChild(option);
+                });
+            };
+
+            const applyFilters = () => {
+                const searchValue = searchInput.value.toLowerCase();
+                const kategoriValue = filterKategori.value;
+                const statusValue = filterStatus.value;
+                const kecamatanValue = filterKecamatan.value;
+                const tahunValue = filterTahun.value;
+                
+                const lowerKecamatanValue = kecamatanValue.toLowerCase();
+                const upperStatusValue = statusValue.toUpperCase();
+
+                const activeNotes = Array.from(noteCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value.toLowerCase());
+
+                const activeAges = Array.from(ageCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value); // 'baru' | 'sedang' | 'lama'
+
+                currentFilteredData = originalData.filter(row => {
+                    const rowText = row.join(' ').toLowerCase();
+                    
+                    const isSearchMatch = !searchValue || rowText.includes(searchValue);
+                    const isKategoriMatch = kategoriValue === 'all' || row[1] === kategoriValue;
+                    
+                    const dataStatus = row[12] ? row[12].trim().toUpperCase() : '';
+                    const isStatusMatch = statusValue === 'all' || dataStatus === upperStatusValue;
+                    
+                    let isKecamatanMatch;
+                    if (kecamatanValue === 'all') {
+                        isKecamatanMatch = true;
+                    } else {
+                        const dataKecamatan = row[5] ? row[5].trim().toLowerCase() : '';
+                        isKecamatanMatch = dataKecamatan === lowerKecamatanValue;
+                    }
+                    
+                    const isTahunMatch = tahunValue === 'all' || row[2] === tahunValue;
+
+                    const notesRaw = (row[14] || '').toLowerCase();
+                    const isNotesMatch = activeNotes.length === 0
+                        ? true
+                        : activeNotes.every(note => notesRaw.includes(note));
+
+                    // Filter usia perumahan
+                    const tahunNumber = Number(row[2]) || null;
+                    let ageCategory = null;
+                    if (tahunNumber) {
+                        const age = currentYear - tahunNumber;
+                        if (age <= 5) {
+                            ageCategory = 'baru';
+                        } else if (age <= 10) {
+                            ageCategory = 'sedang';
+                        } else {
+                            ageCategory = 'lama';
+                        }
+                    }
+
+                    const isAgeMatch = activeAges.length === 0
+                        ? true
+                        : (ageCategory && activeAges.includes(ageCategory));
+
+                    return isSearchMatch 
+                        && isKategoriMatch 
+                        && isStatusMatch 
+                        && isKecamatanMatch 
+                        && isTahunMatch 
+                        && isNotesMatch
+                        && isAgeMatch;
+                });
+                currentPage = 1;
+                renderTable();
+            };
+
+            // --- FUNGSI BANTU UNTUK EXPORT ---
+            const getExportData = () => {
+                const headers = [
+                    'NO',
+                    'NAMA PERUMAHAN',
+                    'KATEGORI',
+                    'TAHUN',
+                    'ALAMAT',
+                    'KELURAHAN',
+                    'KECAMATAN',
+                    'PENGEMBANG',
+                    'DIREKTUR / PELAKSANA',
+                    'ASOSIASI',
+                    'SITE PLAN',
+                    'TERBANGUN',
+                    'TERHUNI',
+                    'PROGRESS BANGUN (%)',
+                    'PROGRESS HUNI (%)',
+                    'STATUS PENYERAHAN PSU',
+                    'TAHUN PENYERAHAN PSU',
+                    'CATATAN'
+                ];
+
+                const rows = currentFilteredData.map((rowData, index) => {
+                    const sitePlan = Number(rowData[9]) || 0;
+                    const terbangun = Number(rowData[10]) || 0;
+                    const terhuni = Number(rowData[11]) || 0;
+
+                    const progBangun = sitePlan > 0 ? (terbangun / sitePlan * 100) : 0;
+                    const progHuni = sitePlan > 0 ? (terhuni / sitePlan * 100) : 0;
+
+                    return [
+                        index + 1,
+                        rowData[0],
+                        rowData[1],
+                        rowData[2],
+                        rowData[3],
+                        rowData[4],
+                        rowData[5],
+                        rowData[6],
+                        rowData[7],
+                        rowData[8],
+                        sitePlan,
+                        terbangun,
+                        terhuni,
+                        sitePlan > 0 ? progBangun.toFixed(0) + '%' : '-',
+                        sitePlan > 0 ? progHuni.toFixed(0) + '%' : '-',
+                        rowData[12],
+                        rowData[13],
+                        rowData[14] || ''
+                    ];
+                });
+
+                return { headers, rows };
+            };
+
+            const exportToExcel = () => {
+                const { headers, rows } = getExportData();
+                if (rows.length === 0) {
+                    alert('Tidak ada data untuk diexport.');
+                    return;
+                }
+
+                const allRows = [headers, ...rows];
+                const csvLines = allRows.map(row => 
+                    row.map(value => {
+                        const cell = (value !== null && value !== undefined) ? String(value) : '';
+                        const escaped = cell.replace(/"/g, '""');
+                        return `"${escaped}"`;
+                    }).join(',')
+                );
+
+                const csvContent = csvLines.join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.href = url;
+                link.download = 'data_perumahan_pangkalpinang.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
+            const exportToPDF = () => {
+                const { headers, rows } = getExportData();
+
+                if (rows.length === 0) {
+                    alert('Tidak ada data untuk diexport.');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('l', 'pt', 'a4');
+
+                doc.setFontSize(12);
+                doc.text('Data Perumahan Kota Pangkal Pinang', 40, 40);
+
+                doc.autoTable({
+                    head: [headers],
+                    body: rows,
+                    startY: 60,
+                    styles: {
+                        fontSize: 7,
+                        cellPadding: 3
+                    },
+                    headStyles: {
+                        fillColor: [23, 91, 114],
+                        textColor:  [213, 197, 145],
+                        halign: 'center'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 25 },
+                        1: { cellWidth: 80 },
+                        3: { cellWidth: 40 },
+                        4: { cellWidth: 100 },
+                        17: { cellWidth: 120 }
+                    },
+                    margin: { left: 30, right: 30 }
+                });
+
+                doc.save('data_perumahan_pangkalpinang.pdf');
+            };
+
+            // event listener filter
+            searchInput.addEventListener('input', applyFilters);
+            filterKategori.addEventListener('change', applyFilters);
+            filterStatus.addEventListener('change', applyFilters);
+            filterKecamatan.addEventListener('change', applyFilters);
+            filterTahun.addEventListener('change', applyFilters);
+            noteCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+            ageCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
+            
+            // pagination
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
+
+            nextButton.addEventListener('click', () => {
+                const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            // tombol export
+            exportExcelBtn.addEventListener('click', exportToExcel);
+            exportPdfBtn.addEventListener('click', exportToPDF);
+
+            // init
+            populateFilters();
+            applyFilters();
+        });
+    </script>
+</body>
+</html>
