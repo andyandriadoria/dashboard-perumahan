@@ -388,6 +388,13 @@
             font-size: 1.25rem;
             font-weight: 600;
         }
+.ranking-subtitle {
+    font-family: 'Poppins', sans-serif;
+    color: #555;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
 
         .cell-notes {
             font-size: 0.85rem;
@@ -506,6 +513,28 @@
 #map-legend span img {
     vertical-align: middle;
     margin-right: 4px;
+}
+/* Membuat sel tabel pada ranking bisa turun baris */
+.ranking-container table td {
+    white-space: normal !important;
+    word-wrap: break-word;
+    line-height: 1.3;
+    padding: 0.75rem 1rem;
+}
+
+/* Batasi lebar kolom nama & catatan biar tidak melebar */
+.ranking-container table td:nth-child(2) { /* Nama Perumahan */
+    max-width: 200px;
+}
+
+.ranking-container table td:nth-child(5) { /* Catatan */
+    max-width: 260px;
+}
+
+/* Supaya badge catatan per baris (agar lebih pendek secara horizontal) */
+.ranking-container .cell-notes span {
+    display: inline-block;
+    margin-bottom: 4px;
 }
 
     </style>
@@ -716,24 +745,42 @@
 
 
 
-    <div class="ranking-container">
-        <h2 class="ranking-title">Ranking Perumahan Prioritas Penanganan</h2>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>RANK</th>
-                        <th>NAMA PERUMAHAN</th>
-                        <th>PSU</th>
-                        <th>CATATAN</th>
-                        <th>SKOR</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-body">
-                </tbody>
-            </table>
-        </div>
+<div class="ranking-container">
+    <h2 class="ranking-title">Rangking Perumahan Prioritas Penanganan</h2>
+
+    <h3 class="ranking-subtitle">Perumahan BELUM Serah Terima PSU</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>RANK</th>
+                    <th>NAMA PERUMAHAN</th>
+                    <th>CATATAN</th>
+                    <th>SKOR PRIORITAS</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body-belum">
+            </tbody>
+        </table>
     </div>
+
+    <h3 class="ranking-subtitle">Perumahan SUDAH Serah Terima PSU</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>RANK</th>
+                    <th>NAMA PERUMAHAN</th>
+                    <th>CATATAN</th>
+                    <th>SKOR PRIORITAS</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body-sudah">
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -790,25 +837,25 @@
 ["AROMA RESIDENCE", "Subsidi", "2023", "Jl. Selar", "Ketapang", "Pangkal Balam", "PT. CAHAYA KEMULIAAN BERSAMA", "", "NN", "34", "11", "0", "BELUM DISERAHKAN", "NN", "",-2.1040527, 106.1313563],
 ["ARTHA USAHA MANDIRI", "Subsidi", "2017", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. ARTHA USAHA MANDIRI INDAH", "Dahri", "REI", "75", "75", "75", "BELUM DISERAHKAN", "NN","", -2.1027433, 106.0581504],
 ["ARTHA USAHA MANDIRI 2", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. ARTHA USAHA MANDIRI INDAH", "Dahri", "REI", "42", "28", "28", "BELUM DISERAHKAN", "NN", "", -2.1027433, 106.0581504],
-["ARTISTIK RESIDENCE ", "Subsidi", "2020", "Gg. Warisan Budaya Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "35", "35", "35", "SUDAH DISERAHKAN", "2023","", -2.104167, 106.082465],
-["ARTISTIK RESIDENCE 2", "Subsidi", "2023", "NN", "Air Kepala Tujuh", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "46", "46", "46", "SUDAH DISERAHKAN", "2024","", -2.120102,106.065451],
+["ARTISTIK RESIDENCE ", "Subsidi", "2020", "Gg. Warisan Budaya Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "35", "35", "35", "SUDAH DISERAHKAN", "2023","RTH belum terbangun", -2.104167, 106.082465],
+["ARTISTIK RESIDENCE 2", "Subsidi", "2023", "NN", "Air Kepala Tujuh", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "46", "46", "46", "SUDAH DISERAHKAN", "2024","RTH belum terbangun", -2.120102,106.065451],
 ["ARTISTIK RESIDENCE 3", "Subsidi", "2023", "Jl. Haji Bakir", "Jerambah Gantung", "Gabek", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "57", "5", "0", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.0965927, 106.0855923],
 ["ARTISTIK RESIDENCE 5", "Subsidi", "2024", "Jl. Pikas", "Air Salemba", "Gabek", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "37", "26", "13", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.0999434,106.0947832],
 ["ARTISTIK RESIDENCE 6", "Subsidi", "2025", "Jl. Kurma", "Tua Tunu Indah", "Gerunggang", "PT. ARTISTIK JAYA CONT", "Eko Yulianto", "PI", "51", "0", "0", "BELUM DISERAHKAN", "NN"],
-["AYRA SRIWIJAYA RESIDENCE", "Subsidi", "2020", "Jl. Pantai Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "71", "71", "71", "SUDAH DISERAHKAN", "2024","", -2.126577, 106.161564],
-["AYRA SRIWIJAYA RESIDENCE 2", "Subsidi", "2022", "Jl. Cempaka Putih", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "48", "48", "44", "SUDAH DISERAHKAN", "2024","", -2.126353, 106.162304],
-["AYRA SRIWIJAYA RESIDENCE 3", "Subsidi", "2022", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "42", "42", "37", "SUDAH DISERAHKAN", "2024", "", -2.1267816, 106.1637747],
+["AYRA SRIWIJAYA RESIDENCE", "Subsidi", "2020", "Jl. Pantai Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "71", "71", "71", "SUDAH DISERAHKAN", "2024","RTH belum terbangun", -2.126577, 106.161564],
+["AYRA SRIWIJAYA RESIDENCE 2", "Subsidi", "2022", "Jl. Cempaka Putih", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "48", "48", "44", "SUDAH DISERAHKAN", "2024","RTH belum terbangun", -2.126353, 106.162304],
+["AYRA SRIWIJAYA RESIDENCE 3", "Subsidi", "2022", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "42", "42", "37", "SUDAH DISERAHKAN", "2024", "RTH belum terbangun", -2.1267816, 106.1637747],
 ["AYRA SRIWIJAYA RESIDENCE 4", "Subsidi", "2023", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT. AYRA SRIWIJAYA MANDIRI", "Yuyun Mutriani", "APERSI", "118", "113", "113", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.1284293, 106.1647957],
 ["AZKA SQUARE", "Subsidi", "2021", "Jl. Al-Mizan", "Tua Tunu Indah", "Gerunggang", "PT. AZKA CAHAYA GEMILANG", "Anggun", "REI", "37", "37", "37", "BELUM DISERAHKAN", "NN","titik rawan genangan dan banjir", -2.0998827, 106.0770128],
 ["AZURA", "Subsidi", "2019", "Gg. Vanila", "Taman Bunga", "Gerunggang", "", "", "NN", "7", "7", "7", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.106475, 106.091840],
-["AZZAHRAH RESIDENCE", "Subsidi", "2021", "Gg. Palapa", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "81", "81", "81", "SUDAH DISERAHKAN", "2025", "", -2.1070612,106.0869773],
-["AZZAHRAH RESIDENCE II", "Subsidi", "2022", "Jl. Mawar Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "102", "102", "102", "SUDAH DISERAHKAN", "2025", "", -2.105553, 106.078391],
+["AZZAHRAH RESIDENCE", "Subsidi", "2021", "Gg. Palapa", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "81", "81", "81", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.1070612,106.0869773],
+["AZZAHRAH RESIDENCE II", "Subsidi", "2022", "Jl. Mawar Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "102", "102", "102", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.105553, 106.078391],
 ["AZZAHRAH RESIDENCE IV", "Subsidi", "2025", "Jl. Air Ketapik ", "Tua Tunu Indah", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "39", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.104814, 106.078589],
 ["BABEL RESIDENCE", "Subsidi", "2021", "Jl. Kurma Dalam", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "115", "115", "115", "BELUM DISERAHKAN", "NN","", -2.1149461, 106.0729504 ],
 ["BABEL RESIDENCE II", "Subsidi", "2023", "Jl. Kurma Dalam", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "36", "36", "36", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.1140293,106.0734587],
 ["BABEL RESIDENCE III", "Subsidi", "2024", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "92", "0", "0", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.1030523, 106.0597731],
 ["BABEL RESIDENCE IV", "Subsidi", "2024", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. IFAN AURA LESTARI", "Firmansyah", "REI", "136", "34", "10", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.1030523, 106.0597731],
-["BERKAH MANDIRI", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "122", "122", "NN", "SUDAH DISERAHKAN", "2022", "", -2.089695, 106.105641],
+["BERKAH MANDIRI", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "122", "122", "NN", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.089695, 106.105641],
 ["BERKAH SYARIAH MANDIRI", "Subsidi", "2017", "Jl. Kelompok", "Jerambah Gantung", "Gabek", "", "", "NN", "50", "50", "50", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.084692, 106.097726],
 ["BHAYANGKARA RESIDENCE", "Subsidi", "2019", "Jl. Komp Sampur", "Sinar Bulan", "Bukit Intan", "PT. TJEMARA MENTARI", "Tan Tok Khian", "REI", "228", "140", "140", "BELUM DISERAHKAN", "NN","Jalan belum perkerasan", -2.1513855, 106.1672731],
 ["BINTANG SAMRATULANGI 3", "Subsidi", "2021", "Jl. Tanjung Bunga", "Sinar Bulan", "Bukit Intan", "PT. LIMA BINTANG SEMPURNA", "M. Nomordin", "APPERINDO", "46", "46", "46", "SUDAH DISERAHKAN", "2025", "", -2.140658, 106.167591],
@@ -822,7 +869,7 @@
 ["BUKIT INTAN ASRI", "Komersil", "NN", "Jl. Nilam Raya No II", "Bacang", "Bukit Intan", "", "", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN", "RTH terbangun", -2.14223, 106.135379],
 ["BUKIT MANGGIS", "Subsidi", "2017", "Jl. Fatmawati", "Bukit Merapin", "Gerunggang", "", "Irma Yani", "NN", "10", "6", "6", "BELUM DISERAHKAN", "NN", "", -2.105018, 106.089422],
 ["BUKIT MAS", "Komersil", "NN", "Jl. Borneo", "Bukit Merapin", "Gerunggang", "", "", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN", "", -2.1097991, 106.0891817],
-["BUKIT PRIMER", "Subsidi", "2017", "Gg. Karet", "Bukit Merapin", "Gerunggang", "PT. PUNDIMAS", "Efran", "HIMPERA", "77", "68", "68", "SUDAH DISERAHKAN", "2020", "", -2.111450, 106.088959],
+["BUKIT PRIMER", "Subsidi", "2017", "Gg. Karet", "Bukit Merapin", "Gerunggang", "PT. PUNDIMAS", "Efran", "HIMPERA", "77", "68", "68", "SUDAH DISERAHKAN", "2020", "RTH belum terbangun", -2.111450, 106.088959],
 ["BUMI ASRI PERMAI", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. RADHI UTAMA NUSA", "Rudi Kurniawan", "REI", "119", "44", "44", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan | RTH terbangun", -2.1020436, 106.0473163],
 ["BUMI ASRI PERMAI 2", "Subsidi", "2018", "Jl. Kampung Melayu", "Tua Tunu Indah", "Gerunggang", "PT. RADHI UTAMA NUSA", "Rudi Kurniawan", "REI", "131", "37", "37", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.1020436, 106.0473164],
 ["BUMI GANADHYA", "Subsidi", "2018", "NN", "Air Itam", "Bukit Intan", "PT. MITRA GUNADHYA MANDIRI", "Novita Lestari", "NN", "70", "0", "0", "BELUM DISERAHKAN", "NN", ""],
@@ -846,7 +893,7 @@
 ["CAHAYA RESIDENCE 15", "Subsidi", "2022", "NN", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "49", "49", "49", "BELUM DISERAHKAN", "NN", "", -2.1189081, 106.0837735],
 ["CAHAYA RESIDENCE 17", "Subsidi", "2022", "Jl. Anggrek", "Tua Tunu Indah", "Gerunggang", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "132", "132", "132", "BELUM DISERAHKAN", "NN", "", -2.106437, 106.083372],
 ["CAHAYA RESIDENCE 18", "Subsidi", "2023", "Jl. H. Umar", "Jerambah Gantung", "Gabek", "PT. CAHAYA JAYA KONSTRUKSI", "Mas'ud", "PI", "38", "38", "38", "BELUM DISERAHKAN", "NN", "", -2.098622,106.0840701],
-["CEMPAKA MAS RESIDENCE ", "Subsidi", "2019", "Jl. Haji Bakir", "Tua Tunu Indah", "Gerunggang", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "86", "86", "86", "SUDAH DISERAHKAN", "2022", "", -2.096354, 106.085175],
+["CEMPAKA MAS RESIDENCE ", "Subsidi", "2019", "Jl. Haji Bakir", "Tua Tunu Indah", "Gerunggang", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "86", "86", "86", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.096354, 106.085175],
 ["CEMPAKA MAS RESIDENCE 3", "Subsidi", "2022", "Jl. Jalur Dua", "Air Kepala Tujuh", "Gerunggang", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "97", "97", "97", "BELUM DISERAHKAN", "NN", "RTH beralih fungsi", -2.1202123, 106.0750427],
 ["CEMPAKA MAS RESIDENCE 4", "Subsidi", "2023", "Jl. Ali Asik II", "Jerambah Gantung", "Gabek", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "97", "97", "97", "SUDAH DISERAHKAN", "2025", "", -2.093257, 106.093285],
 ["CEMPAKA MAS RESIDENCE 5", "Subsidi", "2024", "Jl. Ali Asik II", "Jerambah Gantung", "Gabek", "PT. WANGKA WIJAYA PROPERTY", "Ery Wahyudi", "REI", "128", "76", "76", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.091889, 106.094716],
@@ -854,9 +901,9 @@
 ["CIPTA KARYA", "Subsidi", "NN", "Gg. Vanila", "Taman Bunga", "Gerunggang", "", "", "NN", "12", "12", "12", "BELUM DISERAHKAN", "NN", "", -2.106166, 106.092079],
 ["CITRALAND", "Komersil", "2019", "Jl. Alexander", "Air Itam", "Bukit Intan", "PT. CIPUTRA SUKSES PROPERTY", "NN", "NN", "", "339", "134", "BELUM DISERAHKAN", "NN", "RTH terbangun", -2.1276794, 106.1520824],
 ["CITY RESIDENCE", "Komersil", "2021", "NN", "Tua Tunu Indah", "Gerunggang", "", "", "NN", "", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.1150597, 106.0892383],
-["DAMAI LESTARI RESIDENCE", "Subsidi dan Komersil", "2018", "Jl. Nilam II", "Bacang", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "156", "156", "156", "SUDAH DISERAHKAN", "2020", "", -2.1409722, 106.1375556],
-["DAMAI LESTARI RESIDENCE 1 TAHAP 1", "Subsidi", "2016", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "147", "147", "147", "SUDAH DISERAHKAN", "2020", "", -2.1399853, 106.1655690],
-["DAMAI LESTARI RESIDENCE 1 TAHAP 2", "Subsidi", "2020", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "43", "36", "36", "SUDAH DISERAHKAN", "2021", "titik rawan genangan dan banjir", -2.1399853, 106.1655691],
+["DAMAI LESTARI RESIDENCE", "Subsidi dan Komersil", "2018", "Jl. Nilam II", "Bacang", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "156", "156", "156", "SUDAH DISERAHKAN", "2020", "RTH belum terbangun", -2.1409722, 106.1375556],
+["DAMAI LESTARI RESIDENCE 1 TAHAP 1", "Subsidi", "2016", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "147", "147", "147", "SUDAH DISERAHKAN", "2020", "RTH belum terbangun", -2.1399853, 106.1655690],
+["DAMAI LESTARI RESIDENCE 1 TAHAP 2", "Subsidi", "2020", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "43", "36", "36", "SUDAH DISERAHKAN", "2021", "titik rawan genangan dan banjir | RTH belum terbangun", -2.1399853, 106.1655691],
 ["DAMAI LESTARI RESIDENCE 2", "Subsidi", "2021", "Jl. Kartini", "Selindung Baru", "Gabek", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "92", "92", "92", "BELUM DISERAHKAN", "NN", "titik rawan genangan dan banjir", -2.088156, 106.114213],
 ["DAMAI LESTARI RESIDENCE 2 B", "Subsidi", "2024", "Jl. Kartini", "Selindung Baru", "Gabek", "PT. BANGKA DAMAI LESTARI", "Rince", "REI", "69", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.087337, 106.115123],
 ["DAMAI LESTARI RESIDENCE 6 TAHAP 1", "Subsidi", "2019", "Jl. Raya Pasir Padi", "Temberan", "Bukit Intan", "PT.BANGKA DAMAI LESTARI", "Rince", "REI", "106", "106", "106", "SUDAH DISERAHKAN", "2021", "", -2.1327806, 106.1638395],
@@ -868,7 +915,7 @@
 ["DE PURNAMA", "Subsidi", "2016", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "31", "31", "31", "BELUM DISERAHKAN", "NN", "", -2.1219239, 106.0739295],
 ["DEALOVA BAHAGIA", "Subsidi", "2017", "Jl. Jalur 2, Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "285", "285", "285", "SUDAH DISERAHKAN", "2020", "RTH terbangun", -2.124953, 106.07577],
 ["DEALOVA BAHAGIA TAHAP 2", "Subsidi", "2020", "Jl. Jalur 2", "Air Kepala Tujuh", "Gerunggang", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "271", "271", "271", "BELUM DISERAHKAN", "NN", "", -2.124588, 106.075708],
-["DELANO RESIDENCE", "Subsidi", "2019", "Jl. Fatmawati Gg. Keluarga", "Jerambah Gantung", "Gabek", "PT . DELANO JAYA PROPERTI", "Djong Khian Khie", "REI", "50", "50", "50", "SUDAH DISERAHKAN", "2022", "", -2.101267, 106.093493],
+["DELANO RESIDENCE", "Subsidi", "2019", "Jl. Fatmawati Gg. Keluarga", "Jerambah Gantung", "Gabek", "PT . DELANO JAYA PROPERTI", "Djong Khian Khie", "REI", "50", "50", "50", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.101267, 106.093493],
 ["DELANO RESIDENCE 2", "Subsidi", "2022", "Jl. Swadaya", "Air Mawar", "Bukit Intan", "PT . DELANO JAYA PROPERTI", "Djong Khian Khie", "REI", "34", "8", "4", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.1226183, 106.1419678],
 ["DELIMA BAHAGIA", "Subsidi", "2018", "Jl. Mirah Delima", "Air Itam", "Bukit Intan", "PT. STANLEY PROPERTY MANDIRI", "Mulyadi Lie", "REI", "46", "46", "46", "BELUM DISERAHKAN", "NN", "", -2.1398175, 106.1503439],
 ["DERIYASA", "Subsidi", "2017", "Jl. Kerabut 2", "Selindung", "Gabek", "CV. RIMA JAYA", "Asep Hidayat", "NN", "72", "12", "12", "BELUM DISERAHKAN", "NN", "", -2.084039, 106.097479],
@@ -878,7 +925,7 @@
 ["DREAMLAND 1", "Subsidi", "2023", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. BESTINDO PROPERTY", "Ir. Thomas Jusman, MM", "REI", "59", "53", "53", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.0939874, 106.0866914],
 ["D'RICH ADYKA RESIDENCE", "Komersil", "2015", "Jl R. Hundani", "Lontong Pancur", "Pangkal Balam", "PT. ANUGRAH HARAPAN BARU REGENCY", "Ady Irawan/Riska Jesika", "APERSI", "45", "21", "21", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.095619, 106.118709],
 ["D'RICH ADYKA RESIDENCE", "Subsidi", "2021", "Jl R. Hundani", "Lontong Pancur", "Pangkal Balam", "PT. ANUGRAH HARAPAN BARU REGENCY", "Ady Irawan/Riska Jesika", "APERSI", "18", "2", "2", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.095619, 106.118709],
-["ELGHANI REGENCY", "Subsidi", "2024", "Jl. Cucak Rowo", "Air Kepala Tujuh", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "62", "62", "62", "SUDAH DISERAHKAN", "2025", "", -2.1175194, 106.0815047],
+["ELGHANI REGENCY", "Subsidi", "2024", "Jl. Cucak Rowo", "Air Kepala Tujuh", "Gerunggang", "PT. ALEXINDO CIPTA PROPERTI", "Yongki Alexander", "REI", "62", "62", "62", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.1175194, 106.0815047],
 ["FARRAS RESIDENCE", "Subsidi", "2018", "Jl. Dasalamah", "Tua Tunu Indah", "Gerunggang", "PT. FARRAZY PUTRA CONTRAINDO ", "NN", "HIMPERA", "40", "22", "22", "BELUM DISERAHKAN", "NN", "", -2.111962, 106.083900],
 ["FEIYAZ RESIDENCE", "Subsidi", "2020", "Jl. Pulau Gelasa", "Air Itam", "Bukit Intan", "PT. KARYA DANISH FAZILA", "Zulfani", "PI", "34", "29", "29", "BELUM DISERAHKAN", "NN", "", -2.1443801, 106.1543704],
 ["FEIYAZ RESIDENCE 2", "Subsidi", "2021", "Jl. Fajar", "Air Itam", "Bukit Intan", "PT. KARYA DANISH FAZILA", "Zulfani", "PI", "45", "45", "45", "BELUM DISERAHKAN", "NN", "", -2.1311974, 106.1576383],
@@ -891,7 +938,7 @@
 ["GADING HIJAU", "Subsidi", "2018", "Jl. Belakang Sd 60 Girimaya", "Bukit Besar", "Girimaya", "PERUMAHAN GADING HIJAU", "Hasan Basri", "NN", "42", "10", "", "BELUM DISERAHKAN", "NN", "", ],
 ["GADING PERMAI", "Subsidi", "2023", "Jl. Fatmawati Gg. H. Hasan", "Tua Tunu Indah", "Gerunggang", "PT. MAESA BANGUN SEJAHTERA", "Andrev Timbong", "NN", "111", "51", "0", "BELUM DISERAHKAN", "NN", "", -2.1040464, 106.0873765],
 ["GANDARIA GREEN RESIDENCE", "Subsidi", "2015", "Jl. Gandaria Dalam", "Air Kepala Tujuh", "Gerunggang", "PT. MEGA SAPUTRA PERSADA", "Defri Hertanto", "APPERNAS JAYA", "86", "86", "86", "BELUM DISERAHKAN", "NN", "", -2.1243244, 106.078325],
-["GANDARIA MAS 2", "Subsidi", "2019", "Jl. Gandaria 1", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "52", "52", "52", "SUDAH DISERAHKAN", "2023", "", -2.1169406, 106.0747703],
+["GANDARIA MAS 2", "Subsidi", "2019", "Jl. Gandaria 1", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "52", "52", "52", "SUDAH DISERAHKAN", "2023", "RTH belum terbangun", -2.1169406, 106.0747703],
 ["GANTUNG BRIDGE RESIDENCE", "Subsidi", "2025", "Jl. Kerabut", "Jerambah Gantung", "Gabek", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "43", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.088985, 106.096946],
 ["GARDEN INDAH RESIDENCE 1", "Subsidi", "2017", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "PI", "18", "18", "18", "BELUM DISERAHKAN", "NN", "", -2.1208572, 106.0729011],
 ["GARDEN INDAH RESIDENCE 2", "Subsidi", "2017", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KHANZANAH BABEL LESTARI", "Robiani", "PI", "137", "57", "30", "BELUM DISERAHKAN", "NN", "", -2.1191513, 106.0727887],
@@ -926,7 +973,7 @@
 ["GRIYA BANGKA POS", "Komersil", "SEBELUM TAHUN 2014", "Jl. Pulau Pelepas", "Bacang", "Bukit Intan", "", "", "NN", "70", "NN", "NN", "BELUM DISERAHKAN", "NN", "RTH terbangun", ],
 ["GRIYA BERKAH", "Subsidi", "2017", "Jl. Bukit Tunggal", "Sriwijaya", "Girimaya", "PT.BERKAH ABADI BERJAYA", "Fiter", "NN", "23", "23", "23", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.1512881, 106.1042964],
 ["GRIYA BUKIT INTAN", "Subsidi", "2016", "Jl. Pasir Padi", "Air Itam", "Bukit Intan", "", "", "NN", "25", "NN", "NN", "BELUM DISERAHKAN", "NN", "", -2.130813, 106.162803],
-["GRIYA ELANG", "Subsidi", "2019", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT.ELANG PERKASA PROPERTY", "Muhammad Pharevi", "HIMPERA", "56", "56", "53", "SUDAH DISERAHKAN", "2022", "", -2.091568, 106.118658],
+["GRIYA ELANG", "Subsidi", "2019", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT.ELANG PERKASA PROPERTY", "Muhammad Pharevi", "HIMPERA", "56", "56", "53", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.091568, 106.118658],
 ["GRIYA ELANG 2", "Subsidi", "2020", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "54", "54", "54", "BELUM DISERAHKAN", "NN", "titik rawan genangan dan banjir", -2.100077, 106.076467],
 ["GRIYA ELANG 3", "Subsidi", "2022", "Jl. Sungai Salim Dalam", "Tua Tunu Indah", "Gerunggang", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "70", "51", "35", "BELUM DISERAHKAN", "NN", "", -2.0998857, 106.0713998],
 ["GRIYA ELANG 4", "Subsidi", "2024", "Jl. Rustam Effendi", "Selindung Baru", "Gabek", "PT. ELANG PERKASA PROPERTI", "Muhammad Pharevi", "HIMPERA", "64", "17", "0", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.090351, 106.118136],
@@ -948,7 +995,7 @@
 ["HARVEST RESIDENCE 1", "Subsidi", "2019", "Jl. Padat Karya", "Selindung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "167", "167", "91", "BELUM DISERAHKAN", "NN", "", -2.090011, 106.102472],
 ["HARVEST RESIDENCE 2", "Subsidi", "2022", "Jl. Padat Karya", "Selindung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "51", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.0885656, 106.0979266],
 ["HARVEST RESIDENCE 3", "Subsidi", "2022", "Jl. Jamrud III", "Semabung Lama", "Bukit Intan", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "117", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.128357, 106.1317034],
-["HARVEST RESIDENCE 5", "Komersil", "2022", "Jl. Gandaria 1", "Tua Tunu Indah", "Gerunggang", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "38", "26", "38", "SUDAH DISERAHKAN", "2025", "", -2.1216097, 106.0862723],
+["HARVEST RESIDENCE 5", "Komersil", "2022", "Jl. Gandaria 1", "Tua Tunu Indah", "Gerunggang", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "38", "26", "38", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.1216097, 106.0862723],
 ["HARVEST RESIDENCE 6", "Subsidi", "2023", "Jl. Line Listrik", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "148", "116", "80", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.0946505, 106.091736],
 ["HARVEST RESIDENCE 7", "Subsidi", "2023", "Jl. Line Listrik (Kampak-Kerabut)", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "24", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.095226, 106.0856861],
 ["HARVEST RESIDENCE 8", "Subsidi", "2024", "Jl. Haji Bakir", "Jerambah Gantung", "Gabek", "PT. TRIMADYA PRIMA JAYA", "Lilis Martono", "REI", "47", "0", "0", "BELUM DISERAHKAN", "NN", "", -2.0995051, 106.0848124],
@@ -993,13 +1040,13 @@
 ["PANORAMA ZAMRUD RESIDENCE", "Subsidi", "2019", "Jl. Masjid Al Husna", "Temberan", "Bukit Intan", "PT. PUTRA LIMBUNG JAYA PROPERTINDO", "Zam Zami", "PI", "57", "55", "55", "BELUM DISERAHKAN", "NN"],
 ["PAPINKA VALLEY (JASMINE)", "Komersil", "2015", "Jl. Raya Air Itam", "Air Itam", "Bukit Intan", "PT. TIGA KOTA SEMACANG", "NN", "NN", "88", "22", "22", "BELUM DISERAHKAN", "NN", "RTH terbangun"],
 ["PAPINKA VALLEY (ORCHID)", "Komersil", "2016", "Jl. Depati Hamzah", "Semabung Lama", "Bukit Intan", "PT. TIGA KOTA SEMACANG", "NN", "NN", "92", "9", "9", "BELUM DISERAHKAN", "NN", "RTH terbangun"],
-["PARADISE RESIDENCE 1", "Subsidi", "2017", "Jl. Tampak Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "43", "38", "38", "SUDAH DISERAHKAN", "2021"],
-["PARADISE RESIDENCE 2", "Subsidi", "2017", "Jl. Kemang Permata", "Tua Tunu Indah", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "29", "29", "29", "SUDAH DISERAHKAN", "2021"],
-["PARADISE RESIDENCE 3", "Subsidi", "2017", "Jl. Warisan Budaya", "Tua Tunu Indah", "Gerunggang", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "123", "123", "123", "SUDAH DISERAHKAN", "2021"],
-["PARADISE RESIDENCE 4", "Subsidi", "2018", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "110", "110", "110", "SUDAH DISERAHKAN", "2021"],
-["PARADISE RESIDENCE 5 ", "Subsidi", "2018", "Jl. Lingkar Barat Jalur 30 M", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "44", "44", "44", "SUDAH DISERAHKAN", "2021", "", -2.094485, 106.091070],
-["PARADISE RESIDENCE 6", "Subsidi", "2018", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "70", "70", "70", "SUDAH DISERAHKAN", "2022"],
-["PARADISE RESIDENCE 7", "Subsidi", "2020", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022"],
+["PARADISE RESIDENCE 1", "Subsidi", "2017", "Jl. Tampak Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "43", "38", "38", "SUDAH DISERAHKAN", "2021", "RTH belum terbangun"],
+["PARADISE RESIDENCE 2", "Subsidi", "2017", "Jl. Kemang Permata", "Tua Tunu Indah", "Gerunggang", "CV. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "29", "29", "29", "SUDAH DISERAHKAN", "2021", "RTH belum terbangun"],
+["PARADISE RESIDENCE 3", "Subsidi", "2017", "Jl. Warisan Budaya", "Tua Tunu Indah", "Gerunggang", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "123", "123", "123", "SUDAH DISERAHKAN", "2021", "RTH belum terbangun"],
+["PARADISE RESIDENCE 4", "Subsidi", "2018", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "110", "110", "110", "SUDAH DISERAHKAN", "2021", "RTH belum terbangun"],
+["PARADISE RESIDENCE 5 ", "Subsidi", "2018", "Jl. Lingkar Barat Jalur 30 M", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "44", "44", "44", "SUDAH DISERAHKAN", "2021", "RTH terbangun", -2.094485, 106.091070],
+["PARADISE RESIDENCE 6", "Subsidi", "2018", "Jl. Kulan Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "70", "70", "70", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["PARADISE RESIDENCE 7", "Subsidi", "2020", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Dori Setiawan", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
 ["PARADISE RESIDENCE 8", "Subsidi", "2021", "Jl. Haji Umar", "Jerambah Gantung", "Gabek", "PT. Anugerah Karya Konstruksi", "Dori Setiawan", "PI", "58", "58", "58", "BELUM DISERAHKAN", "NN"],
 ["PARADISE RESIDENCE 9 GANDARIA", "Subsidi", "2024", "Jl. Dealova Bahagia", "Air Kepala Tujuh", "Gerunggang", "PT. ANUGRAH KARYA KONSTRUKSI", "Tisnu Rehatta", "PI", "42", "1", "0", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["PARIS RESIDENCE", "Subsidi", "2015", "Jl. Lintas Timur", "Selindung", "Gabek", "PT. GRAHA KARUNIA PERKASA", "Gunawan", "APERSI", "103", "74", "74", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
@@ -1040,7 +1087,7 @@
 ["PURI SEMABUNG INDAH", "Komersil", "2013", "Jl. Mustika II", "Semabung Lama", "Bukit Intan", "", "Heriyanto", "NN", "12", "12", "12", "BELUM DISERAHKAN", "NN"],
 ["PURI SEMABUNG INDAH 1", "Komersil", "2015", "Jl. Semabung Lama", "Semabung Lama", "Bukit Intan", "", "Heriyanto", "NN", "", "", "", "BELUM DISERAHKAN", "NN"],
 ["RED WOOD", "Komersil", "2014", "Jl. Tayib", "Sriwijaya", "Girimaya", "", "", "NN", "", "8", "3", "BELUM DISERAHKAN", "NN", "RTH terbangun"],
-["RIVERA RESIDENCE", "Subsidi", "2018", "Jl. Tanjung Bunga II", "Temberan", "Bukit Intan", "PT. ARTISTIK JAYA CONT", "Eko Yuliyanto", "PI", "75", "72", "72", "SUDAH DISERAHKAN", "2022", "titik rawan genangan dan banjir"],
+["RIVERA RESIDENCE", "Subsidi", "2018", "Jl. Tanjung Bunga II", "Temberan", "Bukit Intan", "PT. ARTISTIK JAYA CONT", "Eko Yuliyanto", "PI", "75", "72", "72", "SUDAH DISERAHKAN", "2022", "titik rawan genangan dan banjir | RTH belum terbangun"],
 ["RIZKI RESIDENCE ", "Subsidi", "2019", "Jl. Fajar", "Temberan", "Bukit Intan", "PT.SUKMA KARYA ABADI", "Ebit Sugiarto", "APPERINDO", "38", "38", "38", "BELUM DISERAHKAN", "NN"],
 ["RIZKY RESIDENCE 2", "Subsidi", "2020", "Jl. Fajar", "Temberan", "Bukit Intan", "PT. SUKMA KARYA ABADI PROPERTI ", "Ebid Sugiarto", "APPERINDO", "62", "57", "57", "BELUM DISERAHKAN", "NN"],
 ["ROSE WATER ESTATE", "Subsidi", "2017", "NN", "Bacang", "Bukit Intan", "", "", "NN", "NN", "NN", "NN", "BELUM DISERAHKAN", "NN"],
@@ -1049,17 +1096,17 @@
 ["SINAR BANGKA INDAH", "Subsidi", "2023", "Jl. Depati Hamzah Gg. Mirah Delima I", "Air Itam", "Bukit Intan", "PT. SINAR BANGKA INDAH", "NN", "NN", "42", "1", "0", "BELUM DISERAHKAN", "NN"],
 ["TAMAN ANGGREK RESIDENCE 1", "Subsidi", "2015", "Jl. Bukit Tunggal", "Sriwijaya", "Girimaya", "", "", "NN", "22", "22", "22", "BELUM DISERAHKAN", "NN"],
 ["TAMAN ANGGREK RESIDENCE 2", "Subsidi", "2016", "Jl. Parit Lalang", "Sriwijaya", "Girimaya", "", "", "NN", "11", "11", "11", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
-["TAMAN GANDARIA MAS", "Subsidi", "2017", "Jl. H. Umar", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "21", "21", "21", "SUDAH DISERAHKAN", "2023"],
+["TAMAN GANDARIA MAS", "Subsidi", "2017", "Jl. H. Umar", "Air Kepala Tujuh", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "21", "21", "21", "SUDAH DISERAHKAN", "2023", "RTH belum terbangun"],
 ["TAMAN GANDARIA MAS 3", "Subsidi", "2019", "Gg. Melati", "Jerambah Gantung", "Gabek", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "43", "23", "18", "BELUM DISERAHKAN", "NN"],
-["TAMAN JAGUNG RESIDENCE 1", "Subsidi", "2017", "Jl. Betutu Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "15", "15", "15", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 2 ", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYATEK PRIMA", "Dwi Pramono", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 3", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "34", "33", "33", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 4", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "50", "50", "49", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 5", "Subsidi", "2017", "Jl. Terubuk Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "26", "26", "24", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 6", "Subsidi", "2018", "Jl. Stadion Depati Amir ", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "55", "54", "54", "SUDAH DISERAHKAN", "2022", "", -2.103625, 106.104417],
-["TAMAN JAGUNG RESIDENCE 7", "Subsidi", "2018", "Jl. Fatmawati Kampak", "Taman Bunga", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "37", "37", "37", "SUDAH DISERAHKAN", "2022", "", -2.1039151,106.0908293],
-["TAMAN JAGUNG RESIDENCE 8", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "20", "20", "20", "SUDAH DISERAHKAN", "2022"],
-["TAMAN JAGUNG RESIDENCE 9 ", "Subsidi", "2018", "Jl. M. Saleh Zainudin", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "32", "32", "SUDAH DISERAHKAN", "2022", "", -2.103268, 106.102847],
+["TAMAN JAGUNG RESIDENCE 1", "Subsidi", "2017", "Jl. Betutu Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "15", "15", "15", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 2 ", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYATEK PRIMA", "Dwi Pramono", "PI", "40", "40", "40", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 3", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "34", "33", "33", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 4", "Subsidi", "2017", "Jl. Jebung 1", "Selindung Baru ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "50", "50", "49", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 5", "Subsidi", "2017", "Jl. Terubuk Dalam", "Selindung Baru", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "26", "26", "24", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 6", "Subsidi", "2018", "Jl. Stadion Depati Amir ", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "55", "54", "54", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.103625, 106.104417],
+["TAMAN JAGUNG RESIDENCE 7", "Subsidi", "2018", "Jl. Fatmawati Kampak", "Taman Bunga", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "37", "37", "37", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.1039151,106.0908293],
+["TAMAN JAGUNG RESIDENCE 8", "Subsidi", "2018", "Jl. Bukit Manggis", "Bukit Merapin", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "20", "20", "20", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun"],
+["TAMAN JAGUNG RESIDENCE 9 ", "Subsidi", "2018", "Jl. M. Saleh Zainudin", "Air Salemba ", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "32", "32", "SUDAH DISERAHKAN", "2022", "RTH belum terbangun", -2.103268, 106.102847],
 ["TAMAN JAGUNG RESIDENCE 10", "Subsidi", "2018", "Jl. Tampuk Pinang Pura", "Air Kepala Tujuh", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "35", "35", "35", "BELUM DISERAHKAN", "NN"],
 ["TAMAN JAGUNG RESIDENCE 11", "Subsidi", "2019", "Jl. Lingkar Barat", "Jerambah Gantung", "Gabek", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "39", "31", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan", -2.092116, 106.092775],
 ["TAMAN JAGUNG RESIDENCE 12", "Subsidi", "2019", "Jl. Mawar", "Tua Tunu Indah", "Gerunggang", "PT. KARYA TEKNIK KONTRUKSI", "Dwi Pramono", "PI", "39", "36", "36", "BELUM DISERAHKAN", "NN", "", -2.109334, 106.081409],
@@ -1079,14 +1126,14 @@
 ["TAMAN SEMESTA MAS", "Subsidi", "2017", "Jl. Fatmawati", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "100", "98", "98", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["TAMAN SRIWIJAYA", "Subsidi", "2016", "Jl. Kubis", "Sriwijaya", "Girimaya", "", "", "NN", "45", "45", "45", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["TAMAN SRIWIJAYA II", "Subsidi", "NN", "Jl. Kubis II", "Sriwijaya", "Girimaya", "", "", "NN", "18", "18", "18", "BELUM DISERAHKAN", "NN"],
-["TAMAN SURYA", "Subsidi", "2017", "Jl. Fatmawati Gg. Makmur", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA RAYA JAYA", "Julu Wahyono", "REI", "100", "87", "87", "SUDAH DISERAHKAN", "2022", "titik rawan genangan dan banjir", -2.1053254,106.087098],
-["TAMAN SURYA MAS", "Subsidi", "2016", "Jl. Kampak Gg. Haji Umar", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "36", "36", "36", "SUDAH DISERAHKAN", "2023"],
-["TAMAN SURYA MAS INDAH", "Subsidi", "2015", "Jl. Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "22", "17", "17", "SUDAH DISERAHKAN", "2023"],
+["TAMAN SURYA", "Subsidi", "2017", "Jl. Fatmawati Gg. Makmur", "Tua Tunu Indah", "Gerunggang", "PT. BANGKA RAYA JAYA", "Julu Wahyono", "REI", "100", "87", "87", "SUDAH DISERAHKAN", "2022", "titik rawan genangan dan banjir | RTH belum terbangun", -2.1053254,106.087098],
+["TAMAN SURYA MAS", "Subsidi", "2016", "Jl. Kampak Gg. Haji Umar", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "36", "36", "36", "SUDAH DISERAHKAN", "2023", "RTH belum terbangun"],
+["TAMAN SURYA MAS INDAH", "Subsidi", "2015", "Jl. Kampak", "Tua Tunu Indah", "Gerunggang", "PT. ANGKASA RAYA MAS", "Daniel Surya Putra", "PI", "22", "17", "17", "SUDAH DISERAHKAN", "2023", "RTH belum terbangun"],
 ["TAMAN TANJUNG BUNGA CLUSTER ANGGREK", "Komersil", "NN", "Jl. Tanjung Bunga ", "Temberan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "378", "257", "174", "SUDAH DISERAHKAN", "2020", "RTH terbangun"],
 ["TAMAN TANJUNG BUNGA CLUSTER DAHLIA", "Subsidi", "2023", "Jl. Perumahan Tanjung Bunga", "Temberan", "Bukit Intan", "PT. CAHAYA INDAH ABADISAKTI", "Ferdinan", "REI", "111", "33", "0", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["TAMAN TANJUNG BUNGA CLUSTER LILI", "Komersil", "NN", "Jl. Taman Indah No 212", "Temberan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "313", "112", "70", "SUDAH DISERAHKAN", "2020", "RTH terbangun"],
 ["TAMAN TANJUNG BUNGA CLUSTER MAWAR 1", "Komersil", "NN", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "200", "200", "200", "BELUM DISERAHKAN", "NN", "RTH terbangun"],
-["TAMAN TANJUNG BUNGA CLUSTER MAWAR 2", "Subsidi", "2016", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "56", "56", "56", "SUDAH DISERAHKAN", "2020"],
+["TAMAN TANJUNG BUNGA CLUSTER MAWAR 2", "Subsidi", "2016", "Jl. Depati Hamzah", "Sinar Bulan", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "56", "56", "56", "SUDAH DISERAHKAN", "2020", "RTH belum terbangun"],
 ["TAMAN TANJUNG BUNGA CLUSTER SERUNI", "Subsidi", "2019", "Jl. Taman Indah No 212", "Air Itam", "Bukit Intan", "PT.CAHAYA INTAN ABADI SAKTI", "Welly Abdullah", "REI", "305", "305", "26", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["TAMARA DREAM LAND 2", "Subsidi", "2020", "Jl. Lintas Timur", "Selindung", "Gabek", "PT. BUSNI IPAH GEMA", "Harini", "ALIANSI PENGEMBANG PERUMAHAN NASIONAL JAYA (APPERNAS JAYA)", "68", "61", "12", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
 ["TAMARA DREAM LAND 2 TAHAP 2", "Subsidi", "2023", "Jl. Air Bebar", "Selindung", "Gabek", "PT. BUSNI IPAH GEMA", "Harini", "ALIANSI PENGEMBANG PERUMAHAN NASIONAL JAYA (APPERNAS JAYA)", "25", "6", "0", "BELUM DISERAHKAN", "NN", "Jalan belum perkerasan"],
@@ -1139,7 +1186,9 @@
         const exportPdfBtn   = document.getElementById('export-pdf');
 
         let housingChart = null;
-        const rankingBody = document.getElementById('ranking-body');
+const rankingBodyBelum = document.getElementById('ranking-body-belum');
+const rankingBodySudah = document.getElementById('ranking-body-sudah');
+
 
         const currentYear = new Date().getFullYear();
 
@@ -1155,17 +1204,17 @@
             if (statusPSU === "BELUM DISERAHKAN") score += 2;
 
             // Catatan terkait pengembang & banjir
-            if (notesRaw.includes("pengembang tidak aktif")) score += 5;
+            if (notesRaw.includes("pengembang tidak aktif")) score += 1;
             if (notesRaw.includes("titik rawan genangan") || notesRaw.includes("banjir")) score += 4;
 
             // Jalan
-            if (notesRaw.includes("jalan belum perkerasan")) score += 3;
+            if (notesRaw.includes("jalan belum perkerasan")) score += 4;
             if (notesRaw.includes("jalan rusak berat"))      score += 3;
             if (notesRaw.includes("jalan rusak sedang"))     score += 2;
             if (notesRaw.includes("jalan rusak ringan"))     score += 1;
 
             // RTH
-            if (notesRaw.includes("rth beralih fungsi"))   score += 3;
+            if (notesRaw.includes("rth beralih fungsi"))   score += 4;
             if (notesRaw.includes("rth belum terbangun"))  score += 2;
             if (notesRaw.includes("rth terbangun"))        score += 1;
 
@@ -1241,27 +1290,52 @@
             return list;
         }
 
-        function renderPriorityRanking() {
-            const rankingList = buildPriorityRankingList();
-            rankingBody.innerHTML = "";
+function renderPriorityRanking() {
+    const rankingList = buildPriorityRankingList();
 
-            const maxRows = 30;
-            rankingList.slice(0, maxRows).forEach((item, index) => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${item.nama}</td>
-                    <td class="${item.statusPSU === "SUDAH DISERAHKAN" ? "cell-success" : "cell-status"}">
-                        ${item.statusPSU}
-                    </td>
-                    <td class="cell-notes">
-                        ${renderNoteBadges(item.notes)}
-                    </td>
-                    <td class="cell-progress">${item.score}</td>
-                `;
-                rankingBody.appendChild(tr);
-            });
-        }
+    // Kosongkan kedua tabel
+    rankingBodyBelum.innerHTML = "";
+    rankingBodySudah.innerHTML = "";
+
+    // Pisahkan berdasarkan status PSU
+    const belumList = rankingList.filter(
+        item => (item.statusPSU || "").toUpperCase() === "BELUM DISERAHKAN"
+    );
+    const sudahList = rankingList.filter(
+        item => (item.statusPSU || "").toUpperCase() === "SUDAH DISERAHKAN"
+    );
+
+    const maxRows = 10; // limit masing-masing tabel
+
+    // ---- TABEL ATAS: BELUM DISERAHKAN ----
+    belumList.slice(0, maxRows).forEach((item, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.nama}</td>
+            <td class="cell-notes">
+                ${renderNoteBadges(item.notes)}
+            </td>
+            <td class="cell-progress">${item.score}</td>
+        `;
+        rankingBodyBelum.appendChild(tr);
+    });
+
+    // ---- TABEL BAWAH: SUDAH DISERAHKAN ----
+    sudahList.slice(0, maxRows).forEach((item, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.nama}</td>
+            <td class="cell-notes">
+                ${renderNoteBadges(item.notes)}
+            </td>
+            <td class="cell-progress">${item.score}</td>
+        `;
+        rankingBodySudah.appendChild(tr);
+    });
+}
+
 
         // ===================== SUMMARY (TOTAL & PROGRESS) =====================
 
@@ -1784,12 +1858,10 @@
 
                 const popupHtml = `
                     <strong>${row[0]}</strong><br/>
-                    Kategori: ${row[1]}<br/>
+                    Pengembang: ${row[6]}<br/>
                     Tahun: ${row[2]}<br/>
-                    Kecamatan: ${row[5]}<br/>
                     Status PSU: ${row[12]}<br/>
-                    Terbangun: ${row[10]} / Site plan: ${row[9]}
-                `;
+                    `;
 
                 L.marker([lat, lng], { icon }).addTo(map).bindPopup(popupHtml);
             });
