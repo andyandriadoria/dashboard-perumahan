@@ -1856,11 +1856,27 @@ function renderPriorityRanking() {
                 const statusPSU = (row[12] || '').toUpperCase();
                 const icon = statusPSU === 'SUDAH DISERAHKAN' ? greenIcon : redIcon;
 
-                const popupHtml = `
-                    <strong>${row[0]}</strong><br/>
-                    Pengembang: ${row[6]}<br/>
-                    Tahun: ${row[2]}<br/>
-                    Status PSU: ${row[12]}<br/>
+const popupHtml = `
+    <strong>${row[0]}</strong><br/>
+    Kategori: ${row[1]}<br/>
+    Tahun: ${row[2]}<br/>
+    Kecamatan: ${row[5]}<br/>
+    Status PSU: ${row[12]}<br/>
+    Terbangun: ${row[10]} / Site plan: ${row[9]}<br/><br/>
+
+    <a href="https://www.google.com/maps?q=${lat},${lng}" 
+       target="_blank" 
+       style="color:#1a73e8; font-weight:600; text-decoration:underline;">
+       ? Buka di Google Maps
+    </a>
+    <br/>
+
+    <a href="https://www.google.com/maps?q=&layer=c&cbll=${lat},${lng}"
+       target="_blank"
+       style="color:#ea4335; font-weight:600; text-decoration:underline;">
+       ? Street View
+    </a>
+
                     `;
 
                 L.marker([lat, lng], { icon }).addTo(map).bindPopup(popupHtml);
