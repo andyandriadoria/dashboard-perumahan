@@ -1,831 +1,693 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Perumahan</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard SIRUMAH Terintegrasi - Kota Pangkalpinang</title>
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #175b72;
-            color: #333;
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1rem;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-        }
+  <style>
+    :root{
+      --bg:#f3f7f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#175b72;
+      --primary-dark:#0f3f50;
+      --gold:#d3c584;
+      --teal:#0f766e;
+      --blue:#2563eb;
+      --red:#dc2626;
+      --orange:#d97706;
+      --green:#16a34a;
+      --purple:#7c3aed;
+      --shadow:0 10px 28px rgba(15,23,42,.08);
+      --radius:18px;
+    }
 
-        h1 {
-            font-family: 'Poppins', sans-serif;
-            color: #d3c584;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Poppins,sans-serif}
+    body{background:var(--bg);color:var(--text)}
+    .app{display:grid;grid-template-columns:288px 1fr;min-height:100vh}
+    .sidebar{
+      background:linear-gradient(180deg,#175b72 0%,#0f3f50 100%);
+      color:#fff;padding:22px;position:sticky;top:0;height:100vh;overflow-y:auto
+    }
+    .brand{display:flex;gap:12px;align-items:center;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:18px}
+    .logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#d3c584,#fff0a8);color:#0f3f50;display:grid;place-items:center;font-weight:900;letter-spacing:-1px;box-shadow:0 14px 26px rgba(0,0,0,.2)}
+    .brand h1{font-size:22px;line-height:1}
+    .brand p{font-size:12px;color:#dbe8ed;margin-top:4px}
+    .tagline{font-size:12px;line-height:1.55;color:#e6edf0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;margin:16px 0}
+    .nav-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#cfe2e8;margin:14px 0 8px}
+    .nav button{width:100%;border:0;background:transparent;color:#eef7fa;text-align:left;padding:12px;border-radius:12px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:14px;transition:.2s}
+    .nav button:hover,.nav button.active{background:rgba(255,255,255,.12);transform:translateX(2px)}
+    .nav .icon{width:24px;text-align:center}
+    .main{padding:26px;overflow:hidden}
+    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+    .title-block h2{font-size:29px;letter-spacing:-.7px;color:#0f3f50;margin-bottom:6px}
+    .title-block p{color:var(--muted);line-height:1.45}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .btn,select,input{
+      border:1px solid var(--line);background:#fff;color:var(--text);
+      min-height:42px;border-radius:12px;padding:10px 12px;outline:none
+    }
+    .btn{border:0;background:var(--primary);color:var(--gold);font-weight:800;cursor:pointer;transition:.2s}
+    .btn:hover{filter:brightness(.96);transform:translateY(-1px)}
+    .btn.light{background:#fff;color:var(--primary);border:1px solid var(--line)}
+    .btn.gold{background:var(--gold);color:#0f3f50}
+    .mobile-menu{display:none}
+    .section{display:none;animation:fade .22s ease}
+    .section.active{display:block}
+    @keyframes fade{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .grid{display:grid;gap:18px}
+    .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}
+    .two-col{grid-template-columns:1.35fr .9fr}
+    .three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{background:var(--card);border:1px solid rgba(226,232,240,.8);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .pad{padding:18px}
+    .card-header{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .card-header h3{font-size:17px;color:#173b4a;margin-bottom:4px}
+    .card-header p{font-size:13px;color:var(--muted);line-height:1.45}
+    .kpi{padding:18px;position:relative;overflow:hidden}
+    .kpi:after{content:"";position:absolute;right:-30px;top:-30px;width:92px;height:92px;background:rgba(211,197,132,.18);border-radius:999px}
+    .kpi .label{font-size:13px;color:var(--muted);margin-bottom:9px}
+    .kpi .value{font-size:30px;font-weight:900;letter-spacing:-1px;color:#0f3f50}
+    .kpi .note{font-size:12px;color:var(--muted);margin-top:8px}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .filters input{min-width:280px;flex:1}
+    .table-wrap{overflow:auto;max-height:580px}
+    table{width:100%;border-collapse:collapse;white-space:nowrap}
+    th,td{border-bottom:1px solid var(--line);padding:12px 14px;text-align:left;font-size:13px;vertical-align:top}
+    th{background:var(--primary);color:var(--gold);font-weight:800;text-transform:uppercase;position:sticky;top:0;z-index:5;text-align:center}
+    tr:hover{background:#eef7fa}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+    .badge.green{background:#dcfce7;color:#166534}
+    .badge.red{background:#fee2e2;color:#991b1b}
+    .badge.orange{background:#ffedd5;color:#9a3412}
+    .badge.blue{background:#dbeafe;color:#1e40af}
+    .badge.purple{background:#ede9fe;color:#5b21b6}
+    .note{display:inline-block;padding:3px 8px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:12px;font-weight:700;margin:2px}
+    .note.flood{background:#cffafe;color:#155e75}
+    .note.road{background:#fef3c7;color:#92400e}
+    .note.dev{background:#fee2e2;color:#991b1b}
+    .note.rth{background:#dcfce7;color:#166534}
+    .note.damage{background:#ffedd5;color:#9a3412}
+    .chart{padding:18px;min-height:290px}
+    canvas{width:100%;height:260px;display:block}
+    .stat-list{display:grid;gap:12px;padding:18px}
+    .stat-row{display:flex;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);background:#f8fafc;border-radius:14px;align-items:flex-start}
+    .stat-row strong{font-size:14px}.stat-row span{font-size:13px;color:var(--muted)}
+    .progress{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}
+    .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--primary));border-radius:999px}
+    .pagination{display:flex;gap:10px;justify-content:center;align-items:center;margin:16px 0}
+    .pagination button{border:0;background:var(--primary);color:var(--gold);border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+    .pagination button:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed}
+    #map{height:520px;margin:18px;border-radius:16px;border:1px solid var(--line);background:#e8f4f8}
+    .legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 18px 18px;color:var(--muted);font-size:12px}
+    .legend span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 10px;display:inline-flex;gap:6px;align-items:center}
+    .dot{width:9px;height:9px;border-radius:999px;display:inline-block}
+    .dot.green{background:var(--green)}.dot.red{background:var(--red)}.dot.orange{background:var(--orange)}.dot.blue{background:var(--blue)}
+    .report-box{width:100%;min-height:330px;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:1.55;color:#334155}
+    textarea.report-box{resize:vertical;background:#fff}
+    .info-block{line-height:1.7;color:#334155}
+    .info-block h4{margin:12px 0 4px;color:#0f3f50}
+    .info-block ul{margin-left:20px}
+    .footer-note{font-size:12px;line-height:1.55;color:var(--muted);margin-top:18px;padding:14px 16px;border:1px dashed #cbd5e1;border-radius:14px;background:rgba(255,255,255,.72)}
+    .public-note{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px}
+    body.public-mode .private-only{display:none!important}
 
-        h2 {
-            font-family: 'Poppins', sans-serif;
-            color: #175b72;
-            text-align: center;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .summary-box {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .summary-title {
-            color: #175b72;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
 
-        .summary-cards {
-            display: flex;
-            gap: 1rem;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
+    /* Mode pilihan checkbox untuk Filter Catatan dan Filter Usia Perumahan */
+    .filter-panel{
+      width:100%;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px 18px;
+      margin-bottom:8px;
+    }
+    .filter-panel.compact{
+      width:auto;
+      max-width:760px;
+    }
+    .filter-panel-title{
+      font-weight:900;
+      color:#4b5563;
+      font-size:15px;
+      margin-bottom:10px;
+    }
+    .checkbox-grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px 28px;
+      align-items:center;
+    }
+    .checkbox-option{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#4b5563;
+      font-size:14px;
+      font-weight:600;
+      white-space:nowrap;
+      cursor:pointer;
+      user-select:none;
+    }
+    .checkbox-option input{
+      min-height:auto;
+      width:18px;
+      height:18px;
+      accent-color:var(--primary);
+      cursor:pointer;
+    }
+    .filter-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    @media(max-width:768px){
+      .filter-panel.compact{width:100%;max-width:none}
+      .checkbox-grid{gap:10px 16px}
+      .checkbox-option{white-space:normal}
+    }
 
-        .summary-card {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e6e8;
-            padding: 1rem;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 180px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-        
-        .summary-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    @media(max-width:1100px){
+      .app{grid-template-columns:1fr}
+      .sidebar{display:none;position:fixed;left:0;top:0;width:290px;z-index:30}
+      .sidebar.open{display:block}
+      .mobile-menu{display:inline-flex}
+      .topbar{flex-direction:column}
+      .toolbar{justify-content:flex-start}
+      .kpi-grid,.two-col,.three-col{grid-template-columns:1fr}
+      .filters input{min-width:100%}
+    }
 
-        .summary-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #d3c584;
-            margin-top: 0.25rem;
-        }
-        
-        .summary-label {
-            font-size: 0.9rem;
-            color: #555;
-            font-weight: 500;
-        }
+    @media print{
+      .sidebar,.toolbar,.filters,.pagination,.mobile-menu,.btn{display:none!important}
+      .app{display:block}.main{padding:0}.section{display:block!important;page-break-after:always}
+      .card{box-shadow:none;border:1px solid #bbb}
+      #map{height:360px}
+    }
+  
+    /* Tambahan modul SIRUMAH asli */
+    textarea{border:1px solid var(--line);background:#fff;padding:11px 12px;border-radius:12px;outline:none;color:var(--text);min-height:100px;resize:vertical}
+    label{display:grid;gap:7px;color:#475569;font-size:13px;font-weight:700}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .form-grid .full{grid-column:1/-1}
+    .filters select{min-width:180px}
+    @media(max-width:1100px){.form-grid{grid-template-columns:1fr}}
 
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            align-items: flex-start;
-        }
-        
-        .search-box {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            max-width: 800px;
-        }
-
-        .search-box input {
-            flex-grow: 1;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            flex-grow: 2;
-            align-items: center;
-        }
-        
-        .filter-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .controls label {
-            font-weight: 600;
-            color: #555;
-            margin-right: 0.5rem;
-        }
-        
-        .controls .search-label {
-            font-size: 1.5rem;
-            color: #175b72;
-        }
-
-        .controls .filter-label {
-            font-size: 1rem;
-        }
-
-        .controls input[type="text"],
-        .controls select {
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        
-        .filter-item select {
-            flex-grow: 1;
-            min-width: 120px;
-        }
-
-        .filter-notes {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            border: 1px solid #e0e6e8;
-        }
-
-        .filter-notes-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 2px;
-        }
-
-        .filter-notes-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-        }
-
-        .filter-notes-row label {
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: #444;
-            margin-right: 0;
-        }
-
-        /* tombol export */
-        .export-buttons {
-            margin-left: auto;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .export-buttons button {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: 1px solid #175b72;
-            background-color: #175b72;
-            color: #d5c591;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-
-        .export-buttons button:hover {
-            background-color: #0f3f50;
-        }
-
-        /* legend usia perumahan */
-        .age-legend {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.5rem 1rem;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-        .age-legend-title {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .age-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 4px;
-        }
-
-        .age-new {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .age-mid {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .age-old {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            white-space: nowrap;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #e0e6e8;
-        }
-
-        th:nth-child(1),
-        td:nth-child(1) {
-            width: 20px;
-            min-width: 20px;
-        }
-
-        thead th {
-            background-color: #175b72;
-            color: #d5c591;
-            font-weight: 600;
-            text-transform: uppercase;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            text-align: center
-        }
-
-        thead th:nth-child(1),
-        tbody td:nth-child(1) {
-            position: sticky;
-            left: 0;
-            z-index: 20;
-            background-color: #175b72;
-        }
-
-        tbody td:nth-child(1) {
-            background-color: #ffffff;
-        }
-
-        thead th:nth-child(2),
-        tbody td:nth-child(2) {
-            position: sticky;
-            left: 60px;
-            z-index: 19;
-            background-color: #175b72;
-        }
-
-        tbody td:nth-child(2) {
-            background-color: #ffffff;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        tr:hover {
-            background-color: #c7d8e2;
-        }
-
-        .cell-status {
-            font-weight: 600;
-            color: #c0392b;
-        }
-        .cell-success {
-            font-weight: 600;
-            color: #27ae60;
-        }
-
-        .cell-progress {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 1rem;
-            gap: 1rem;
-        }
-
-        .pagination button {
-            padding: 0.75rem 1.5rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #175b72;
-            color: #d5c591;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .pagination button:hover:not(:disabled) {
-            background-color: #0f3f50;
-        }
-        
-        .pagination button:disabled {
-            background-color: #e0e6e8;
-            color: #aaa;
-            cursor: not-allowed;
-        }
-        
-        .chart-container {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1rem;
-        }
-
-        .ranking-container {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1rem;
-        }
-
-        .ranking-title {
-            font-family: 'Poppins', sans-serif;
-            color: #175b72;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-.ranking-subtitle {
-    font-family: 'Poppins', sans-serif;
-    color: #555;
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0.5rem 0;
-}
-
-        .cell-notes {
-            font-size: 0.85rem;
-        }
-
-        .note-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 999px;
-            margin: 2px 4px 2px 0;
-            background-color: #e9ecef;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .note-badge--dev {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .note-badge--flood {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .note-badge--road {
-            background-color: #ffeeba;
-            color: #856404;
-        }
-
-        .note-badge--rth {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .note-badge--light {
-            background-color: #e2f7d3;
-            color: #2e6622;
-        }
-        .note-badge--medium {
-            background-color: #ffe0b3;
-            color: #8a4b05;
-        }
-        .note-badge--heavy {
-            background-color: #f5c6cb;
-            color: #721c24;
-        }
-        .note-badge--rth-built {
-            background-color: #d3f2ef;
-            color: #0f4f4c;
-        }
-        .note-badge--rth-notbuilt {
-            background-color: #e2e6f5;
-            color: #2e385f;
-        }
-        /* Peta GIS */
-        .map-container {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1rem;
-        }
-
-        #map {
-            width: 100%;
-            height: 420px;
-            border-radius: 10px;
-            border: 1px solid #e0e6e8;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0;
-                border-radius: 0;
-            }
-            body {
-                padding: 1rem 0;
-            }
-            .controls {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            .controls input, .controls select {
-                width: 100%;
-                max-width: none;
-            }
-            .search-box {
-                max-width: 100%;
-            }
-            .summary-cards {
-                flex-direction: column;
-            }
-            .summary-card {
-                min-width: 100%;
-            }
-            .filter-notes {
-                width: 100%;
-            }
-            .export-buttons {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .age-legend {
-                margin-left: 0;
-            }
-        }
-        #map-legend {
-    background: #ffffff;
-    padding: 6px 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    width: fit-content;
-}
-#map-legend span img {
-    vertical-align: middle;
-    margin-right: 4px;
-}
-/* Membuat sel tabel pada ranking bisa turun baris */
-.ranking-container table td {
-    white-space: normal !important;
-    word-wrap: break-word;
-    line-height: 1.3;
-    padding: 0.75rem 1rem;
-}
-
-/* Batasi lebar kolom nama & catatan biar tidak melebar */
-.ranking-container table td:nth-child(2) { /* Nama Perumahan */
-    max-width: 200px;
-}
-
-.ranking-container table td:nth-child(5) { /* Catatan */
-    max-width: 260px;
-}
-
-/* Supaya badge catatan per baris (agar lebih pendek secara horizontal) */
-.ranking-container .cell-notes span {
-    display: inline-block;
-    margin-bottom: 4px;
-}
-
-    </style>
-
-    <!-- Leaflet CSS (peta tanpa API berbayar, pakai OpenStreetMap) -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
+  </style>
 </head>
+
 <body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">SR</div>
+      <div>
+        <h1>SIRUMAH</h1>
+        <p>Sistem Integrasi Rumah Layak Huni</p>
+      </div>
+    </div>
 
-    <h1>DATA PERUMAHAN KOTA PANGKAL PINANG</h1>
+    <div class="tagline">
+      <strong>Tagline:</strong><br>
+      Satu Data, Satu Layanan, Satu Kolaborasi Menuju Rumah Layak Huni untuk Semua.
+    </div>
 
-    <div class="container">
-        <div class="controls">
-            <div class="search-box">
-                <label for="search-input" class="search-label">&#x1F50D;</label>
-                <input type="text" id="search-input" placeholder="Cari...">
+    <div class="nav-title">Dashboard Terintegrasi</div>
+    <nav class="nav" id="nav">
+      <button class="active" data-section="beranda"><span class="icon">🏠</span> Beranda</button>
+      <button data-section="data-perumahan"><span class="icon">🏘️</span> Data Perumahan</button>
+      <button data-section="peta"><span class="icon">🗺️</span> Peta Perumahan</button>
+      <button data-section="rtlh"><span class="icon">🧱</span> RTLH</button>
+      <button data-section="backlog"><span class="icon">👨‍👩‍👧</span> Backlog & MBR</button>
+      <button data-section="psu"><span class="icon">🛣️</span> PSU & RTH</button>
+      <button data-section="layanan"><span class="icon">☎️</span> Layanan & Pengaduan</button>
+      <button data-section="kolaborasi"><span class="icon">🤝</span> Kolaborasi</button>
+      <button data-section="integrasi"><span class="icon">🔗</span> Integrasi SIRUMAH</button>
+      <button data-section="laporan"><span class="icon">📄</span> Laporan</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="title-block">
+        <button class="btn light mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
+        <h2>Dashboard SIRUMAH Terintegrasi</h2>
+        <p>Data Perumahan, PSU, RTH, dan Prioritas Penanganan Kota Pangkalpinang.</p>
+      </div>
+      <div class="toolbar">
+        <select id="globalKecamatan" onchange="applyFilters()">
+          <option value="all">Semua Kecamatan</option>
+        </select>
+        <button class="btn gold" onclick="togglePublicMode()">Mode Internal/Publik</button>
+        <button class="btn light" onclick="window.print()">Cetak / PDF</button>
+        <button class="btn" onclick="exportCSV()">Export CSV</button>
+      </div>
+    </div>
+
+    <section class="section active" id="beranda">
+      <div id="modeNote" class="public-note" style="display:none;margin-bottom:16px;">
+        Mode Publik aktif: kolom Direktur/Pelaksana dan informasi internal disembunyikan.
+      </div>
+
+      <div class="grid kpi-grid" id="kpiGrid"></div>
+
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Jumlah Perumahan per Kecamatan</h3>
+              <p>Grafik dihitung langsung dari data perumahan yang terintegrasi.</p>
             </div>
-            <div class="filter-group">
-                <div class="filter-item">
-                    <label for="filter-kategori" class="filter-label">Kategori:</label>
-                    <select id="filter-kategori">
-                        <option value="all">Semua</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label for="filter-status" class="filter-label">Status PSU:</label>
-                    <select id="filter-status">
-                        <option value="all">Semua</option>
-                        <option value="SUDAH DISERAHKAN">SUDAH DISERAHKAN</option>
-                        <option value="BELUM DISERAHKAN">BELUM DISERAHKAN</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label for="filter-kecamatan" class="filter-label">Kecamatan:</label>
-                    <select id="filter-kecamatan">
-                        <option value="all">Semua</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label for="filter-tahun" class="filter-label">Tahun:</label>
-                    <select id="filter-tahun">
-                        <option value="all">Semua</option>
-                    </select>
-                </div>
-
-                <!-- NEW: Sort Tahun -->
-                <div class="filter-item">
-                    <label for="sort-tahun" class="filter-label">Urut Tahun:</label>
-                    <select id="sort-tahun">
-                        <option value="none">Default</option>
-                        <option value="asc">Tahun Lama ? Baru</option>
-                        <option value="desc">Tahun Baru ? Lama</option>
-                    </select>
-                </div>
-
-                <!-- Filter catatan -->
-                <div class="filter-notes">
-                    <div class="filter-notes-title">Filter Catatan:</div>
-                    <div class="filter-notes-row">
-                        <label>
-                            <input type="checkbox" class="note-filter" value="pengembang tidak aktif">
-                            Pengembang tidak aktif
-                        </label>
-                        <label>
-                            <input type="checkbox" class="note-filter" value="titik rawan genangan dan banjir">
-                            Titik rawan genangan dan banjir
-                        </label>
-                        <label>
-                            <input type="checkbox" class="note-filter" value="jalan belum perkerasan">
-                            Jalan belum perkerasan
-                        </label>
-                        <label>
-                        <input type="checkbox" class="note-filter" value="jalan rusak ringan">
-                            Jalan rusak ringan
-                        </label>
-                        <label>
-                        <input type="checkbox" class="note-filter" value="jalan rusak sedang">
-                            Jalan rusak sedang
-                        </label>
-                        <label>
-                        <input type="checkbox" class="note-filter" value="jalan rusak berat">
-                            Jalan rusak berat
-                        </label>
-                        <label>
-                            <input type="checkbox" class="note-filter" value="RTH terbangun">
-                            RTH terbangun
-                        </label>
-                        <label>
-                            <input type="checkbox" class="note-filter" value="RTH belum terbangun">
-                            RTH belum terbangun
-                        </label>
-                        <label>
-                            <input type="checkbox" class="note-filter" value="RTH beralih fungsi">
-                            RTH beralih fungsi
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Filter usia perumahan (checkbox) -->
-                <div class="filter-notes">
-                    <div class="filter-notes-title">Filter Usia Perumahan:</div>
-                    <div class="filter-notes-row">
-                        <label>
-                            <input type="checkbox" class="age-filter" value="baru">
-                            Baru (= 5 tahun)
-                        </label>
-                        <label>
-                            <input type="checkbox" class="age-filter" value="sedang">
-                            Sedang (6-10 tahun)
-                        </label>
-                        <label>
-                            <input type="checkbox" class="age-filter" value="lama">
-                            Lama (> 10 tahun)
-                        </label>
-                    </div>
-                </div>
-
-                <!-- tombol export -->
-                <div class="export-buttons">
-                    <button id="export-excel">Export Excel</button>
-                    <button id="export-pdf">Export PDF</button>
-                </div>
-            </div>
+          </div>
+          <div class="chart"><canvas id="kecamatanChart"></canvas></div>
         </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>NO</th>
-                        <th>NAMA PERUMAHAN</th>
-                        <th>KATEGORI</th>
-                        <th>TAHUN</th>
-                        <th>ALAMAT</th>
-                        <th>KELURAHAN</th>
-                        <th>KECAMATAN</th>
-                        <th>PENGEMBANG</th>
-                        <th>DIREKTUR / PELAKSANA</th>
-                        <th>ASOSIASI</th>
-                        <th>SITE PLAN</th>
-                        <th>TERBANGUN</th>
-                        <th>TERHUNI</th>
-                        <th>PROGRESS<br>BANGUN (%)</th>
-                        <th>PROGRESS<br>HUNI (%)</th>
-                        <th>STATUS<br>PENYERAHAN PSU</th>
-                        <th>TAHUN<br>PENYERAHAN PSU</th>
-                        <th>CATATAN</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Status Penyerahan PSU</h3>
+              <p>Komposisi PSU sudah dan belum diserahkan.</p>
+            </div>
+          </div>
+          <div class="chart"><canvas id="statusChart"></canvas></div>
+        </div>
+      </div>
+
+
+      <div class="grid two-col" style="margin-top:18px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Capaian Program SIRUMAH per Kecamatan</h3>
+              <p>Kolaborasi data perumahan eksisting dengan modul RTLH, backlog, dan MBR.</p>
+            </div>
+          </div>
+          <div class="chart"><canvas id="sirBerandaChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Status Penanganan RTLH</h3>
+              <p>Komposisi status verifikasi, prioritas, pelaksanaan, dan selesai.</p>
+            </div>
+          </div>
+          <div class="chart"><canvas id="sirStatusChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid three-col" style="margin-top:18px;">
+        <div class="card">
+          <div class="card-header"><div><h3>Progress Unit</h3><p>Site plan, terbangun, dan terhuni.</p></div></div>
+          <div class="stat-list" id="progressUnit"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Catatan Penting</h3><p>Isu yang paling sering muncul pada data.</p></div></div>
+          <div class="stat-list" id="catatanStats"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Top Prioritas</h3><p>Perumahan dengan skor prioritas tertinggi.</p></div></div>
+          <div class="stat-list" id="topPrioritas"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="data-perumahan">
+      <div class="filters">
+        <input id="searchInput" placeholder="Cari nama perumahan, pengembang, alamat, catatan..." oninput="applyFilters()" />
+        <select id="filterKategori" onchange="applyFilters()"><option value="all">Semua Kategori</option></select>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="all">Semua Status PSU</option>
+          <option value="SUDAH DISERAHKAN">Sudah Diserahkan</option>
+          <option value="BELUM DISERAHKAN">Belum Diserahkan</option>
+        </select>
+        <select id="filterTahun" onchange="applyFilters()"><option value="all">Semua Tahun</option></select>
+        <select id="sortTahun" onchange="applyFilters()">
+          <option value="default">Urut Default</option>
+          <option value="asc">Tahun Lama ke Baru</option>
+          <option value="desc">Tahun Baru ke Lama</option>
+        </select>
+        <button class="btn light" onclick="resetDataPerumahanFilters()">Reset Filter</button>
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel-title">Filter Catatan:</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="pengembang tidak aktif" onchange="applyFilters()"> Pengembang tidak aktif</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="titik rawan genangan dan banjir" onchange="applyFilters()"> Titik rawan genangan dan banjir</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="jalan belum perkerasan" onchange="applyFilters()"> Jalan belum perkerasan</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="jalan rusak ringan" onchange="applyFilters()"> Jalan rusak ringan</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="jalan rusak sedang" onchange="applyFilters()"> Jalan rusak sedang</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="jalan rusak berat" onchange="applyFilters()"> Jalan rusak berat</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="rth terbangun" onchange="applyFilters()"> RTH terbangun</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="rth belum terbangun" onchange="applyFilters()"> RTH belum terbangun</label>
+          <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="rth beralih fungsi" onchange="applyFilters()"> RTH beralih fungsi</label>
+        </div>
+      </div>
+
+      <div class="filter-panel compact">
+        <div class="filter-panel-title">Filter Usia Perumahan:</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-option"><input type="checkbox" class="usia-filter" value="Baru" onchange="applyFilters()"> Baru (≤ 5 tahun)</label>
+          <label class="checkbox-option"><input type="checkbox" class="usia-filter" value="Sedang" onchange="applyFilters()"> Sedang (6–10 tahun)</label>
+          <label class="checkbox-option"><input type="checkbox" class="usia-filter" value="Lama" onchange="applyFilters()"> Lama (&gt; 10 tahun)</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Modul Data Perumahan</h3>
+            <p>Data dari dashboard perumahan eksisting telah menjadi bagian dari Dashboard SIRUMAH.</p>
+          </div>
+          <div class="small"><strong id="tableCount">0</strong> data</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead id="housingHead"></thead>
+            <tbody id="housingBody"></tbody>
+          </table>
         </div>
         <div class="pagination">
-            <button id="prev-page">Sebelumnya</button>
-            <span id="page-info"></span>
-            <button id="next-page">Berikutnya</button>
+          <button id="prevBtn" onclick="prevPage()">Sebelumnya</button>
+          <span id="pageInfo"></span>
+          <button id="nextBtn" onclick="nextPage()">Berikutnya</button>
         </div>
-    </div>
-    
-<div class="summary-box">
-    <div class="summary-title">TOTAL UNIT RUMAH</div>
-    <div class="summary-cards">
-        <div class="summary-card">
-            <div class="summary-label">SITE PLAN</div>
-            <div class="summary-value" id="total-site-plan">0</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-label">TERBANGUN</div>
-            <div class="summary-value" id="total-terbangun">0</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-label">TERHUNI</div>
-            <div class="summary-value" id="total-terhuni">0</div>
-        </div>
-        <!-- ? kartu baru: progress bangun -->
-        <div class="summary-card">
-            <div class="summary-label">PROGRESS BANGUN</div>
-            <div class="summary-value" id="summary-progress-bangun">0%</div>
-        </div>
-        <!-- ? kartu baru: progress huni -->
-        <div class="summary-card">
-            <div class="summary-label">PROGRESS HUNI</div>
-            <div class="summary-value" id="summary-progress-huni">0%</div>
-        </div>
-    </div>
-</div>
+      </div>
+    </section>
 
-    <!-- PETA GIS -->
-    <div class="map-container">
-        <div id="map-legend" style="
-    display:flex;
-    align-items:center;
-    gap:1rem;
-    margin-top:0.5rem;
-    font-size:0.85rem;
-    font-weight:600;
-    color:#175b72;
-">
-    <span><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png" width="16"> Sudah Serah Terima PSU</span>
-    <span><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png" width="16"> Belum Serah Terima PSU</span>
-</div>
-
-        <h2>Peta Persebaran Perumahan</h2>
+    <section class="section" id="peta">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Peta Persebaran Perumahan</h3>
+            <p>Marker hijau = PSU sudah diserahkan. Marker merah = PSU belum diserahkan. Data tanpa koordinat tetap tampil pada tabel, tetapi tidak muncul di peta.</p>
+          </div>
+        </div>
         <div id="map"></div>
-    </div>
-    <div class="chart-container">
-        <h2>Grafik Jumlah Perumahan per Kecamatan</h2>
-        <div id="total-housing-count" style="text-align:center;font-size:1.1rem;font-weight:600;color:#175b72;margin-bottom:1rem;">
-            Total Perumahan: 0
+        <div class="legend">
+          <span><i class="dot green"></i> PSU sudah diserahkan</span>
+          <span><i class="dot red"></i> PSU belum diserahkan</span>
+          <span><i class="dot orange"></i> Data tanpa koordinat tidak ditampilkan di peta</span>
         </div>
-        <canvas id="housingChart"></canvas>
-    </div>
+      </div>
+    </section>
 
-
-
-<div class="ranking-container">
-    <h2 class="ranking-title">Rangking Perumahan Prioritas Penanganan</h2>
-
-    <h3 class="ranking-subtitle">PSU milik pengembang</h3>
-    <div class="table-wrapper">
-        <table>
-            <thead>
+    <section class="section" id="rtlh">
+        <div class="filters">
+          <input id="searchRTLH" placeholder="Cari nama/alamat/kelurahan..." oninput="renderRTLH()" />
+          <select id="statusRTLH" onchange="renderRTLH()">
+            <option value="Semua">Semua Status</option>
+            <option value="Belum Diverifikasi">Belum Diverifikasi</option>
+            <option value="Sudah Diverifikasi">Sudah Diverifikasi</option>
+            <option value="Masuk Prioritas">Masuk Prioritas</option>
+            <option value="Dalam Pelaksanaan">Dalam Pelaksanaan</option>
+            <option value="Selesai">Selesai</option>
+          </select>
+          <button class="btn" onclick="openAddDataForm('rtlh')">+ Tambah Data RTLH</button>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Data Rumah Tidak Layak Huni</h3>
+              <p>Memuat kondisi rumah, skor prioritas, dan status penanganan.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                    <th>RANK</th>
-                    <th>NAMA PERUMAHAN</th>
-                    <th>CATATAN</th>
-                    <th>SKOR PRIORITAS</th>
+                  <th>Nama KK</th>
+                  <th>Alamat</th>
+                  <th>Kecamatan</th>
+                  <th>Kondisi</th>
+                  <th>Skor</th>
+                  <th>Status</th>
                 </tr>
-            </thead>
-            <tbody id="ranking-body-belum">
-            </tbody>
-        </table>
-    </div>
+              </thead>
+              <tbody id="rtlhTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <h3 class="ranking-subtitle">PSU milik Pemda</h3>
-    <div class="table-wrapper">
-        <table>
-            <thead>
+    <section class="section" id="backlog">
+        <div class="grid two-col">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>Backlog dan MBR per Kecamatan</h3>
+                <p>Data kebutuhan rumah dan masyarakat berpenghasilan rendah.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kecamatan</th>
+                    <th>Backlog KK</th>
+                    <th>MBR</th>
+                    <th>Kontrak/Sewa</th>
+                    <th>Prioritas</th>
+                  </tr>
+                </thead>
+                <tbody id="backlogTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>Grafik Backlog</h3>
+                <p>Perbandingan backlog dan MBR.</p>
+              </div>
+            </div>
+            <div class="chart">
+              <canvas id="backlogChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <section class="section" id="layanan">
+        <div class="grid two-col">
+          <div class="card pad">
+            <h3 style="margin-bottom:12px;">Form Input Layanan / Pengaduan</h3>
+            <div class="form-grid">
+              <label>Nama Pemohon
+                <input id="fNama" placeholder="Contoh: Budi" />
+              </label>
+              <label>No. HP
+                <input id="fHp" placeholder="08xxxxxxxxxx" />
+              </label>
+              <label>Jenis Layanan
+                <select id="fJenis">
+                  <option>Informasi Rumah Subsidi</option>
+                  <option>Konsultasi RTLH</option>
+                  <option>Pengaduan PSU</option>
+                  <option>Konsultasi Program 3 Juta Rumah</option>
+                  <option>Informasi Bantuan Perumahan</option>
+                </select>
+              </label>
+              <label>Kecamatan
+                <select id="fKecamatan">
+                  <option>Bukit Intan</option>
+                  <option>Gabek</option>
+                  <option>Gerunggang</option>
+                  <option>Girimaya</option>
+                  <option>Pangkalbalam</option>
+                  <option>Rangkui</option>
+                  <option>Taman Sari</option>
+                </select>
+              </label>
+              <label class="full">Uraian
+                <textarea id="fUraian" placeholder="Tuliskan uraian singkat..."></textarea>
+              </label>
+              <div class="full">
+                <button class="btn" onclick="addLayanan()">Simpan Layanan</button>
+                <button class="btn light" onclick="resetForm()">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>Rekap Layanan</h3>
+                <p>Status tindak lanjut layanan masyarakat.</p>
+              </div>
+            </div>
+            <div class="stat-list" id="layananStats"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <div>
+              <h3>Daftar Layanan dan Pengaduan</h3>
+              <p>Data layanan tersimpan sementara di browser selama halaman belum di-refresh.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                    <th>RANK</th>
-                    <th>NAMA PERUMAHAN</th>
-                    <th>CATATAN</th>
-                    <th>SKOR PRIORITAS</th>
+                  <th>Tanggal</th>
+                  <th>Nama</th>
+                  <th>Jenis</th>
+                  <th>Kecamatan</th>
+                  <th>Uraian</th>
+                  <th>Status</th>
                 </tr>
-            </thead>
-            <tbody id="ranking-body-sudah">
-            </tbody>
-        </table>
+              </thead>
+              <tbody id="layananTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    <section class="section" id="kolaborasi">
+        <div class="grid two-col">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>Kolaborasi Pembiayaan</h3>
+                <p>APBN, APBD, CSR, BAZNAS, pengembang, perbankan, dan swadaya.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mitra</th>
+                    <th>Bentuk Dukungan</th>
+                    <th>Lokasi</th>
+                    <th>Nilai</th>
+                    <th>Rumah Terbantu</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="kolaborasiTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>Komposisi Sumber Dukungan</h3>
+                <p>Ilustrasi kontribusi sumber pembiayaan.</p>
+              </div>
+            </div>
+            <div class="chart">
+              <canvas id="kolabChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <section class="section" id="psu">
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-header"><div><h3>Rekap PSU per Kecamatan</h3><p>Status penyerahan PSU berdasarkan lokasi perumahan. Ranking prioritas kini ditampilkan pada menu PSU & RTH.</p></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Kecamatan</th><th>Total</th><th>Sudah Diserahkan</th><th>Belum Diserahkan</th><th>Persentase</th></tr></thead>
+              <tbody id="psuRekapBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Rekap Catatan RTH dan Jalan</h3><p>Identifikasi isu kawasan permukiman dari data catatan.</p></div></div>
+          <div class="stat-list" id="psuIssueList"></div>
+        </div>
+      </div>
+      <div style="height:18px;"></div>
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pengembang</h3><p>Perumahan belum serah terima PSU dengan isu teknis dan administratif.</p></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Catatan</th><th>Skor</th></tr></thead>
+              <tbody id="rankBelumBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pemda</h3><p>Perumahan sudah diserahkan, namun masih memiliki catatan penanganan kawasan.</p></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Catatan</th><th>Skor</th></tr></thead>
+              <tbody id="rankSudahBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="section" id="integrasi">
+      <div class="card pad">
+        <div class="info-block">
+          <h3 style="color:#0f3f50;margin-bottom:10px;">Model Integrasi Dashboard Perumahan ke SIRUMAH</h3>
+          <p>
+            Dashboard perumahan eksisting diposisikan sebagai <strong>Modul Data Perumahan dan PSU</strong> dalam SIRUMAH.
+            Data ini menjadi basis awal untuk mendukung prinsip <strong>Satu Data</strong>, khususnya terkait perumahan formal,
+            rumah subsidi/komersil, status penyerahan PSU, RTH, jalan lingkungan, titik rawan genangan, dan sebaran lokasi perumahan.
+          </p>
+
+          <h4>Posisi dalam SIRUMAH</h4>
+          <ul>
+            <li><strong>Satu Data:</strong> data perumahan, unit site plan, terbangun, terhuni, status PSU, koordinat, dan catatan teknis.</li>
+            <li><strong>Satu Layanan:</strong> data menjadi rujukan untuk layanan informasi perumahan, pengaduan PSU, dan konsultasi pengembang.</li>
+            <li><strong>Satu Kolaborasi:</strong> daftar perumahan dan pengembang menjadi bahan koordinasi dengan pengembang, bank, CSR, BAZNAS, dan perangkat daerah terkait.</li>
+            <li><strong>Satu Monitoring:</strong> status PSU, RTH, jalan, dan progress unit dipantau secara berkala melalui dashboard.</li>
+          </ul>
+
+          <h4>Catatan Penggunaan</h4>
+          <ul>
+            <li>Data ini dapat digunakan untuk kerja internal Dinas Perkim dan bahan laporan kepada pimpinan.</li>
+            <li>Untuk versi publik, sebaiknya data pribadi seperti nama direktur/pelaksana disembunyikan.</li>
+            <li>Data tanpa koordinat tetap masuk dalam rekap, tetapi tidak muncul pada peta.</li>
+            <li>Nilai skor prioritas bersifat alat bantu awal dan tetap perlu verifikasi lapangan.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="laporan">
+      <div class="grid two-col">
+        <div class="card pad">
+          <h3 style="color:#0f3f50;margin-bottom:8px;">Generator Laporan SIRUMAH</h3>
+          <p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:14px;">Narasi otomatis berdasarkan data dan filter yang sedang aktif.</p>
+          <button class="btn" onclick="generateReport()">Buat Narasi Laporan</button>
+          <button class="btn light" onclick="copyReport()">Salin Narasi</button>
+          <textarea id="reportText" class="report-box" style="margin-top:14px;"></textarea>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><h3>Ringkasan Data Aktif</h3><p>Rekap berdasarkan filter yang sedang digunakan.</p></div></div>
+          <div class="stat-list" id="reportStats"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Catatan: data dalam file ini berasal dari dashboard perumahan yang diunggah dan telah diintegrasikan ke dalam prototipe SIRUMAH. Untuk penggunaan resmi, data perlu diverifikasi dan dimutakhirkan secara berkala.
     </div>
+  </main>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Leaflet JS -->
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
-    <!-- jsPDF & autoTable untuk export PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // STRUKTUR DATA:
-        // 0  = NAMA PERUMAHAN
-        // 1  = KATEGORI
-        // 2  = TAHUN
-        // 3  = ALAMAT
-        // 4  = KELURAHAN
-        // 5  = KECAMATAN
-        // 6  = PENGEMBANG
-        // 7  = DIREKTUR / PELAKSANA
-        // 8  = ASOSIASI
-        // 9  = SITE PLAN
-        // 10 = TERBANGUN
-        // 11 = TERHUNI
-        // 12 = STATUS PSU
-        // 13 = TAHUN PSU
-        // 14 = CATATAN
-        // 15 = LATITUDE
-        // 16 = LONGITUDE
-
-        const data = [
+<script>
+const RAW_HOUSING_DATA = [
 ["ALAM KAMPAK", "Subsidi", "2019", "Jl. Seniman", "Tua Tunu Indah", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "54", "54", "54", "BELUM DISERAHKAN", "", "titik rawan genangan dan banjir | RTH belum terbangun", -2.0962671, 106.0769433],
 ["ALAM KEMANG PERMATA", "Subsidi", "2023", "Jl. Kemang Permata", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "46", "22", "0", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.1163817, 106.0678203],
 ["ALAM PINANG PURA", "Subsidi", "2020", "Jl. Kemang Permata", "Air Kepala Tujuh", "Gerunggang", "PT. ELNOV LANGGENG INDAH", "Novian Kasmofit", "APERSI", "52", "52", "52", "SUDAH DISERAHKAN", "2025", "RTH belum terbangun", -2.114164, 106.065597],
@@ -1174,775 +1036,862 @@
 ["ZIKRY RESIDENCE TAHAP 4", "Subsidi", "2019", "Jl. Sungai Liat", "Selindung", "Gabek", "PT. ROBIATUL RUBIEQA RABBANI", "Zikri", "NN", "43", "0", "0", "BELUM DISERAHKAN", "NN", "RTH belum terbangun", -2.077107, 106.115712]
             ];
 
-        const searchInput     = document.getElementById('search-input');
-        const filterKategori  = document.getElementById('filter-kategori');
-        const filterStatus    = document.getElementById('filter-status');
-        const filterKecamatan = document.getElementById('filter-kecamatan');
-        const filterTahun     = document.getElementById('filter-tahun');
-        const sortTahun       = document.getElementById('sort-tahun');
-        const noteCheckboxes  = document.querySelectorAll('.note-filter');
-        const ageCheckboxes   = document.querySelectorAll('.age-filter');
+const CURRENT_YEAR = new Date().getFullYear();
+let housing = [];
+let filtered = [];
+let page = 1;
+let pageSize = 20;
+let map = null;
+let mapLayer = null;
+let publicMode = false;
 
-        const tableBody   = document.getElementById('table-body');
-        const originalData = data;
-        const itemsPerPage = 8;
-        let currentPage    = 1;
-        let currentFilteredData = [];
+function toNum(v){
+  if(v === null || v === undefined || v === "" || String(v).trim().toUpperCase() === "NN") return 0;
+  const n = Number(String(v).replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+}
+function fmt(n){ return new Intl.NumberFormat("id-ID").format(Math.round(Number(n)||0)); }
+function pct(a,b){ return b > 0 ? Math.round((a/b)*100) : 0; }
+function normStatus(s){ return String(s||"").trim().toUpperCase(); }
+function clean(v){ return (v === null || v === undefined) ? "" : String(v).trim(); }
 
-        const prevButton   = document.getElementById('prev-page');
-        const nextButton   = document.getElementById('next-page');
-        const pageInfo     = document.getElementById('page-info');
+function normalizeRow(row, index){
+  let lat = null, lng = null, coordIndex = -1;
+  for(let i=14;i<row.length-1;i++){
+    if(typeof row[i] === "number" && typeof row[i+1] === "number" && row[i] < 0 && row[i+1] > 90){
+      lat = row[i]; lng = row[i+1]; coordIndex = i; break;
+    }
+  }
+  const noteEnd = coordIndex > -1 ? coordIndex : row.length;
+  const noteParts = row.slice(14, noteEnd)
+    .filter(v => typeof v === "string")
+    .map(v => v.trim())
+    .filter(v => v && v.toUpperCase() !== "NN");
+  const catatan = noteParts.join(" | ");
+  const tahun = clean(row[2]);
+  const yearNum = Number(tahun);
+  const age = Number.isFinite(yearNum) ? (CURRENT_YEAR - yearNum) : null;
+  let ageCat = "Tidak diketahui";
+  if(age !== null){
+    if(age <= 5) ageCat = "Baru";
+    else if(age <= 10) ageCat = "Sedang";
+    else ageCat = "Lama";
+  }
 
-        const exportExcelBtn = document.getElementById('export-excel');
-        const exportPdfBtn   = document.getElementById('export-pdf');
+  const item = {
+    id:index+1,
+    nama: clean(row[0]),
+    kategori: clean(row[1]) || "Tidak ada kategori",
+    tahun: tahun || "NN",
+    alamat: clean(row[3]) || "NN",
+    kelurahan: clean(row[4]) || "NN",
+    kecamatan: clean(row[5]) || "NN",
+    pengembang: clean(row[6]) || "NN",
+    direktur: clean(row[7]) || "NN",
+    asosiasi: clean(row[8]) || "NN",
+    siteplan: toNum(row[9]),
+    terbangun: toNum(row[10]),
+    terhuni: toNum(row[11]),
+    statusPSU: normStatus(row[12]) || "BELUM DISERAHKAN",
+    tahunPSU: clean(row[13]) || "NN",
+    catatan,
+    lat, lng,
+    age, ageCat
+  };
+  item.progressBangun = pct(item.terbangun, item.siteplan);
+  item.progressHuni = pct(item.terhuni, item.terbangun);
+  item.score = priorityScore(item);
+  return item;
+}
 
-        let housingChart = null;
-const rankingBodyBelum = document.getElementById('ranking-body-belum');
-const rankingBodySudah = document.getElementById('ranking-body-sudah');
+function priorityScore(x){
+  const note = x.catatan.toLowerCase();
+  let s = 0;
+  if(x.statusPSU.includes("BELUM")) s += 50;
+  if(note.includes("pengembang tidak aktif")) s += 25;
+  if(note.includes("titik rawan genangan") || note.includes("banjir")) s += 20;
+  if(note.includes("jalan belum perkerasan")) s += 18;
+  if(note.includes("jalan rusak berat")) s += 18;
+  if(note.includes("jalan rusak sedang")) s += 12;
+  if(note.includes("jalan rusak ringan")) s += 8;
+  if(note.includes("rth belum terbangun")) s += 12;
+  if(note.includes("rth beralih fungsi")) s += 18;
+  if(x.ageCat === "Lama") s += 12;
+  if(x.siteplan >= 100) s += 8;
+  if(x.siteplan >= 200) s += 8;
+  return s;
+}
 
+function badge(status){
+  const s = String(status || "");
+  let c = "blue";
+  if(s.includes("SUDAH") || s === "Selesai" || s === "Baik") c = "green";
+  else if(s.includes("BELUM") || s.includes("Prioritas")) c = "red";
+  else if(s.includes("RTH") || s.includes("Jalan")) c = "orange";
+  else if(s.includes("Lama")) c = "purple";
+  return `<span class="badge ${c}">${s}</span>`;
+}
 
-        const currentYear = new Date().getFullYear();
+function noteBadges(text){
+  if(!text) return `<span style="color:#94a3b8;">-</span>`;
+  return text.split("|").map(n => {
+    const t = n.trim();
+    const l = t.toLowerCase();
+    let cls = "";
+    if(l.includes("banjir") || l.includes("genangan")) cls = "flood";
+    else if(l.includes("jalan")) cls = l.includes("rusak") ? "damage" : "road";
+    else if(l.includes("pengembang")) cls = "dev";
+    else if(l.includes("rth")) cls = "rth";
+    return `<span class="note ${cls}">${t}</span>`;
+  }).join("");
+}
 
-        // ===================== RANGKING PERUMAHAN PRIORITAS =====================
+function init(){
+  housing = RAW_HOUSING_DATA.map(normalizeRow);
+  populateFilters();
+  initNavigation();
+  try {
+    applyFilters();
+  } catch (err) {
+    console.error("Gagal memuat data dashboard:", err);
+  }
+}
 
-        function getPriorityScore(item) {
-            const statusPSU = (item[12] || "").toUpperCase();
-            const notesRaw  = (item[14] || "").toLowerCase();
+function unique(arr){ return [...new Set(arr.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b), "id")); }
 
-            let score = 0;
+function populateFilters(){
+  const kec = unique(housing.map(x=>x.kecamatan));
+  const kat = unique(housing.map(x=>x.kategori));
+  const tahun = unique(housing.map(x=>x.tahun)).sort((a,b)=>(toNum(a)||9999)-(toNum(b)||9999));
 
-            // Status PSU
-            if (statusPSU === "BELUM DISERAHKAN") score += 2;
+  fillSelect("globalKecamatan", kec, "Semua Kecamatan");
+  fillSelect("filterKategori", kat, "Semua Kategori");
+  fillSelect("filterTahun", tahun, "Semua Tahun");
+}
+function fillSelect(id, values, firstLabel){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = `<option value="all">${firstLabel}</option>` + values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
 
-            // Catatan terkait pengembang & banjir
-            if (notesRaw.includes("pengembang tidak aktif")) score += 1;
-            if (notesRaw.includes("titik rawan genangan") || notesRaw.includes("banjir")) score += 4;
+function applyFilters(){
+  const q = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const kec = document.getElementById("globalKecamatan")?.value || "all";
+  const kategori = document.getElementById("filterKategori")?.value || "all";
+  const status = document.getElementById("filterStatus")?.value || "all";
+  const tahun = document.getElementById("filterTahun")?.value || "all";
+  const sortTahun = document.getElementById("sortTahun")?.value || "default";
 
-            // Jalan
-            if (notesRaw.includes("jalan belum perkerasan")) score += 4;
-            if (notesRaw.includes("jalan rusak berat"))      score += 3;
-            if (notesRaw.includes("jalan rusak sedang"))     score += 2;
-            if (notesRaw.includes("jalan rusak ringan"))     score += 1;
+  const selectedCatatan = Array.from(document.querySelectorAll(".catatan-filter:checked"))
+    .map(el => el.value.toLowerCase());
 
-            // RTH
-            if (notesRaw.includes("rth beralih fungsi"))   score += 4;
-            if (notesRaw.includes("rth belum terbangun"))  score += 2;
-            if (notesRaw.includes("rth terbangun"))        score += 1;
+  const selectedUsia = Array.from(document.querySelectorAll(".usia-filter:checked"))
+    .map(el => el.value);
 
-            // Bonus berdasarkan jumlah terhuni (lebih banyak warga terdampak)
-            const terhuni = parseInt(item[11] || "0", 10);
-            if (!isNaN(terhuni)) {
-                if (terhuni >= 100)      score += 3;
-                else if (terhuni >= 50)  score += 2;
-                else if (terhuni >= 20)  score += 1;
-            }
+  filtered = housing.filter(x => {
+    const text = [x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.statusPSU,x.tahunPSU,x.catatan].join(" ").toLowerCase();
+    const catatanText = String(x.catatan || "").toLowerCase();
 
-            return score;
-        }
+    const matchCatatan = selectedCatatan.length === 0 ||
+      selectedCatatan.some(item => catatanText.includes(item));
 
-        function renderNoteBadges(notesText) {
-            if (!notesText) return "";
+    const matchUsia = selectedUsia.length === 0 ||
+      selectedUsia.includes(x.ageCat);
 
-            const notes = notesText
-                .split("|")
-                .map(n => n.trim())
-                .filter(n => n.length > 0);
+    return (!q || text.includes(q)) &&
+      (kec === "all" || x.kecamatan === kec) &&
+      (kategori === "all" || x.kategori === kategori) &&
+      (status === "all" || x.statusPSU === status) &&
+      (tahun === "all" || x.tahun === tahun) &&
+      matchCatatan &&
+      matchUsia;
+  });
 
-            return notes.map(note => {
-                const lower = note.toLowerCase();
-                let extraClass = "";
-
-                if (lower.includes("pengembang tidak aktif")) {
-                    extraClass = "note-badge--dev";
-                } else if (lower.includes("genangan") || lower.includes("banjir")) {
-                    extraClass = "note-badge--flood";
-                } else if (lower.includes("jalan rusak ringan")) {
-                    extraClass = "note-badge--light";
-                } else if (lower.includes("jalan rusak sedang")) {
-                    extraClass = "note-badge--medium";
-                } else if (lower.includes("jalan rusak berat") || lower.includes("jalan belum perkerasan")) {
-                    extraClass = "note-badge--heavy";
-                } else if (lower.includes("rth beralih fungsi")) {
-                    extraClass = "note-badge--rth";
-                } else if (lower.includes("rth terbangun")) {
-                    extraClass = "note-badge--rth-built";
-                } else if (lower.includes("rth belum terbangun")) {
-                    extraClass = "note-badge--rth-notbuilt";
-                }
-
-                return `<span class="note-badge ${extraClass}">${note}</span>`;
-            }).join(" ");
-        }
-
-        function buildPriorityRankingList() {
-            const list = [];
-
-            originalData.forEach(item => {
-                const nama      = item[0] || "-";
-                const statusPSU = item[12] || "-";
-                const notes     = item[14] || "";
-                const score     = getPriorityScore(item);
-
-                if (score > 0) {
-                    list.push({
-                        nama,
-                        statusPSU,
-                        notes,
-                        score
-                    });
-                }
-            });
-
-            list.sort((a, b) => {
-                if (b.score !== a.score) return b.score - a.score;
-                return a.nama.localeCompare(b.nama);
-            });
-
-            return list;
-        }
-
-function renderPriorityRanking() {
-    const rankingList = buildPriorityRankingList();
-
-    // Kosongkan kedua tabel
-    rankingBodyBelum.innerHTML = "";
-    rankingBodySudah.innerHTML = "";
-
-    // Pisahkan berdasarkan status PSU
-    const belumList = rankingList.filter(
-        item => (item.statusPSU || "").toUpperCase() === "BELUM DISERAHKAN"
-    );
-    const sudahList = rankingList.filter(
-        item => (item.statusPSU || "").toUpperCase() === "SUDAH DISERAHKAN"
-    );
-
-    const maxRows = 10; // limit masing-masing tabel
-
-    // ---- TABEL ATAS: BELUM DISERAHKAN ----
-    belumList.slice(0, maxRows).forEach((item, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${item.nama}</td>
-            <td class="cell-notes">
-                ${renderNoteBadges(item.notes)}
-            </td>
-            <td class="cell-progress">${item.score}</td>
-        `;
-        rankingBodyBelum.appendChild(tr);
+  if(sortTahun !== "default"){
+    filtered.sort((a,b)=>{
+      const ay = toNum(a.tahun) || (sortTahun === "asc" ? 9999 : -1);
+      const by = toNum(b.tahun) || (sortTahun === "asc" ? 9999 : -1);
+      return sortTahun === "asc" ? ay - by : by - ay;
     });
+  }
 
-    // ---- TABEL BAWAH: SUDAH DISERAHKAN ----
-    sudahList.slice(0, maxRows).forEach((item, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${item.nama}</td>
-            <td class="cell-notes">
-                ${renderNoteBadges(item.notes)}
-            </td>
-            <td class="cell-progress">${item.score}</td>
-        `;
-        rankingBodySudah.appendChild(tr);
+  page = 1;
+  renderAll();
+}
+
+function resetDataPerumahanFilters(){
+  const ids = ["searchInput", "filterKategori", "filterStatus", "filterTahun", "sortTahun"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el.tagName === "INPUT") el.value = "";
+    if(el.tagName === "SELECT") el.selectedIndex = 0;
+  });
+  document.querySelectorAll(".catatan-filter, .usia-filter").forEach(el => el.checked = false);
+  applyFilters();
+}
+
+function summary(arr){
+  const total = arr.length;
+  const siteplan = arr.reduce((s,x)=>s+x.siteplan,0);
+  const terbangun = arr.reduce((s,x)=>s+x.terbangun,0);
+  const terhuni = arr.reduce((s,x)=>s+x.terhuni,0);
+  const sudah = arr.filter(x=>x.statusPSU.includes("SUDAH")).length;
+  const belum = arr.filter(x=>x.statusPSU.includes("BELUM")).length;
+  const coords = arr.filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lng)).length;
+  return { total, siteplan, terbangun, terhuni, sudah, belum, coords };
+}
+
+function renderKPI(){
+  const s = summary(filtered);
+  const items = [
+    ["Total Perumahan", s.total, "data aktif sesuai filter"],
+    ["Total Site Plan", s.siteplan, "unit rencana"],
+    ["Total Terbangun", s.terbangun, `${pct(s.terbangun,s.siteplan)}% dari site plan`],
+    ["Total Terhuni", s.terhuni, `${pct(s.terhuni,s.terbangun)}% dari terbangun`],
+    ["PSU Sudah Diserahkan", s.sudah, `${pct(s.sudah,s.total)}% dari data aktif`],
+    ["PSU Belum Diserahkan", s.belum, `${pct(s.belum,s.total)}% dari data aktif`],
+    ["Data Berkoordinat", s.coords, "muncul pada peta"],
+    ["Kecamatan Terdata", unique(filtered.map(x=>x.kecamatan)).length, "wilayah aktif"]
+  ];
+  document.getElementById("kpiGrid").innerHTML = items.map(i => `
+    <div class="card kpi">
+      <div class="label">${i[0]}</div>
+      <div class="value">${fmt(i[1])}</div>
+      <div class="note">${i[2]}</div>
+    </div>
+  `).join("");
+}
+
+function renderProgressUnit(){
+  const s = summary(filtered);
+  const pb = pct(s.terbangun,s.siteplan);
+  const ph = pct(s.terhuni,s.terbangun);
+  document.getElementById("progressUnit").innerHTML = `
+    <div class="stat-row"><div><strong>Progress Bangun</strong><br><span>${fmt(s.terbangun)} / ${fmt(s.siteplan)} unit</span><div class="progress"><i style="width:${Math.min(pb,100)}%"></i></div></div><strong>${pb}%</strong></div>
+    <div class="stat-row"><div><strong>Progress Huni</strong><br><span>${fmt(s.terhuni)} / ${fmt(s.terbangun)} unit</span><div class="progress"><i style="width:${Math.min(ph,100)}%"></i></div></div><strong>${ph}%</strong></div>
+    <div class="stat-row"><div><strong>Belum Terbangun</strong><br><span>Selisih site plan dan terbangun</span></div><strong>${fmt(Math.max(0,s.siteplan-s.terbangun))}</strong></div>
+  `;
+}
+
+function countNote(keyword){
+  const k = keyword.toLowerCase();
+  return filtered.filter(x=>x.catatan.toLowerCase().includes(k)).length;
+}
+function renderCatatanStats(){
+  const rows = [
+    ["Rawan genangan/banjir", countNote("banjir")],
+    ["Jalan belum perkerasan", countNote("jalan belum perkerasan")],
+    ["Jalan rusak", filtered.filter(x=>x.catatan.toLowerCase().includes("jalan rusak")).length],
+    ["RTH belum terbangun", countNote("RTH belum terbangun")],
+    ["RTH terbangun", countNote("RTH terbangun")],
+    ["Pengembang tidak aktif", countNote("pengembang tidak aktif")]
+  ];
+  document.getElementById("catatanStats").innerHTML = rows.map(r=>`<div class="stat-row"><strong>${r[0]}</strong><span>${fmt(r[1])} perumahan</span></div>`).join("");
+}
+
+function renderTopPrioritas(){
+  const rows = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5);
+  document.getElementById("topPrioritas").innerHTML = rows.map((x,i)=>`
+    <div class="stat-row">
+      <div><strong>${i+1}. ${escapeHtml(x.nama)}</strong><br><span>${escapeHtml(x.kecamatan)} · ${escapeHtml(x.statusPSU)}</span></div>
+      <strong>${x.score}</strong>
+    </div>
+  `).join("");
+}
+
+function renderTable(){
+  const headersInternal = ["NO","NAMA PERUMAHAN","KATEGORI","TAHUN","ALAMAT","KELURAHAN","KECAMATAN","PENGEMBANG","DIREKTUR/PELAKSANA","ASOSIASI","SITE PLAN","TERBANGUN","TERHUNI","PROGRESS BANGUN","PROGRESS HUNI","STATUS PSU","TAHUN PSU","USIA","CATATAN"];
+  const headersPublic = headersInternal.filter(h => h !== "DIREKTUR/PELAKSANA");
+  const headers = publicMode ? headersPublic : headersInternal;
+  document.getElementById("housingHead").innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>`;
+
+  const start = (page-1)*pageSize;
+  const rows = filtered.slice(start,start+pageSize);
+  document.getElementById("tableCount").textContent = fmt(filtered.length);
+  document.getElementById("housingBody").innerHTML = rows.length ? rows.map((x,idx)=>{
+    const cells = [
+      start+idx+1,
+      `<strong>${escapeHtml(x.nama)}</strong>`,
+      escapeHtml(x.kategori),
+      escapeHtml(x.tahun),
+      escapeHtml(x.alamat),
+      escapeHtml(x.kelurahan),
+      escapeHtml(x.kecamatan),
+      escapeHtml(x.pengembang),
+      escapeHtml(x.direktur),
+      escapeHtml(x.asosiasi),
+      fmt(x.siteplan),
+      fmt(x.terbangun),
+      fmt(x.terhuni),
+      `${x.progressBangun}%`,
+      `${x.progressHuni}%`,
+      badge(x.statusPSU),
+      escapeHtml(x.tahunPSU),
+      badge(x.ageCat),
+      noteBadges(x.catatan)
+    ];
+    if(publicMode) cells.splice(8,1);
+    return `<tr>${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
+  }).join("") : `<tr><td colspan="${headers.length}" style="text-align:center;color:#64748b;padding:28px;">Tidak ada data sesuai filter.</td></tr>`;
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length/pageSize));
+  document.getElementById("pageInfo").textContent = `Halaman ${page} dari ${totalPages}`;
+  document.getElementById("prevBtn").disabled = page <= 1;
+  document.getElementById("nextBtn").disabled = page >= totalPages;
+}
+
+function prevPage(){ if(page>1){page--;renderTable();} }
+function nextPage(){ const totalPages=Math.max(1,Math.ceil(filtered.length/pageSize)); if(page<totalPages){page++;renderTable();} }
+
+function groupByKecamatan(arr){
+  const map = {};
+  arr.forEach(x=>{
+    if(!map[x.kecamatan]) map[x.kecamatan]={kecamatan:x.kecamatan,total:0,sudah:0,belum:0,siteplan:0,terbangun:0,terhuni:0};
+    const m=map[x.kecamatan]; m.total++; m.siteplan+=x.siteplan; m.terbangun+=x.terbangun; m.terhuni+=x.terhuni;
+    if(x.statusPSU.includes("SUDAH")) m.sudah++; else m.belum++;
+  });
+  return Object.values(map).sort((a,b)=>b.total-a.total);
+}
+
+function renderCharts(){
+  const g = groupByKecamatan(filtered);
+  drawBar("kecamatanChart", g.map(x=>x.kecamatan), [
+    {name:"Total", values:g.map(x=>x.total), color:"#175b72"},
+    {name:"Sudah PSU", values:g.map(x=>x.sudah), color:"#16a34a"},
+    {name:"Belum PSU", values:g.map(x=>x.belum), color:"#dc2626"}
+  ]);
+  const s = summary(filtered);
+  drawDonut("statusChart", [s.sudah,s.belum], ["Sudah PSU","Belum PSU"], ["#16a34a","#dc2626"]);
+}
+
+function drawBar(id, labels, datasets){
+  const canvas=document.getElementById(id); if(!canvas) return;
+  const ctx=canvas.getContext("2d"); const rect=canvas.getBoundingClientRect(); const ratio=window.devicePixelRatio||1;
+  canvas.width=rect.width*ratio; canvas.height=260*ratio; ctx.scale(ratio,ratio);
+  const w=rect.width,h=260,p={top:28,right:12,bottom:62,left:45};
+  ctx.clearRect(0,0,w,h); const vals=datasets.flatMap(d=>d.values); const max=Math.max(...vals,1);
+  const plotW=w-p.left-p.right, plotH=h-p.top-p.bottom, groupW=plotW/Math.max(labels.length,1), barW=Math.max(4,(groupW-14)/datasets.length);
+  ctx.strokeStyle="#e2e8f0"; ctx.fillStyle="#64748b"; ctx.font="11px Arial";
+  for(let i=0;i<=4;i++){ const y=p.top+plotH-(plotH*i/4); ctx.beginPath(); ctx.moveTo(p.left,y); ctx.lineTo(w-p.right,y); ctx.stroke(); ctx.fillText(Math.round(max*i/4),6,y+4); }
+  datasets.forEach((d,di)=>{d.values.forEach((v,i)=>{ const x=p.left+i*groupW+7+di*barW; const bh=v/max*plotH; const y=p.top+plotH-bh; ctx.fillStyle=d.color; roundRect(ctx,x,y,barW-2,bh,5); ctx.fill(); });});
+  ctx.fillStyle="#334155"; ctx.textAlign="right"; labels.forEach((lab,i)=>{ const x=p.left+i*groupW+groupW/2; ctx.save(); ctx.translate(x,h-38); ctx.rotate(-0.45); ctx.fillText(lab,0,0); ctx.restore(); });
+  ctx.textAlign="left"; let lx=p.left; datasets.forEach(d=>{ ctx.fillStyle=d.color; ctx.fillRect(lx,8,10,10); ctx.fillStyle="#475569"; ctx.fillText(d.name,lx+15,17); lx+=95; });
+}
+function drawDonut(id, values, labels, colors){
+  const canvas=document.getElementById(id); if(!canvas) return;
+  const ctx=canvas.getContext("2d"); const rect=canvas.getBoundingClientRect(); const ratio=window.devicePixelRatio||1;
+  canvas.width=rect.width*ratio; canvas.height=260*ratio; ctx.scale(ratio,ratio);
+  const w=rect.width,h=260,cx=w/2,cy=105,r=78,total=values.reduce((a,b)=>a+b,0)||1; let start=-Math.PI/2;
+  ctx.clearRect(0,0,w,h);
+  values.forEach((v,i)=>{ const ang=v/total*Math.PI*2; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,start+ang); ctx.closePath(); ctx.fillStyle=colors[i]; ctx.fill(); start+=ang; });
+  ctx.beginPath(); ctx.arc(cx,cy,45,0,Math.PI*2); ctx.fillStyle="#fff"; ctx.fill();
+  ctx.fillStyle="#0f3f50"; ctx.font="bold 22px Arial"; ctx.textAlign="center"; ctx.fillText(fmt(total),cx,cy+7);
+  ctx.font="12px Arial"; ctx.textAlign="left"; labels.forEach((l,i)=>{ const y=205+i*24; ctx.fillStyle=colors[i]; ctx.fillRect(20,y-10,10,10); ctx.fillStyle="#475569"; ctx.fillText(`${l}: ${fmt(values[i])} (${pct(values[i],total)}%)`,36,y); });
+}
+function roundRect(ctx,x,y,w,h,r){ if(h<r) r=Math.max(0,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+function renderPSU(){
+  const g = groupByKecamatan(filtered);
+  document.getElementById("psuRekapBody").innerHTML = g.map(x=>`
+    <tr><td><strong>${escapeHtml(x.kecamatan)}</strong></td><td>${fmt(x.total)}</td><td>${fmt(x.sudah)}</td><td>${fmt(x.belum)}</td><td>${pct(x.sudah,x.total)}%</td></tr>
+  `).join("");
+
+  const issues = [
+    ["RTH belum terbangun", countNote("RTH belum terbangun")],
+    ["RTH terbangun", countNote("RTH terbangun")],
+    ["RTH beralih fungsi", countNote("RTH beralih fungsi")],
+    ["Jalan belum perkerasan", countNote("Jalan belum perkerasan")],
+    ["Jalan rusak ringan/sedang/berat", filtered.filter(x=>x.catatan.toLowerCase().includes("jalan rusak")).length],
+    ["Titik rawan genangan/banjir", filtered.filter(x=>x.catatan.toLowerCase().includes("genangan") || x.catatan.toLowerCase().includes("banjir")).length]
+  ];
+  document.getElementById("psuIssueList").innerHTML = issues.map(i=>`<div class="stat-row"><strong>${i[0]}</strong><span>${fmt(i[1])} perumahan</span></div>`).join("");
+
+  const belum = filtered.filter(x=>x.statusPSU.includes("BELUM")).sort((a,b)=>b.score-a.score).slice(0,50);
+  const belumPsuBody = document.getElementById("belumPsuBody");
+  if (belumPsuBody) {
+    belumPsuBody.innerHTML = belum.map((x,i)=>`
+      <tr><td>${i+1}</td><td><strong>${escapeHtml(x.nama)}</strong></td><td>${escapeHtml(x.kecamatan)}</td><td>${escapeHtml(x.pengembang)}</td><td>${fmt(x.siteplan)}</td><td>${fmt(x.terbangun)}</td><td>${noteBadges(x.catatan)}</td><td><strong>${x.score}</strong></td></tr>
+    `).join("");
+  }
+}
+
+function renderRanking(){
+  const belum = filtered.filter(x=>x.statusPSU.includes("BELUM")).sort((a,b)=>b.score-a.score).slice(0,25);
+  const sudah = filtered.filter(x=>x.statusPSU.includes("SUDAH")).sort((a,b)=>b.score-a.score).slice(0,25);
+  const row = (x,i) => `<tr><td>${i+1}</td><td><strong>${escapeHtml(x.nama)}</strong></td><td>${escapeHtml(x.kecamatan)}</td><td>${noteBadges(x.catatan)}</td><td><strong>${x.score}</strong></td></tr>`;
+  document.getElementById("rankBelumBody").innerHTML = belum.map(row).join("");
+  document.getElementById("rankSudahBody").innerHTML = sudah.map(row).join("");
+}
+
+function initMap(){
+  if(typeof L === "undefined"){
+    document.getElementById("map").innerHTML = "<div style='padding:20px;color:#64748b;'>Leaflet tidak dapat dimuat. Pastikan perangkat terhubung internet untuk menampilkan peta.</div>";
+    return;
+  }
+  if(!map){
+    map = L.map("map").setView([-2.12,106.11], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19, attribution:"&copy; OpenStreetMap"
+    }).addTo(map);
+    mapLayer = L.layerGroup().addTo(map);
+  }
+  renderMap();
+}
+function renderMap(){
+  if(!map || !mapLayer) return;
+  mapLayer.clearLayers();
+  const points = filtered.filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lng));
+  points.forEach(x=>{
+    const color = x.statusPSU.includes("SUDAH") ? "#16a34a" : "#dc2626";
+    const lat = Number(x.lat);
+    const lng = Number(x.lng);
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+    const popupHtml = `
+      <div style="min-width:220px;line-height:1.45;">
+        <strong style="font-size:15px;">${escapeHtml(x.nama)}</strong><br>
+        ${escapeHtml(x.kelurahan)}, ${escapeHtml(x.kecamatan)}<br>
+        ${badge(x.statusPSU)}<br>
+        Site plan: ${fmt(x.siteplan)} unit<br>
+        ${noteBadges(x.catatan)}
+        <div style="margin-top:10px;display:grid;gap:4px;">
+          <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="color:#2563eb;font-weight:800;text-decoration:underline;">&gt;&gt; Buka di Google Maps</a>
+          <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" style="color:#dc2626;font-weight:800;text-decoration:underline;">&gt;&gt; Street View</a>
+        </div>
+      </div>
+    `;
+    L.circleMarker([lat,lng], {radius:7,color:"#fff",weight:2,fillColor:color,fillOpacity:.9})
+      .bindPopup(popupHtml, {maxWidth: 320})
+      .addTo(mapLayer);
+  });
+  if(points.length){
+    const bounds = L.latLngBounds(points.map(x=>[x.lat,x.lng]));
+    map.fitBounds(bounds.pad(0.12));
+  }
+  setTimeout(()=>map.invalidateSize(),100);
+}
+
+function renderReportStats(){
+  const s=summary(filtered);
+  const rows = [
+    ["Total Perumahan", fmt(s.total)],
+    ["Site Plan", fmt(s.siteplan)+" unit"],
+    ["Terbangun", fmt(s.terbangun)+" unit"],
+    ["Terhuni", fmt(s.terhuni)+" unit"],
+    ["Progress Bangun", pct(s.terbangun,s.siteplan)+"%"],
+    ["Progress Huni", pct(s.terhuni,s.terbangun)+"%"],
+    ["PSU Sudah Diserahkan", fmt(s.sudah)+" perumahan"],
+    ["PSU Belum Diserahkan", fmt(s.belum)+" perumahan"],
+    ["Data Berkoordinat", fmt(s.coords)+" titik"]
+  ];
+  document.getElementById("reportStats").innerHTML = rows.map(r=>`<div class="stat-row"><strong>${r[0]}</strong><span>${r[1]}</span></div>`).join("");
+}
+
+function generateReport(){
+  const s=summary(filtered);
+  const kec = document.getElementById("globalKecamatan").value;
+  const wilayah = kec === "all" ? "Kota Pangkalpinang" : `Kecamatan ${kec}`;
+  const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\n");
+  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+
+Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+
+Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.
+
+Catatan penting yang perlu menjadi perhatian antara lain RTH belum terbangun sebanyak ${fmt(countNote("RTH belum terbangun"))} perumahan, jalan belum perkerasan sebanyak ${fmt(countNote("Jalan belum perkerasan"))} perumahan, serta titik rawan genangan/banjir sebanyak ${fmt(filtered.filter(x=>x.catatan.toLowerCase().includes("genangan") || x.catatan.toLowerCase().includes("banjir")).length)} perumahan.
+
+Daftar prioritas awal berdasarkan skor dashboard:
+${top}
+
+Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+  document.getElementById("reportText").value = txt;
+}
+function copyReport(){
+  const el=document.getElementById("reportText"); el.select(); document.execCommand("copy"); alert("Narasi laporan berhasil disalin.");
+}
+
+function exportCSV(){
+  const headers = ["No","Nama Perumahan","Kategori","Tahun","Alamat","Kelurahan","Kecamatan","Pengembang","Direktur/Pelaksana","Asosiasi","Site Plan","Terbangun","Terhuni","Progress Bangun","Progress Huni","Status PSU","Tahun PSU","Usia","Catatan","Latitude","Longitude","Skor"];
+  const rows = filtered.map((x,i)=>[i+1,x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.siteplan,x.terbangun,x.terhuni,x.progressBangun+"%",x.progressHuni+"%",x.statusPSU,x.tahunPSU,x.ageCat,x.catatan,x.lat??"",x.lng??"",x.score]);
+  const csv = [headers,...rows].map(r=>r.map(c=>`"${String(c).replaceAll('"','""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download="data_sirumah_terintegrasi.csv"; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function togglePublicMode(){
+  publicMode = !publicMode;
+  document.body.classList.toggle("public-mode", publicMode);
+  document.getElementById("modeNote").style.display = publicMode ? "block" : "none";
+  renderTable();
+}
+function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("open"); }
+
+function initNavigation(){
+  const buttons = document.querySelectorAll(".nav button");
+  const sections = document.querySelectorAll(".section");
+  buttons.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target = document.getElementById(btn.dataset.section);
+      if(!target) return;
+      buttons.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      sections.forEach(s=>s.classList.remove("active"));
+      target.classList.add("active");
+      document.getElementById("sidebar").classList.remove("open");
+      if(btn.dataset.section==="peta"){ setTimeout(initMap,120); }
+      setTimeout(renderCharts,80);
     });
+  });
+}
+
+function renderAll(){
+  renderKPI();
+  renderProgressUnit();
+  renderCatatanStats();
+  renderTopPrioritas();
+  renderTable();
+  renderCharts();
+  renderPSU();
+  renderRanking();
+  renderReportStats();
+  renderMap();
+}
+window.addEventListener("resize",()=>setTimeout(renderCharts,100));
+
+
+/* ================================
+   MODUL TAMBAHAN SIRUMAH
+   RTLH, Backlog & MBR, Rumah Subsidi, Layanan, Kolaborasi
+   ================================ */
+const SIRUMAH_PROGRAM = {
+      kecamatan: [
+        { nama: "Bukit Intan", rtlh: 182, tertangani: 36, backlog: 410, mbr: 276, subsidi: 220 },
+        { nama: "Gabek", rtlh: 160, tertangani: 28, backlog: 365, mbr: 241, subsidi: 185 },
+        { nama: "Gerunggang", rtlh: 225, tertangani: 42, backlog: 510, mbr: 330, subsidi: 260 },
+        { nama: "Girimaya", rtlh: 112, tertangani: 20, backlog: 215, mbr: 140, subsidi: 95 },
+        { nama: "Pangkal Balam", rtlh: 148, tertangani: 26, backlog: 290, mbr: 190, subsidi: 120 },
+        { nama: "Rangkui", rtlh: 130, tertangani: 31, backlog: 250, mbr: 155, subsidi: 110 },
+        { nama: "Taman Sari", rtlh: 98, tertangani: 18, backlog: 185, mbr: 120, subsidi: 75 }
+      ],
+      rtlh: [
+        { nama: "Samsudin", alamat: "Kel. Tua Tunu", kecamatan: "Gerunggang", kondisi: "Atap, dinding, sanitasi", skor: 86, status: "Masuk Prioritas" },
+        { nama: "Nurhayati", alamat: "Kel. Air Itam", kecamatan: "Bukit Intan", kondisi: "Lantai dan sanitasi", skor: 74, status: "Sudah Diverifikasi" },
+        { nama: "Ahmad Zaini", alamat: "Kel. Gabek Satu", kecamatan: "Gabek", kondisi: "Atap rusak berat", skor: 81, status: "Dalam Pelaksanaan" },
+        { nama: "Marlina", alamat: "Kel. Ampui", kecamatan: "Pangkal Balam", kondisi: "Dinding dan air bersih", skor: 69, status: "Belum Diverifikasi" },
+        { nama: "Siti Aminah", alamat: "Kel. Bintang", kecamatan: "Rangkui", kondisi: "Atap dan lantai", skor: 78, status: "Selesai" },
+        { nama: "Herman", alamat: "Kel. Sriwijaya", kecamatan: "Girimaya", kondisi: "Sanitasi tidak layak", skor: 65, status: "Sudah Diverifikasi" },
+        { nama: "Rohani", alamat: "Kel. Opas Indah", kecamatan: "Taman Sari", kondisi: "Dinding rusak sedang", skor: 58, status: "Belum Diverifikasi" }
+      ],
+      subsidi: [
+        { nama: "Tanjung Bunga Cluster Seruni", pengembang: "PT Contoh Sejahtera", lokasi: "Gerunggang", unit: 180, tersedia: 42, bank: "BTN", status: "Tersedia" },
+        { nama: "Bukit Harmoni Residence", pengembang: "PT Bangun Griya", lokasi: "Bukit Intan", unit: 120, tersedia: 18, bank: "BRI", status: "Siap Huni" },
+        { nama: "Gabek Green Village", pengembang: "PT Pundi Properti", lokasi: "Gabek", unit: 95, tersedia: 27, bank: "BTN", status: "Dalam Pembangunan" },
+        { nama: "Pangkal Balam Indah", pengembang: "PT Mitra Hunian", lokasi: "Pangkal Balam", unit: 70, tersedia: 0, bank: "BSI", status: "Terjual" },
+        { nama: "Rangkui Residence", pengembang: "PT Karya Rumah", lokasi: "Rangkui", unit: 65, tersedia: 11, bank: "BTN", status: "Tersedia" }
+      ],
+      psu: [
+        { perumahan: "Tanjung Bunga Cluster Seruni", pengembang: "PT Contoh Sejahtera", jenis: "Jalan, drainase, RTH", volume: "1.250 m²", dokumen: "Belum lengkap", status: "Dalam Verifikasi", tindak: "Lengkapi dokumen aset" },
+        { perumahan: "Bukit Harmoni Residence", pengembang: "PT Bangun Griya", jenis: "Jalan lingkungan, PJU", volume: "830 m²", dokumen: "Lengkap", status: "Menunggu BAST", tindak: "Jadwal BAST" },
+        { perumahan: "Gabek Green Village", pengembang: "PT Pundi Properti", jenis: "Drainase, jalan", volume: "960 m²", dokumen: "Belum masuk", status: "Belum Mengajukan", tindak: "Surat pemberitahuan" },
+        { perumahan: "Pangkal Balam Indah", pengembang: "PT Mitra Hunian", jenis: "Jalan, saluran", volume: "710 m²", dokumen: "Lengkap", status: "Sudah Diserahkan", tindak: "Input aset" }
+      ],
+      layanan: [
+        { tanggal: "2026-07-01", nama: "Dewi", jenis: "Konsultasi RTLH", kecamatan: "Gerunggang", uraian: "Menanyakan syarat bantuan rumah tidak layak huni.", status: "Ditindaklanjuti" },
+        { tanggal: "2026-07-02", nama: "Rudi", jenis: "Pengaduan PSU", kecamatan: "Bukit Intan", uraian: "Drainase perumahan belum berfungsi baik.", status: "Diverifikasi" },
+        { tanggal: "2026-07-03", nama: "Andi", jenis: "Informasi Rumah Subsidi", kecamatan: "Gabek", uraian: "Meminta informasi perumahan subsidi yang masih tersedia.", status: "Selesai" }
+      ],
+      kolaborasi: [
+        { mitra: "BAZNAS", dukungan: "Bantuan sanitasi", lokasi: "Bukit Intan", nilai: 50000000, rumah: 10, status: "Selesai" },
+        { mitra: "CSR Perusahaan", dukungan: "Material bangunan", lokasi: "Gerunggang", nilai: 75000000, rumah: 12, status: "Berjalan" },
+        { mitra: "Pengembang", dukungan: "Perbaikan RTLH", lokasi: "Gabek", nilai: 30000000, rumah: 5, status: "Rencana" },
+        { mitra: "Perbankan", dukungan: "Sosialisasi FLPP", lokasi: "Rangkui", nilai: 15000000, rumah: 0, status: "Berjalan" }
+      ]
+    };
+
+
+function selectedKecamatanProgram(){
+  const v = document.getElementById("globalKecamatan")?.value || "all";
+  return v;
+}
+function filterByGlobalKec(arr, field="kecamatan"){
+  const sel = selectedKecamatanProgram();
+  return sel === "all" ? arr : arr.filter(x => String(x[field] || "").trim() === sel);
+}
+function programKecamatanRows(){
+  return filterByGlobalKec(SIRUMAH_PROGRAM.kecamatan.map(x => ({...x, nama: String(x.nama).replace("Pangkalbalam","Pangkal Balam")})), "nama");
+}
+function programTotal(arr,key){ return arr.reduce((s,x)=>s+Number(x[key]||0),0); }
+function formatMoney(n){ return "Rp" + fmt(Number(n||0)); }
+function programBadge(status){ return badge(status); }
+
+function renderRTLH(){
+  const q = (document.getElementById("searchRTLH")?.value || "").toLowerCase();
+  const st = document.getElementById("statusRTLH")?.value || "Semua";
+  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.rtlh).filter(r => {
+    const text = [r.nama,r.alamat,r.kecamatan,r.kondisi,r.status].join(" ").toLowerCase();
+    return (!q || text.includes(q)) && (st === "Semua" || r.status === st);
+  });
+  const el = document.getElementById("rtlhTable"); if(!el) return;
+  el.innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td><strong>${escapeHtml(r.nama)}</strong></td>
+      <td>${escapeHtml(r.alamat)}</td>
+      <td>${escapeHtml(r.kecamatan)}</td>
+      <td>${escapeHtml(r.kondisi)}</td>
+      <td><strong>${fmt(r.skor)}</strong></td>
+      <td>${programBadge(r.status)}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6" class="empty">Tidak ada data.</td></tr>`;
+}
+
+function renderBacklog(){
+  const rows = programKecamatanRows();
+  const el = document.getElementById("backlogTable"); if(!el) return;
+  el.innerHTML = rows.length ? rows.map(r => {
+    const priority = r.backlog > 400 ? "Masuk Prioritas" : r.backlog > 250 ? "Sudah Diverifikasi" : "Selesai";
+    return `<tr>
+      <td><strong>${escapeHtml(r.nama)}</strong></td>
+      <td>${fmt(r.backlog)}</td>
+      <td>${fmt(r.mbr)}</td>
+      <td>${fmt(Math.round(r.backlog * 0.42))}</td>
+      <td>${programBadge(priority)}</td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="5" class="empty">Tidak ada data.</td></tr>`;
+}
+
+function renderSubsidi(){
+  const q = (document.getElementById("searchSubsidi")?.value || "").toLowerCase();
+  const st = document.getElementById("statusSubsidi")?.value || "Semua";
+  const sel = selectedKecamatanProgram();
+  const rows = housing.filter(x => {
+    const isSubsidi = String(x.kategori || "").toLowerCase().includes("subsidi");
+    const matchK = sel === "all" || x.kecamatan === sel;
+    const text = [x.nama,x.pengembang,x.kelurahan,x.kecamatan,x.kategori,x.statusPSU,x.asosiasi].join(" ").toLowerCase();
+    const matchQ = !q || text.includes(q);
+    const matchS = st === "Semua" || x.statusPSU === st;
+    return isSubsidi && matchK && matchQ && matchS;
+  }).sort((a,b)=>String(a.kecamatan).localeCompare(String(b.kecamatan),"id") || String(a.nama).localeCompare(String(b.nama),"id"));
+  const el = document.getElementById("subsidiTable"); if(!el) return;
+  el.innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td><strong>${escapeHtml(r.nama)}</strong></td>
+      <td>${escapeHtml(r.pengembang || "-")}</td>
+      <td>${escapeHtml(r.kelurahan)}, ${escapeHtml(r.kecamatan)}</td>
+      <td>${fmt(r.siteplan)}</td>
+      <td>${fmt(r.terbangun)} / ${fmt(r.terhuni)}</td>
+      <td>${escapeHtml(r.asosiasi || "-")}</td>
+      <td>${programBadge(r.statusPSU)}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="7" class="empty">Tidak ada data rumah subsidi.</td></tr>`;
+}
+
+function renderLayanan(){
+  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.layanan);
+  const table = document.getElementById("layananTable");
+  if(table){
+    table.innerHTML = rows.length ? rows.map(r => `
+      <tr>
+        <td>${escapeHtml(r.tanggal)}</td>
+        <td><strong>${escapeHtml(r.nama)}</strong></td>
+        <td>${escapeHtml(r.jenis)}</td>
+        <td>${escapeHtml(r.kecamatan)}</td>
+        <td>${escapeHtml(r.uraian)}</td>
+        <td>${programBadge(r.status)}</td>
+      </tr>
+    `).join("") : `<tr><td colspan="6" class="empty">Belum ada layanan.</td></tr>`;
+  }
+  const stats = [
+    ["Total Layanan", rows.length],
+    ["Selesai", rows.filter(x => x.status === "Selesai").length],
+    ["Diverifikasi", rows.filter(x => x.status === "Diverifikasi").length],
+    ["Ditindaklanjuti", rows.filter(x => x.status === "Ditindaklanjuti").length]
+  ];
+  const statEl = document.getElementById("layananStats");
+  if(statEl) statEl.innerHTML = stats.map(s => `<div class="stat-row"><strong>${s[0]}</strong><span>${fmt(s[1])} layanan</span></div>`).join("");
+}
+
+function renderKolaborasi(){
+  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi, "lokasi");
+  const el = document.getElementById("kolaborasiTable"); if(!el) return;
+  el.innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td><strong>${escapeHtml(r.mitra)}</strong></td>
+      <td>${escapeHtml(r.dukungan)}</td>
+      <td>${escapeHtml(r.lokasi)}</td>
+      <td>${formatMoney(r.nilai)}</td>
+      <td>${fmt(r.rumah)}</td>
+      <td>${programBadge(r.status)}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6" class="empty">Belum ada kolaborasi pada wilayah ini.</td></tr>`;
+}
+
+function addLayanan(){
+  const nama = document.getElementById("fNama")?.value.trim();
+  const hp = document.getElementById("fHp")?.value.trim();
+  const jenis = document.getElementById("fJenis")?.value;
+  const kecamatan = document.getElementById("fKecamatan")?.value;
+  const uraian = document.getElementById("fUraian")?.value.trim();
+  if(!nama || !uraian){ alert("Nama pemohon dan uraian wajib diisi."); return; }
+  const today = new Date().toISOString().slice(0,10);
+  SIRUMAH_PROGRAM.layanan.unshift({
+    tanggal: today,
+    nama: hp ? `${nama} (${hp})` : nama,
+    jenis, kecamatan, uraian, status: "Diverifikasi"
+  });
+  resetForm();
+  renderAll();
+  alert("Data layanan berhasil ditambahkan.");
+}
+function resetForm(){ ["fNama","fHp","fUraian"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; }); }
+function openAddDataForm(type){ alert("Fitur tambah data " + String(type).toUpperCase() + " dapat dikembangkan dengan form input khusus atau terhubung ke database SIRUMAH."); }
+
+/* Override beranda agar menggabungkan data perumahan eksisting + modul SIRUMAH sebelumnya */
+function renderKPI(){
+  const s = summary(filtered);
+  const pk = programKecamatanRows();
+  const rtlh = programTotal(pk,"rtlh");
+  const tertangani = programTotal(pk,"tertangani");
+  const backlog = programTotal(pk,"backlog");
+  const mbr = programTotal(pk,"mbr");
+  const subsidiRows = housing.filter(x => String(x.kategori || "").toLowerCase().includes("subsidi") && (selectedKecamatanProgram()==="all" || x.kecamatan===selectedKecamatanProgram()));
+  const layananRows = filterByGlobalKec(SIRUMAH_PROGRAM.layanan);
+  const kolabRows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi");
+  const items = [
+    ["Total Perumahan", s.total, "data perumahan aktif"],
+    ["Total Site Plan", s.siteplan, "unit rencana"],
+    ["Total Terbangun", s.terbangun, `${pct(s.terbangun,s.siteplan)}% dari site plan`],
+    ["Total Terhuni", s.terhuni, `${pct(s.terhuni,s.terbangun)}% dari terbangun`],
+    ["PSU Sudah Diserahkan", s.sudah, `${pct(s.sudah,s.total)}% dari data aktif`],
+    ["PSU Belum Diserahkan", s.belum, `${pct(s.belum,s.total)}% dari data aktif`],
+    ["RTLH Terdata", rtlh, "modul rumah tidak layak huni"],
+    ["RTLH Tertangani", tertangani, `${pct(tertangani,rtlh)}% dari RTLH terdata`],
+    ["Backlog Perumahan", backlog, "estimasi kebutuhan rumah"],
+    ["MBR Terdata", mbr, "masyarakat berpenghasilan rendah"],
+    ["Rumah Subsidi", subsidiRows.length, `${fmt(subsidiRows.reduce((a,b)=>a+b.siteplan,0))} unit site plan`],
+    ["Layanan & Kolaborasi", layananRows.length + kolabRows.length, `${fmt(layananRows.length)} layanan · ${fmt(kolabRows.length)} mitra`]
+  ];
+  document.getElementById("kpiGrid").innerHTML = items.map(i => `
+    <div class="card kpi">
+      <div class="label">${i[0]}</div>
+      <div class="value">${fmt(i[1])}</div>
+      <div class="note">${i[2]}</div>
+    </div>
+  `).join("");
+}
+
+function renderCharts(){
+  const g = groupByKecamatan(filtered);
+  drawBar("kecamatanChart", g.map(x=>x.kecamatan), [
+    {name:"Total", values:g.map(x=>x.total), color:"#175b72"},
+    {name:"Sudah PSU", values:g.map(x=>x.sudah), color:"#16a34a"},
+    {name:"Belum PSU", values:g.map(x=>x.belum), color:"#dc2626"}
+  ]);
+  const s = summary(filtered);
+  drawDonut("statusChart", [s.sudah,s.belum], ["Sudah PSU","Belum PSU"], ["#16a34a","#dc2626"]);
+
+  const pk = programKecamatanRows();
+  drawBar("sirBerandaChart", pk.map(x=>x.nama), [
+    {name:"RTLH", values:pk.map(x=>x.rtlh), color:"#dc2626"},
+    {name:"Tertangani", values:pk.map(x=>x.tertangani), color:"#16a34a"},
+    {name:"Backlog", values:pk.map(x=>x.backlog), color:"#2563eb"}
+  ]);
+  const statusCounts = ["Belum Diverifikasi", "Sudah Diverifikasi", "Masuk Prioritas", "Dalam Pelaksanaan", "Selesai"].map(st => filterByGlobalKec(SIRUMAH_PROGRAM.rtlh).filter(x=>x.status===st).length);
+  drawDonut("sirStatusChart", statusCounts, ["Belum", "Verif", "Prioritas", "Berjalan", "Selesai"], ["#dc2626", "#d97706", "#7c3aed", "#2563eb", "#16a34a"]);
+  drawBar("backlogChart", pk.map(x=>x.nama), [
+    {name:"Backlog", values:pk.map(x=>x.backlog), color:"#2563eb"},
+    {name:"MBR", values:pk.map(x=>x.mbr), color:"#0f766e"}
+  ]);
+  const kolabRows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi");
+  drawDonut("kolabChart", kolabRows.map(x=>Math.max(1, Math.round(Number(x.nilai||0)/1000000))), kolabRows.map(x=>x.mitra), ["#16a34a", "#2563eb", "#d97706", "#7c3aed", "#0f766e"]);
+}
+
+function generateReport(){
+  const s = summary(filtered);
+  const kec = document.getElementById("globalKecamatan")?.value || "all";
+  const wilayah = kec === "all" ? "Kota Pangkalpinang" : `Kecamatan ${kec}`;
+  const pk = programKecamatanRows();
+  const rtlh = programTotal(pk,"rtlh");
+  const tertangani = programTotal(pk,"tertangani");
+  const backlog = programTotal(pk,"backlog");
+  const mbr = programTotal(pk,"mbr");
+  const subsidiRows = housing.filter(x => String(x.kategori || "").toLowerCase().includes("subsidi") && (kec === "all" || x.kecamatan === kec));
+  const kolabRows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi");
+  const nilaiKolab = kolabRows.reduce((sum,x)=>sum+Number(x.nilai||0),0);
+  const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\n");
+  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+
+Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+
+Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.
+
+Dari modul SIRUMAH, tercatat RTLH sebanyak ${fmt(rtlh)} unit dengan ${fmt(tertangani)} unit telah/sedang tertangani. Estimasi backlog perumahan sebanyak ${fmt(backlog)} KK dan MBR terdata sebanyak ${fmt(mbr)}. Data rumah subsidi yang terhubung dari modul perumahan eksisting sebanyak ${fmt(subsidiRows.length)} perumahan dengan total site plan ${fmt(subsidiRows.reduce((a,b)=>a+b.siteplan,0))} unit.
+
+Catatan penting yang perlu menjadi perhatian antara lain RTH belum terbangun sebanyak ${fmt(countNote("RTH belum terbangun"))} perumahan, jalan belum perkerasan sebanyak ${fmt(countNote("Jalan belum perkerasan"))} perumahan, serta titik rawan genangan/banjir sebanyak ${fmt(filtered.filter(x=>x.catatan.toLowerCase().includes("genangan") || x.catatan.toLowerCase().includes("banjir")).length)} perumahan.
+
+Kolaborasi yang tercatat sebanyak ${fmt(kolabRows.length)} mitra/kegiatan dengan estimasi nilai dukungan sebesar Rp${fmt(nilaiKolab)}.
+
+Daftar prioritas awal berdasarkan skor dashboard:\n${top}
+
+Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+  document.getElementById("reportText").value = txt;
+}
+
+function renderAll(){
+  renderKPI();
+  renderProgressUnit();
+  renderCatatanStats();
+  renderTopPrioritas();
+  renderTable();
+  renderCharts();
+  renderPSU();
+  renderRanking();
+  renderRTLH();
+  renderBacklog();
+  renderLayanan();
+  renderKolaborasi();
+  renderReportStats();
+  renderMap();
 }
 
 
-        // ===================== SUMMARY (TOTAL & PROGRESS) =====================
 
-        function updateSummary(dataArr) {
-            let totalSitePlan  = 0;
-            let totalTerbangun = 0;
-            let totalTerhuni   = 0;
-
-            dataArr.forEach(row => {
-                const sitePlan  = Number(row[9])  || 0;
-                const terbangun = Number(row[10]) || 0;
-                const terhuni   = Number(row[11]) || 0;
-
-                totalSitePlan  += sitePlan;
-                totalTerbangun += terbangun;
-                totalTerhuni   += terhuni;
-            });
-
-            document.getElementById('total-site-plan').textContent  = totalSitePlan.toLocaleString('id-ID');
-            document.getElementById('total-terbangun').textContent  = totalTerbangun.toLocaleString('id-ID');
-            document.getElementById('total-terhuni').textContent    = totalTerhuni.toLocaleString('id-ID');
-
-            const progressBangun = totalSitePlan > 0
-                ? (totalTerbangun / totalSitePlan * 100)
-                : 0;
-
-            const progressHuni = totalTerbangun > 0
-                ? (totalTerhuni / totalTerbangun * 100)
-                : 0;
-
-            document.getElementById('summary-progress-bangun').textContent =
-                progressBangun.toFixed(0) + '%';
-            document.getElementById('summary-progress-huni').textContent =
-                progressHuni.toFixed(0) + '%';
-        }
-
-        // ===================== GRAFIK =====================
-
-        function renderChart(dataToChart) {
-            if (housingChart) {
-                housingChart.destroy();
-            }
-
-            const kecamatanCounts = {};
-            dataToChart.forEach(row => {
-                const rawKecamatan = row[5];
-                if (rawKecamatan && rawKecamatan !== 'NN') {
-                    const cleanKecamatan = rawKecamatan.trim().split(' ').map(word =>
-                        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                    ).join(' ');
-                    kecamatanCounts[cleanKecamatan] = (kecamatanCounts[cleanKecamatan] || 0) + 1;
-                }
-            });
-
-            const labels    = Object.keys(kecamatanCounts);
-            const chartData = Object.values(kecamatanCounts);
-
-            const ctx = document.getElementById('housingChart').getContext('2d');
-            housingChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Jumlah Perumahan',
-                        data: chartData,
-                        backgroundColor: 'rgba(23, 91, 114, 0.8)',
-                        borderColor: 'rgba(23, 91, 114, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Jumlah Perumahan'
-                            }
-                        }
-                    }
-                }
-            });
-
-            document.getElementById('total-housing-count').textContent =
-                'Total Perumahan: ' + dataToChart.length;
-        }
-
-        // ===================== TABEL =====================
-
-        function renderTable() {
-            tableBody.innerHTML = '';
-            const start = (currentPage - 1) * itemsPerPage;
-            const end   = start + itemsPerPage;
-            const paginatedData = currentFilteredData.slice(start, end);
-
-            paginatedData.forEach((rowData, index) => {
-                const row = document.createElement('tr');
-
-                // NO
-                let cell = document.createElement('td');
-                cell.textContent = start + index + 1;
-                row.appendChild(cell);
-
-                // 0 NAMA PERUMAHAN
-                cell = document.createElement('td');
-                cell.textContent = rowData[0];
-                row.appendChild(cell);
-
-                // 1 KATEGORI
-                cell = document.createElement('td');
-                cell.textContent = rowData[1];
-                row.appendChild(cell);
-
-                // 2 TAHUN + badge usia
-                const tahun = rowData[2];
-                const yearNum = Number(tahun) || null;
-                const tahunCell = document.createElement('td');
-                tahunCell.textContent = tahun;
-
-                if (yearNum) {
-                    const age = currentYear - yearNum;
-                    const badge = document.createElement('span');
-                    badge.classList.add('age-badge');
-
-                    if (age <= 5) {
-                        badge.classList.add('age-new');
-                        badge.textContent = `Baru (${age} th)`;
-                    } else if (age <= 10) {
-                        badge.classList.add('age-mid');
-                        badge.textContent = `Sedang (${age} th)`;
-                    } else {
-                        badge.classList.add('age-old');
-                        badge.textContent = `Lama (${age} th)`;
-                    }
-
-                    tahunCell.appendChild(document.createTextNode(' '));
-                    tahunCell.appendChild(badge);
-                }
-
-                row.appendChild(tahunCell);
-
-                // 3 ALAMAT
-                cell = document.createElement('td');
-                cell.textContent = rowData[3];
-                row.appendChild(cell);
-
-                // 4 KELURAHAN
-                cell = document.createElement('td');
-                cell.textContent = rowData[4];
-                row.appendChild(cell);
-
-                // 5 KECAMATAN
-                cell = document.createElement('td');
-                cell.textContent = rowData[5];
-                row.appendChild(cell);
-
-                // 6 PENGEMBANG
-                cell = document.createElement('td');
-                cell.textContent = rowData[6];
-                row.appendChild(cell);
-
-                // 7 DIREKTUR / PELAKSANA
-                cell = document.createElement('td');
-                cell.textContent = rowData[7];
-                row.appendChild(cell);
-
-                // 8 ASOSIASI
-                cell = document.createElement('td');
-                cell.textContent = rowData[8];
-                row.appendChild(cell);
-
-                // 9 SITE PLAN
-                const sitePlan  = Number(rowData[9]) || 0;
-                cell = document.createElement('td');
-                cell.textContent = sitePlan;
-                row.appendChild(cell);
-
-                // 10 TERBANGUN
-                const terbangun = Number(rowData[10]) || 0;
-                cell = document.createElement('td');
-                cell.textContent = terbangun;
-                row.appendChild(cell);
-
-                // 11 TERHUNI
-                const terhuni = Number(rowData[11]) || 0;
-                cell = document.createElement('td');
-                cell.textContent = terhuni;
-                row.appendChild(cell);
-
-                // PROGRESS BANGUN
-                const progBangun = sitePlan > 0 ? (terbangun / sitePlan * 100) : 0;
-                const progBangunCell = document.createElement('td');
-                progBangunCell.classList.add('cell-progress');
-                progBangunCell.textContent = sitePlan > 0 ? progBangun.toFixed(0) + '%' : '-';
-                row.appendChild(progBangunCell);
-
-                // PROGRESS HUNI
-                const progHuni = sitePlan > 0 ? (terhuni / sitePlan * 100) : 0;
-                const progHuniCell = document.createElement('td');
-                progHuniCell.classList.add('cell-progress');
-                progHuniCell.textContent = sitePlan > 0 ? progHuni.toFixed(0) + '%' : '-';
-                row.appendChild(progHuniCell);
-
-                // 12 STATUS PSU
-                const statusPSU = rowData[12];
-                const statusCell = document.createElement('td');
-                statusCell.textContent = statusPSU;
-                if (statusPSU === "BELUM DISERAHKAN") {
-                    statusCell.classList.add('cell-status');
-                } else if (statusPSU === "SUDAH DISERAHKAN") {
-                    statusCell.classList.add('cell-success');
-                }
-                row.appendChild(statusCell);
-
-                // 13 TAHUN PSU
-                cell = document.createElement('td');
-                cell.textContent = rowData[13];
-                row.appendChild(cell);
-
-                // 14 CATATAN
-                const catatanCell = document.createElement('td');
-                catatanCell.classList.add('cell-notes');
-                const rawNotes = (rowData[14] || '').trim();
-                if (!rawNotes || rawNotes === 'NN') {
-                    catatanCell.textContent = '-';
-                } else {
-                    catatanCell.innerHTML = renderNoteBadges(rawNotes);
-                }
-                row.appendChild(catatanCell);
-
-                tableBody.appendChild(row);
-            });
-
-            renderPagination();
-            renderChart(currentFilteredData);
-            updateSummary(currentFilteredData);
-            renderPriorityRanking();
-        }
-
-        function renderPagination() {
-            const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage) || 1;
-            pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === totalPages || currentFilteredData.length === 0;
-        }
-
-        // ===================== FILTER =====================
-
-        function populateFilters() {
-            const uniqueKategori = new Set(originalData.map(row => row[1]));
-            uniqueKategori.forEach(kategori => {
-                const option = document.createElement('option');
-                option.value = kategori;
-                option.textContent = kategori;
-                filterKategori.appendChild(option);
-            });
-
-            filterStatus.innerHTML = '<option value="all">Semua</option>';
-            ["SUDAH DISERAHKAN", "BELUM DISERAHKAN"].forEach(status => {
-                const option = document.createElement('option');
-                option.value = status;
-                option.textContent = status;
-                filterStatus.appendChild(option);
-            });
-
-            const standardKecamatan = ["Gabek", "Gerunggang", "Bukit Intan", "Pangkal Balam", "Rangkui", "Girimaya"];
-            filterKecamatan.innerHTML = '<option value="all">Semua</option>';
-            standardKecamatan.forEach(kec => {
-                const option = document.createElement('option');
-                option.value = kec;
-                option.textContent = kec;
-                filterKecamatan.appendChild(option);
-            });
-
-            const uniqueTahun = new Set(originalData.map(row => row[2]));
-            const sortedTahun = Array.from(uniqueTahun).sort();
-            sortedTahun.forEach(tahun => {
-                const option = document.createElement('option');
-                option.value = tahun;
-                option.textContent = tahun;
-                filterTahun.appendChild(option);
-            });
-        }
-
-        function applyFilters() {
-            const searchValue    = searchInput.value.toLowerCase();
-            const kategoriValue  = filterKategori.value;
-            const statusValue    = filterStatus.value;
-            const kecamatanValue = filterKecamatan.value;
-            const tahunValue     = filterTahun.value;
-
-            const lowerKecValue  = kecamatanValue.toLowerCase();
-            const upperStatusVal = statusValue.toUpperCase();
-
-            const activeNotes = Array.from(noteCheckboxes)
-                .filter(cb => cb.checked)
-                .map(cb => cb.value.toLowerCase());
-
-            const activeAges = Array.from(ageCheckboxes)
-                .filter(cb => cb.checked)
-                .map(cb => cb.value); // 'baru' | 'sedang' | 'lama'
-
-            currentFilteredData = originalData.filter(row => {
-                const rowText = row.join(' ').toLowerCase();
-
-                const isSearchMatch   = !searchValue || rowText.includes(searchValue);
-                const isKategoriMatch = kategoriValue === 'all' || row[1] === kategoriValue;
-
-                const dataStatus = row[12] ? row[12].trim().toUpperCase() : '';
-                const isStatusMatch = statusValue === 'all' || dataStatus === upperStatusVal;
-
-                let isKecMatch;
-                if (kecamatanValue === 'all') {
-                    isKecMatch = true;
-                } else {
-                    const dataKec = row[5] ? row[5].trim().toLowerCase() : '';
-                    isKecMatch = dataKec === lowerKecValue;
-                }
-
-                const isTahunMatch = tahunValue === 'all' || row[2] === tahunValue;
-
-                const notesRaw = (row[14] || '').toLowerCase();
-                const isNotesMatch = activeNotes.length === 0
-                    ? true
-                    : activeNotes.every(note => notesRaw.includes(note));
-
-                let isAgeMatch = true;
-                if (activeAges.length > 0) {
-                    const yearNum = Number(row[2]) || null;
-                    if (!yearNum) {
-                        isAgeMatch = false;
-                    } else {
-                        const age = currentYear - yearNum;
-                        let kategoriUmur = '';
-                        if (age <= 5)      kategoriUmur = 'baru';
-                        else if (age <= 10) kategoriUmur = 'sedang';
-                        else               kategoriUmur = 'lama';
-
-                        isAgeMatch = activeAges.includes(kategoriUmur);
-                    }
-                }
-
-                return isSearchMatch && isKategoriMatch && isStatusMatch &&
-                       isKecMatch && isTahunMatch && isNotesMatch && isAgeMatch;
-            });
-            // SORTING TAHUN
-            if (sortTahun.value !== "none") {
-                currentFilteredData.sort((a, b) => {
-                    const tahunA = parseInt(a[2]) || 0;
-                    const tahunB = parseInt(b[2]) || 0;
-
-                    if (sortTahun.value === "asc") {
-                        return tahunA - tahunB;   // Lama ke Baru
-                    } else {
-                        return tahunB - tahunA;   // Baru ke Lama
-                    }
-                });
-            }
-
-            currentPage = 1;
-            renderTable();
-            renderMapMarkers(currentFilteredData);
-        }
-
-        // ===================== EXPORT =====================
-
-        function getExportData() {
-            const headers = [
-                'NO',
-                'NAMA PERUMAHAN',
-                'KATEGORI',
-                'TAHUN',
-                'ALAMAT',
-                'KELURAHAN',
-                'KECAMATAN',
-                'PENGEMBANG',
-                'DIREKTUR / PELAKSANA',
-                'ASOSIASI',
-                'SITE PLAN',
-                'TERBANGUN',
-                'TERHUNI',
-                'PROGRESS BANGUN (%)',
-                'PROGRESS HUNI (%)',
-                'STATUS PENYERAHAN PSU',
-                'TAHUN PENYERAHAN PSU',
-                'CATATAN'
-            ];
-
-            const rows = currentFilteredData.map((rowData, index) => {
-                const sitePlan  = Number(rowData[9])  || 0;
-                const terbangun = Number(rowData[10]) || 0;
-                const terhuni   = Number(rowData[11]) || 0;
-
-                const progBangun = sitePlan > 0 ? (terbangun / sitePlan * 100) : 0;
-                const progHuni   = sitePlan > 0 ? (terhuni / sitePlan * 100) : 0;
-
-                return [
-                    index + 1,
-                    rowData[0],
-                    rowData[1],
-                    rowData[2],
-                    rowData[3],
-                    rowData[4],
-                    rowData[5],
-                    rowData[6],
-                    rowData[7],
-                    rowData[8],
-                    sitePlan,
-                    terbangun,
-                    terhuni,
-                    sitePlan > 0 ? progBangun.toFixed(0) + '%' : '-',
-                    sitePlan > 0 ? progHuni.toFixed(0) + '%' : '-',
-                    rowData[12],
-                    rowData[13],
-                    rowData[14] || ''
-                ];
-            });
-
-            return { headers, rows };
-        }
-
-        function exportToExcel() {
-            const { headers, rows } = getExportData();
-            if (rows.length === 0) {
-                alert('Tidak ada data untuk diexport.');
-                return;
-            }
-
-            const allRows = [headers, ...rows];
-            const csvLines = allRows.map(row =>
-                row.map(value => {
-                    const cell = (value !== null && value !== undefined) ? String(value) : '';
-                    const escaped = cell.replace(/"/g, '""');
-                    return `"${escaped}"`;
-                }).join(',')
-            );
-
-            const csvContent = csvLines.join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-            const link = document.createElement('a');
-            const url  = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = 'data_perumahan_pangkalpinang.xlsx'; // tetap CSV tapi ekstensi .xlsx
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-
-        function exportToPDF() {
-            const { headers, rows } = getExportData();
-            if (rows.length === 0) {
-                alert('Tidak ada data untuk diexport.');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'pt', 'a4');
-
-            doc.setFontSize(12);
-            doc.text('Data Perumahan Kota Pangkal Pinang', 40, 40);
-
-            doc.autoTable({
-                head: [headers],
-                body: rows,
-                startY: 60,
-                styles: {
-                    fontSize: 7,
-                    cellPadding: 3
-                },
-                headStyles: {
-                    fillColor: [23, 91, 114],
-                    textColor:  [213, 197, 145],
-                    halign: 'center'
-                },
-                columnStyles: {
-                    0:  { cellWidth: 25 },
-                    1:  { cellWidth: 80 },
-                    3:  { cellWidth: 40 },
-                    4:  { cellWidth: 100 },
-                    17: { cellWidth: 120 }
-                },
-                margin: { left: 30, right: 30 }
-            });
-
-            doc.save('data_perumahan_pangkalpinang.pdf');
-        }
-
-        // ===================== PETA LEAFLET =====================
-
-        const map = L.map('map').setView([-2.129, 106.109], 12);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
-
-        const greenIcon = new L.Icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
-
-        const redIcon = new L.Icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        });
-
-        function renderMapMarkers(dataArr) {
-            // hapus semua layer selain tile dasar
-            map.eachLayer(layer => {
-                if (!(layer instanceof L.TileLayer)) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            dataArr.forEach(row => {
-                const lat = parseFloat(row[15]);
-                const lng = parseFloat(row[16]);
-                if (isNaN(lat) || isNaN(lng)) return;
-
-                const statusPSU = (row[12] || '').toUpperCase();
-                const icon = statusPSU === 'SUDAH DISERAHKAN' ? greenIcon : redIcon;
-
-const popupHtml = `
-    <strong>${row[0]}</strong><br/>
-    ${row[6]}<br/>
-    Tahun ${row[2]}<br/>
-    PSU ${row[12]}<br/><br/>
-
-    <a href="https://www.google.com/maps?q=${lat},${lng}" 
-       target="_blank" 
-       style="color:#1a73e8; font-weight:600; text-decoration:underline;">
-       >> Buka di Google Maps
-    </a>
-    <br/>
-
-    <a href="https://www.google.com/maps?q=&layer=c&cbll=${lat},${lng}"
-       target="_blank"
-       style="color:#ea4335; font-weight:600; text-decoration:underline;">
-       >> Street View
-    </a>
-                    `;
-
-                L.marker([lat, lng], { icon }).addTo(map).bindPopup(popupHtml);
-            });
-        }
-
-        // ===================== EVENT LISTENER =====================
-
-        searchInput.addEventListener('input', applyFilters);
-        filterKategori.addEventListener('change', applyFilters);
-        filterStatus.addEventListener('change', applyFilters);
-        filterKecamatan.addEventListener('change', applyFilters);
-        filterTahun.addEventListener('change', applyFilters);
-        sortTahun.addEventListener('change', applyFilters);
-        noteCheckboxes.forEach(cb => cb.addEventListener('change', applyFilters));
-        ageCheckboxes.forEach(cb  => cb.addEventListener('change', applyFilters));
-
-        prevButton.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        });
-
-        nextButton.addEventListener('click', () => {
-            const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-            }
-        });
-
-        exportExcelBtn.addEventListener('click', exportToExcel);
-        exportPdfBtn.addEventListener('click', exportToPDF);
-
-        // ===================== INIT =====================
-
-        populateFilters();
-        currentFilteredData = [...originalData];
-        renderTable();
-        renderMapMarkers(originalData);
-    });
-
-    </script>
-
-
-
-
+/* Override KPI Beranda: kartu PSU, Rumah Subsidi, dan Layanan & Kolaborasi dihilangkan */
+function renderKPI(){
+  const s = summary(filtered);
+  const pk = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const rtlh = (typeof programTotal === "function") ? programTotal(pk,"rtlh") : 0;
+  const tertangani = (typeof programTotal === "function") ? programTotal(pk,"tertangani") : 0;
+  const backlog = (typeof programTotal === "function") ? programTotal(pk,"backlog") : 0;
+  const mbr = (typeof programTotal === "function") ? programTotal(pk,"mbr") : 0;
+
+  const items = [
+    ["Total Perumahan", s.total, "data perumahan aktif"],
+    ["Total Site Plan", s.siteplan, "unit rencana"],
+    ["Total Terbangun", s.terbangun, `${pct(s.terbangun,s.siteplan)}% dari site plan`],
+    ["Total Terhuni", s.terhuni, `${pct(s.terhuni,s.terbangun)}% dari terbangun`],
+    ["RTLH Terdata", rtlh, "modul rumah tidak layak huni"],
+    ["RTLH Tertangani", tertangani, `${pct(tertangani,rtlh)}% dari RTLH terdata`],
+    ["Backlog Perumahan", backlog, "estimasi kebutuhan rumah"],
+    ["MBR Terdata", mbr, "masyarakat berpenghasilan rendah"]
+  ];
+
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+  el.innerHTML = items.map(i => `
+    <div class="card kpi">
+      <div class="label">${i[0]}</div>
+      <div class="value">${fmt(i[1])}</div>
+      <div class="note">${i[2]}</div>
+    </div>
+  `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
