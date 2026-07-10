@@ -96,6 +96,11 @@
     .note.damage{background:#ffedd5;color:#9a3412}
     .chart{padding:18px;min-height:290px}
     canvas{width:100%;height:260px;display:block}
+
+    .chart canvas{
+      border-radius:14px;
+    }
+
     .stat-list{display:grid;gap:12px;padding:18px}
     .stat-row{display:flex;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);background:#f8fafc;border-radius:14px;align-items:flex-start}
     .stat-row strong{font-size:14px}.stat-row span{font-size:13px;color:var(--muted)}
@@ -174,6 +179,199 @@
       .checkbox-option{white-space:normal}
     }
 
+
+    .backlog-hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:18px;
+    }
+    .backlog-title-card{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      min-height:160px;
+      background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(226,232,240,.8);
+      padding:22px 26px;
+      overflow:hidden;
+      position:relative;
+    }
+    .backlog-title-card:after{
+      content:"";
+      position:absolute;
+      right:-42px;
+      top:-42px;
+      width:150px;
+      height:150px;
+      border-radius:50%;
+      background:rgba(15,118,110,.09);
+    }
+    .backlog-title-card h3{
+      font-size:28px;
+      letter-spacing:-.5px;
+      color:#0f3f50;
+      margin-bottom:10px;
+      text-transform:uppercase;
+    }
+    .backlog-title-card .bigline{
+      font-size:22px;
+      color:#0b2540;
+      line-height:1.55;
+    }
+    .backlog-icon{
+      width:96px;
+      height:96px;
+      border-radius:24px;
+      background:#f1f5f9;
+      display:grid;
+      place-items:center;
+      font-size:54px;
+      z-index:1;
+      flex:0 0 auto;
+    }
+    .source-box{
+      min-height:160px;
+      display:grid;
+      align-content:center;
+    }
+    .source-box .source-label{
+      color:#64748b;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .source-box .source-text{
+      color:#0f3f50;
+      font-weight:900;
+      line-height:1.45;
+      font-size:16px;
+      text-transform:uppercase;
+    }
+    .source-cell{
+      max-width:290px;
+      font-weight:900;
+      color:#0f3f50;
+      text-align:center;
+      line-height:1.35;
+      text-transform:uppercase;
+      background:#f8fafc;
+    }
+
+    .beranda-summary-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .summary-combo-card{
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(226,232,240,.8);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .summary-combo-card:after{
+      content:"";
+      position:absolute;
+      right:-36px;
+      top:-36px;
+      width:125px;
+      height:125px;
+      border-radius:50%;
+      background:rgba(224,202,113,.18);
+    }
+    .summary-combo-head{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+      margin-bottom:16px;
+      position:relative;
+      z-index:1;
+    }
+    .summary-combo-head h3{
+      color:#0f3f50;
+      font-size:18px;
+      margin-bottom:4px;
+    }
+    .summary-combo-head p{
+      color:#64748b;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .summary-mini-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+    .summary-mini{
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:14px;
+    }
+    .summary-mini .mini-label{
+      color:#64748b;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .summary-mini .mini-value{
+      color:#0f3f50;
+      font-size:28px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.5px;
+    }
+    .summary-mini .mini-note{
+      display:inline-flex;
+      margin-top:10px;
+      background:#e2e8f0;
+      color:#64748b;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .rusunawa-summary-card{
+      margin-bottom:18px;
+    }
+    .rusunawa-summary-card .summary-mini-grid{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+    @media(max-width:1100px){
+      .rusunawa-summary-card .summary-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media(max-width:680px){
+      .rusunawa-summary-card .summary-mini-grid{grid-template-columns:1fr;}
+    }
+
+    @media(max-width:1100px){
+      .beranda-summary-grid{grid-template-columns:1fr;}
+    }
+    @media(max-width:680px){
+      .summary-mini-grid{grid-template-columns:1fr;}
+    }
+
+    @media(max-width:1100px){
+      .backlog-hero{grid-template-columns:1fr;}
+      .backlog-title-card{align-items:flex-start;}
+      .backlog-title-card .bigline{font-size:18px;}
+      .backlog-icon{width:76px;height:76px;font-size:42px;}
+    }
+
     @media(max-width:1100px){
       .app{grid-template-columns:1fr}
       .sidebar{display:none;position:fixed;left:0;top:0;width:290px;z-index:30}
@@ -224,9 +422,10 @@
       <button class="active" data-section="beranda"><span class="icon">🏠</span> Beranda</button>
       <button data-section="data-perumahan"><span class="icon">🏘️</span> Data Perumahan</button>
       <button data-section="peta"><span class="icon">🗺️</span> Peta Perumahan</button>
-      <button data-section="rtlh"><span class="icon">🧱</span> RTLH</button>
       <button data-section="backlog"><span class="icon">👨‍👩‍👧</span> Backlog & MBR</button>
+      <button data-section="rtlh"><span class="icon">🧱</span> RTLH & RLH</button>
       <button data-section="psu"><span class="icon">🛣️</span> PSU & RTH</button>
+      <button data-section="rusunawa"><span class="icon">🏢</span> RUSUNAWA</button>
       <button data-section="layanan"><span class="icon">☎️</span> Layanan & Pengaduan</button>
       <button data-section="kolaborasi"><span class="icon">🤝</span> Kolaborasi</button>
       <button data-section="integrasi"><span class="icon">🔗</span> Integrasi SIRUMAH</button>
@@ -239,7 +438,7 @@
       <div class="title-block">
         <button class="btn light mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
         <h2>Dashboard SIRUMAH Terintegrasi</h2>
-        <p>Data Perumahan, PSU, RTH, dan Prioritas Penanganan Kota Pangkalpinang.</p>
+        <p>Data Perumahan, PSU, RTH, RUSUNAWA, dan Prioritas Penanganan Kota Pangkalpinang.</p>
       </div>
       <div class="toolbar">
         <select id="globalKecamatan" onchange="applyFilters()">
@@ -256,7 +455,7 @@
         Mode Publik aktif: kolom Direktur/Pelaksana dan informasi internal disembunyikan.
       </div>
 
-      <div class="grid kpi-grid" id="kpiGrid"></div>
+      <div class="beranda-summary-grid" id="kpiGrid"></div>
 
       <div class="grid two-col">
         <div class="card">
@@ -284,8 +483,8 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3>Capaian Program SIRUMAH per Kecamatan</h3>
-              <p>Kolaborasi data perumahan eksisting dengan modul RTLH, backlog, dan MBR.</p>
+              <h3>Backlog Kepemilikan dan RTLH per Kecamatan</h3>
+              <p>Perbandingan backlog kepemilikan dan RTLH berdasarkan data SIRUMAH.</p>
             </div>
           </div>
           <div class="chart"><canvas id="sirBerandaChart"></canvas></div>
@@ -293,8 +492,8 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3>Status Penanganan RTLH</h3>
-              <p>Komposisi status verifikasi, prioritas, pelaksanaan, dan selesai.</p>
+              <h3>Komposisi Kualitas Hunian</h3>
+              <p>Perbandingan Rumah Tidak Layak Huni (RTLH) dan Rumah Layak Huni (RLH).</p>
             </div>
           </div>
           <div class="chart"><canvas id="sirStatusChart"></canvas></div>
@@ -398,82 +597,216 @@
       </div>
     </section>
 
-    <section class="section" id="rtlh">
-        <div class="filters">
-          <input id="searchRTLH" placeholder="Cari nama/alamat/kelurahan..." oninput="renderRTLH()" />
-          <select id="statusRTLH" onchange="renderRTLH()">
-            <option value="Semua">Semua Status</option>
-            <option value="Belum Diverifikasi">Belum Diverifikasi</option>
-            <option value="Sudah Diverifikasi">Sudah Diverifikasi</option>
-            <option value="Masuk Prioritas">Masuk Prioritas</option>
-            <option value="Dalam Pelaksanaan">Dalam Pelaksanaan</option>
-            <option value="Selesai">Selesai</option>
-          </select>
-          <button class="btn" onclick="openAddDataForm('rtlh')">+ Tambah Data RTLH</button>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Data Rumah Tidak Layak Huni</h3>
-              <p>Memuat kondisi rumah, skor prioritas, dan status penanganan.</p>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nama KK</th>
-                  <th>Alamat</th>
-                  <th>Kecamatan</th>
-                  <th>Kondisi</th>
-                  <th>Skor</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="rtlhTable"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+    
 
-    <section class="section" id="backlog">
-        <div class="grid two-col">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h3>Backlog dan MBR per Kecamatan</h3>
-                <p>Data kebutuhan rumah dan masyarakat berpenghasilan rendah.</p>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Kecamatan</th>
-                    <th>Backlog KK</th>
-                    <th>MBR</th>
-                    <th>Kontrak/Sewa</th>
-                    <th>Prioritas</th>
-                  </tr>
-                </thead>
-                <tbody id="backlogTable"></tbody>
-              </table>
-            </div>
-          </div>
+<section class="section" id="rtlh">
+  <div class="card pad" style="margin-bottom:18px;">
+    <h3 style="margin-bottom:6px;">RTLH & RLH Kota Pangkalpinang</h3>
+    <p class="small">
+      Menu ini berfokus pada kualitas rumah yang sudah ada, yaitu jumlah rumah,
+      Rumah Tidak Layak Huni (RTLH), dan Rumah Layak Huni (RLH) per kecamatan.
+    </p>
+  </div>
 
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h3>Grafik Backlog</h3>
-                <p>Perbandingan backlog dan MBR.</p>
-              </div>
-            </div>
-            <div class="chart">
-              <canvas id="backlogChart"></canvas>
-            </div>
-          </div>
+  <div class="grid kpi-grid" id="rtlhSummaryGrid" style="margin-bottom:18px;"></div>
+
+  <div class="grid two-col" style="margin-bottom:18px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>RTLH dan RLH per Kecamatan</h3>
+          <p>Jumlah rumah, Rumah Tidak Layak Huni (RTLH), dan Rumah Layak Huni (RLH).</p>
         </div>
-      </section>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kecamatan</th>
+              <th>Jumlah Rumah</th>
+              <th>RTLH</th>
+              <th>RLH</th>
+              <th>% RTLH</th>
+            </tr>
+          </thead>
+          <tbody id="rtlhRlhBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>Ringkasan Analisis RTLH</h3>
+          <p>Kecamatan dengan jumlah RTLH tertinggi dan rasio RTLH tertinggi.</p>
+        </div>
+      </div>
+      <div class="stat-list" id="rtlhInsightList"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;">
+    <div class="card-header">
+      <div>
+        <h3>Sumber Data RTLH/RLH</h3>
+        <p>Catatan sumber data yang digunakan pada modul RTLH & RLH.</p>
+      </div>
+    </div>
+    <div class="stat-list" id="rtlhSourceList"></div>
+  </div>
+
+  <div class="filters">
+    <input id="searchRTLH" placeholder="Cari nama/alamat/kelurahan pada data individu..." oninput="renderRTLH()" />
+    <select id="statusRTLH" onchange="renderRTLH()">
+      <option value="Semua">Semua Status</option>
+      <option value="Belum Diverifikasi">Belum Diverifikasi</option>
+      <option value="Sudah Diverifikasi">Sudah Diverifikasi</option>
+      <option value="Masuk Prioritas">Masuk Prioritas</option>
+      <option value="Dalam Pelaksanaan">Dalam Pelaksanaan</option>
+      <option value="Selesai">Selesai</option>
+    </select>
+    <button class="btn" onclick="openAddDataForm('rtlh')">+ Tambah Data RTLH</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3>Data Individu RTLH</h3>
+        <p>Daftar ini merupakan contoh/pengembangan lanjutan untuk data by name by address, verifikasi, dan status penanganan.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama KK</th>
+            <th>Alamat</th>
+            <th>Kecamatan</th>
+            <th>Kondisi</th>
+            <th>Skor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="rtlhTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+
+    
+
+<section class="section" id="backlog">
+  <div class="card pad" style="margin-bottom:18px;">
+    <h3 style="margin-bottom:6px;">Backlog & MBR Kota Pangkalpinang</h3>
+    <p class="small">
+      Menu ini berfokus pada kebutuhan rumah. Data yang sudah ditampilkan sebagai angka resmi adalah
+      <strong>Backlog Kepemilikan</strong> dan <strong>Backlog Hunian</strong>. Data MBR diposisikan sebagai
+      kelompok sasaran prioritas yang masih memerlukan integrasi dan verifikasi dengan perangkat daerah terkait.
+    </p>
+  </div>
+
+  <div class="grid kpi-grid" id="backlogSummaryGrid" style="margin-bottom:18px;"></div>
+
+  <div class="grid two-col" style="margin-bottom:18px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>Backlog Kepemilikan per Kecamatan</h3>
+          <p>Jumlah backlog kepemilikan rumah berdasarkan kecamatan.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kecamatan</th>
+              <th>Backlog<br>Kepemilikan<br>(Unit)</th>
+            </tr>
+          </thead>
+          <tbody id="backlogOwnershipBody">
+            <tr><td>1</td><td><strong>GERUNGGANG</strong></td><td>1.977</td></tr>
+            <tr><td>2</td><td><strong>BUKIT INTAN</strong></td><td>1.420</td></tr>
+            <tr><td>3</td><td><strong>TAMAN SARI</strong></td><td>1.571</td></tr>
+            <tr><td>4</td><td><strong>GABEK</strong></td><td>1.322</td></tr>
+            <tr><td>5</td><td><strong>RANGKUI</strong></td><td>3.084</td></tr>
+            <tr><td>6</td><td><strong>PANGKALBALAM</strong></td><td>1.450</td></tr>
+            <tr><td>7</td><td><strong>GIRIMAYA</strong></td><td>1.338</td></tr>
+            <tr><td colspan="2"><strong>TOTAL</strong></td><td><strong>12.162</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>Korelasi Backlog dan MBR</h3>
+          <p>Backlog menunjukkan kebutuhan rumah, sedangkan MBR menjadi sasaran prioritas intervensi.</p>
+        </div>
+      </div>
+      <div class="stat-list" id="backlogSourceList">
+        <div class="stat-row">
+          <strong>Backlog</strong>
+          <span>Menjawab jumlah kebutuhan rumah.</span>
+        </div>
+        <div class="stat-row">
+          <strong>MBR</strong>
+          <span>Data sasaran prioritas; masih perlu integrasi/verifikasi.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid two-col">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>Status Data MBR</h3>
+          <p>Data MBR belum ditampilkan sebagai angka tetap sampai tersedia sumber resmi yang terverifikasi.</p>
+        </div>
+      </div>
+      <div class="stat-list" id="mbrStatusList">
+        <div class="stat-row">
+          <strong>Status</strong>
+          <span>Dalam proses integrasi/verifikasi data.</span>
+        </div>
+        <div class="stat-row">
+          <strong>Calon Sumber Data</strong>
+          <span>DTKS, P3KE, data usulan kelurahan, data rumah subsidi/FLPP, dan hasil verifikasi Dinas.</span>
+        </div>
+        <div class="stat-row">
+          <strong>Catatan</strong>
+          <span>Angka MBR tidak ditampilkan dulu agar dashboard tetap kuat secara administrasi.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h3>Sumber dan Catatan Backlog</h3>
+          <p>Informasi sumber data backlog yang digunakan dalam dashboard.</p>
+        </div>
+      </div>
+      <div class="stat-list" id="backlogNoteList">
+        <div class="stat-row">
+          <strong>Backlog Kepemilikan</strong>
+          <span>BKBKN yang diolah oleh Dinas Perumahan dan Kawasan Permukiman Kota Pangkalpinang.</span>
+        </div>
+        <div class="stat-row">
+          <strong>Backlog Hunian</strong>
+          <span>Total Kota Pangkalpinang: 13.921.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
     <section class="section" id="layanan">
         <div class="grid two-col">
@@ -631,6 +964,90 @@
       </div>
 
     </section>
+
+
+    <section class="section" id="rusunawa">
+      <div class="card pad" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:6px;">Pengelolaan RUSUNAWA Kota Pangkalpinang</h3>
+        <p class="small">
+          Menu ini digunakan untuk memantau rumah susun sederhana sewa, mulai dari ringkasan unit, status pembayaran/retribusi,
+          kondisi bangunan dan sarana prasarana, serta grafik pengelolaan RUSUNAWA.
+        </p>
+      </div>
+
+      <div class="grid kpi-grid" id="rusunawaSummaryGrid" style="margin-bottom:18px;"></div>
+
+      <div class="grid two-col" style="margin-bottom:18px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Data Unit RUSUNAWA</h3>
+              <p>Status unit, kondisi unit, dan keterangan teknis.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Blok/Lantai</th>
+                  <th>Unit</th>
+                  <th>Tipe</th>
+                  <th>Status</th>
+                  <th>Kondisi</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="rusunawaUnitBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Status Pembayaran / Retribusi Sewa</h3>
+              <p>Target, realisasi, dan tunggakan retribusi sewa per bulan.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bulan</th>
+                  <th>Target</th>
+                  <th>Realisasi</th>
+                  <th>Capaian</th>
+                </tr>
+              </thead>
+              <tbody id="rusunawaPaymentBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header">
+          <div>
+            <h3>Kondisi Bangunan dan Sarana Prasarana</h3>
+            <p>Monitoring kondisi komponen bangunan, utilitas, dan fasilitas bersama.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Komponen</th>
+                <th>Kondisi</th>
+                <th>Prioritas</th>
+                <th>Tindak Lanjut</th>
+              </tr>
+            </thead>
+            <tbody id="rusunawaFacilityBody"></tbody>
+          </table>
+        </div>
+      </div></section>
+
 
     <section class="section" id="integrasi">
       <div class="card pad">
@@ -1889,6 +2306,1681 @@ function renderKPI(){
       <div class="note">${i[2]}</div>
     </div>
   `).join("");
+}
+
+
+/* ================================
+   DATA AGREGAT RTLH, RLH, DAN BACKLOG
+   Sumber: BKBKN/BKKBN Tahun 2023 yang diolah oleh Dinas Perkim Kota Pangkalpinang
+   ================================ */
+const RTLH_AGGREGATE_DATA = {
+  backlogHunian: 13921,
+  backlogKepemilikan: [
+    { kecamatan: "GERUNGGANG", backlog: 1977 },
+    { kecamatan: "BUKIT INTAN", backlog: 1420 },
+    { kecamatan: "TAMAN SARI", backlog: 1571 },
+    { kecamatan: "GABEK", backlog: 1322 },
+    { kecamatan: "RANGKUI", backlog: 3084 },
+    { kecamatan: "PANGKALBALAM", backlog: 1450 },
+    { kecamatan: "GIRIMAYA", backlog: 1338 }
+  ],
+  rumah: [
+    { kecamatan: "Gerunggang", jumlah: 12049, rtlh: 424, rlh: 11625 },
+    { kecamatan: "Bukit Intan", jumlah: 9500, rtlh: 655, rlh: 8845 },
+    { kecamatan: "Taman Sari", jumlah: 4805, rtlh: 183, rlh: 4622 },
+    { kecamatan: "Gabek", jumlah: 8982, rtlh: 568, rlh: 8414 },
+    { kecamatan: "Rangkui", jumlah: 9679, rtlh: 362, rlh: 9317 },
+    { kecamatan: "Pangkal Balam", jumlah: 5789, rtlh: 757, rlh: 5032 },
+    { kecamatan: "Girimaya", jumlah: 4979, rtlh: 49, rlh: 4930 }
+  ],
+  sumberBacklog: "BKBKN YANG DIOLAH OLEH DINAS PERUMAHAN DAN KAWASAN PERMUKIMAN KOTA PANGKAL PINANG",
+  sumberRTLH: "BKBKN/BKKBN Tahun 2023 yang diolah oleh Dinas Perumahan dan Kawasan Permukiman Kota Pangkalpinang"
+};
+
+function normalizeKecamatanName(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace("pangkalbalam", "pangkalbalam");
+}
+
+function selectedAggregateKecamatan(){
+  return document.getElementById("globalKecamatan")?.value || "all";
+}
+
+function filterAggregateRows(rows){
+  const selected = selectedAggregateKecamatan();
+  if(selected === "all") return rows;
+  const target = normalizeKecamatanName(selected);
+  return rows.filter(row => normalizeKecamatanName(row.kecamatan) === target);
+}
+
+function sumRows(rows, key){
+  return rows.reduce((total, row) => total + Number(row[key] || 0), 0);
+}
+
+function percentValue(value, total){
+  return total ? Math.round((Number(value || 0) / Number(total || 0)) * 100) : 0;
+}
+
+function renderRTLHAggregate(){
+  const backlogRows = filterAggregateRows(RTLH_AGGREGATE_DATA.backlogKepemilikan);
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+
+  const totalBacklogKepemilikan = sumRows(backlogRows, "backlog");
+  const totalJumlahRumah = sumRows(rumahRows, "jumlah");
+  const totalRTLH = sumRows(rumahRows, "rtlh");
+  const totalRLH = sumRows(rumahRows, "rlh");
+
+  const summaryEl = document.getElementById("rtlhSummaryGrid");
+  if(summaryEl){
+    const selected = selectedAggregateKecamatan();
+    const noteWilayah = selected === "all" ? "total Kota Pangkalpinang" : `Kecamatan ${selected}`;
+    const summaryItems = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Jumlah Rumah", totalJumlahRumah, noteWilayah],
+      ["RTLH", totalRTLH, `${percentValue(totalRTLH, totalJumlahRumah)}% dari jumlah rumah`],
+      ["RLH", totalRLH, `${percentValue(totalRLH, totalJumlahRumah)}% dari jumlah rumah`]
+    ];
+
+    summaryEl.innerHTML = summaryItems.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const backlogBody = document.getElementById("backlogOwnershipBody");
+  if(backlogBody){
+    const rowsHtml = backlogRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    backlogBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const rtlhBody = document.getElementById("rtlhRlhBody");
+  if(rtlhBody){
+    const rowsHtml = rumahRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.jumlah)}</td>
+        <td><strong>${fmt(row.rtlh)}</strong></td>
+        <td>${fmt(row.rlh)}</td>
+        <td>${percentValue(row.rtlh, row.jumlah)}%</td>
+      </tr>
+    `).join("");
+
+    rtlhBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalJumlahRumah)}</strong></td>
+        <td><strong>${fmt(totalRTLH)}</strong></td>
+        <td><strong>${fmt(totalRLH)}</strong></td>
+        <td><strong>${percentValue(totalRTLH, totalJumlahRumah)}%</strong></td>
+      </tr>
+    `;
+  }
+
+  const insightEl = document.getElementById("rtlhInsightList");
+  if(insightEl){
+    const allRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+    const highestRTLH = [...allRows].sort((a,b) => b.rtlh - a.rtlh)[0];
+    const highestRatio = [...allRows].sort((a,b) => (b.rtlh / b.jumlah) - (a.rtlh / a.jumlah))[0];
+    const lowestRTLH = [...allRows].sort((a,b) => a.rtlh - b.rtlh)[0];
+
+    const insightRows = [
+      highestRTLH ? [`RTLH terbanyak`, `${highestRTLH.kecamatan} · ${fmt(highestRTLH.rtlh)} unit`] : null,
+      highestRatio ? [`Rasio RTLH tertinggi`, `${highestRatio.kecamatan} · ${percentValue(highestRatio.rtlh, highestRatio.jumlah)}%`] : null,
+      lowestRTLH ? [`RTLH terendah`, `${lowestRTLH.kecamatan} · ${fmt(lowestRTLH.rtlh)} unit`] : null,
+      [`Total RTLH`, `${fmt(totalRTLH)} unit`],
+      [`Total RLH`, `${fmt(totalRLH)} unit`]
+    ].filter(Boolean);
+
+    insightEl.innerHTML = insightRows.map(row => `
+      <div class="stat-row">
+        <strong>${row[0]}</strong>
+        <span>${row[1]}</span>
+      </div>
+    `).join("");
+  }
+
+  const sourceEl = document.getElementById("rtlhSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>${escapeHtml(RTLH_AGGREGATE_DATA.sumberBacklog)}</span>
+      </div>
+      <div class="stat-row">
+        <strong>RTLH/RLH</strong>
+        <span>${escapeHtml(RTLH_AGGREGATE_DATA.sumberRTLH)}</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog hunian tersedia sebagai total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+    `;
+  }
+}
+
+/* Simpan fungsi renderRTLH lama untuk data individu, lalu perluas dengan data agregat */
+const renderRTLHDetailTable = renderRTLH;
+function renderRTLH(){
+  renderRTLHAggregate();
+  renderRTLHDetailTable();
+}
+
+/* Override KPI Beranda agar data RTLH dan backlog mengikuti data agregat terbaru */
+function renderKPI(){
+  const s = summary(filtered);
+  const selected = selectedAggregateKecamatan();
+  const backlogRows = filterAggregateRows(RTLH_AGGREGATE_DATA.backlogKepemilikan);
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+  const totalBacklogKepemilikan = sumRows(backlogRows, "backlog");
+  const totalRTLH = sumRows(rumahRows, "rtlh");
+  const totalRLH = sumRows(rumahRows, "rlh");
+  const totalJumlahRumah = sumRows(rumahRows, "jumlah");
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const items = [
+    ["Total Perumahan", s.total, "data perumahan aktif"],
+    ["Total Site Plan", s.siteplan, "unit rencana"],
+    ["Total Terbangun", s.terbangun, `${pct(s.terbangun,s.siteplan)}% dari site plan`],
+    ["Total Terhuni", s.terhuni, `${pct(s.terhuni,s.terbangun)}% dari terbangun`],
+    ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+    ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+    ["RTLH Terdata", totalRTLH, `${percentValue(totalRTLH, totalJumlahRumah)}% dari jumlah rumah`],
+    ["RLH Terdata", totalRLH, `${percentValue(totalRLH, totalJumlahRumah)}% dari jumlah rumah`]
+  ];
+
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+  el.innerHTML = items.map(i => `
+    <div class="card kpi">
+      <div class="label">${i[0]}</div>
+      <div class="value">${fmt(i[1])}</div>
+      <div class="note">${i[2]}</div>
+    </div>
+  `).join("");
+}
+
+
+/* ================================
+   PEMISAHAN MENU BACKLOG & MBR DENGAN RTLH & RLH
+   ================================ */
+function renderBacklogAggregate(){
+  const backlogRows = filterAggregateRows(RTLH_AGGREGATE_DATA.backlogKepemilikan);
+  const programRows = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const totalBacklogKepemilikan = sumRows(backlogRows, "backlog");
+  const totalProgramBacklog = (typeof programTotal === "function") ? programTotal(programRows, "backlog") : 0;
+  const totalMBR = (typeof programTotal === "function") ? programTotal(programRows, "mbr") : 0;
+  const selected = selectedAggregateKecamatan();
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Backlog Program", totalProgramBacklog, "estimasi kebutuhan rumah"],
+      ["MBR Terdata", totalMBR, "masyarakat berpenghasilan rendah"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const backlogBody = document.getElementById("backlogOwnershipBody");
+  if(backlogBody){
+    const rowsHtml = backlogRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    backlogBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>${escapeHtml(RTLH_AGGREGATE_DATA.sumberBacklog)}</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog menjawab kebutuhan rumah; berbeda dari RTLH yang menjawab kualitas rumah yang sudah ada.</span>
+      </div>
+    `;
+  }
+}
+
+function renderRTLHAggregate(){
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+  const totalJumlahRumah = sumRows(rumahRows, "jumlah");
+  const totalRTLH = sumRows(rumahRows, "rtlh");
+  const totalRLH = sumRows(rumahRows, "rlh");
+  const selected = selectedAggregateKecamatan();
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const summaryEl = document.getElementById("rtlhSummaryGrid");
+  if(summaryEl){
+    const summaryItems = [
+      ["Jumlah Rumah", totalJumlahRumah, noteWilayah],
+      ["RTLH", totalRTLH, `${percentValue(totalRTLH, totalJumlahRumah)}% dari jumlah rumah`],
+      ["RLH", totalRLH, `${percentValue(totalRLH, totalJumlahRumah)}% dari jumlah rumah`],
+      ["Selisih RTLH-RLH", Math.max(0,totalRLH-totalRTLH), "indikasi dominasi rumah layak huni"]
+    ];
+
+    summaryEl.innerHTML = summaryItems.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const rtlhBody = document.getElementById("rtlhRlhBody");
+  if(rtlhBody){
+    const rowsHtml = rumahRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.jumlah)}</td>
+        <td><strong>${fmt(row.rtlh)}</strong></td>
+        <td>${fmt(row.rlh)}</td>
+        <td>${percentValue(row.rtlh, row.jumlah)}%</td>
+      </tr>
+    `).join("");
+
+    rtlhBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalJumlahRumah)}</strong></td>
+        <td><strong>${fmt(totalRTLH)}</strong></td>
+        <td><strong>${fmt(totalRLH)}</strong></td>
+        <td><strong>${percentValue(totalRTLH, totalJumlahRumah)}%</strong></td>
+      </tr>
+    `;
+  }
+
+  const insightEl = document.getElementById("rtlhInsightList");
+  if(insightEl){
+    const allRows = rumahRows;
+    const highestRTLH = [...allRows].sort((a,b) => b.rtlh - a.rtlh)[0];
+    const highestRatio = [...allRows].sort((a,b) => (b.rtlh / b.jumlah) - (a.rtlh / a.jumlah))[0];
+    const lowestRTLH = [...allRows].sort((a,b) => a.rtlh - b.rtlh)[0];
+
+    const insightRows = [
+      highestRTLH ? ["RTLH terbanyak", `${highestRTLH.kecamatan} · ${fmt(highestRTLH.rtlh)} unit`] : null,
+      highestRatio ? ["Rasio RTLH tertinggi", `${highestRatio.kecamatan} · ${percentValue(highestRatio.rtlh, highestRatio.jumlah)}%`] : null,
+      lowestRTLH ? ["RTLH terendah", `${lowestRTLH.kecamatan} · ${fmt(lowestRTLH.rtlh)} unit`] : null,
+      ["Total RTLH", `${fmt(totalRTLH)} unit`],
+      ["Total RLH", `${fmt(totalRLH)} unit`]
+    ].filter(Boolean);
+
+    insightEl.innerHTML = insightRows.map(row => `
+      <div class="stat-row">
+        <strong>${row[0]}</strong>
+        <span>${row[1]}</span>
+      </div>
+    `).join("");
+  }
+
+  const sourceEl = document.getElementById("rtlhSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>RTLH/RLH</strong>
+        <span>${escapeHtml(RTLH_AGGREGATE_DATA.sumberRTLH)}</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>RTLH menunjukkan rumah yang sudah ada namun belum layak huni; RLH menunjukkan rumah yang sudah memenuhi kelayakan dasar.</span>
+      </div>
+    `;
+  }
+}
+
+/* Perluas fungsi Backlog agar data agregat ikut tampil */
+const renderBacklogProgramTable = renderBacklog;
+function renderBacklog(){
+  renderBacklogAggregate();
+  renderBacklogProgramTable();
+}
+
+/* Perluas fungsi RTLH agar hanya menampilkan RTLH/RLH dan data individu */
+const renderRTLHIndividualTable = renderRTLHDetailTable || renderRTLH;
+function renderRTLH(){
+  renderRTLHAggregate();
+  renderRTLHIndividualTable();
+}
+
+
+/* Override tampilan Backlog & MBR agar sesuai informasi upload: Backlog Kepemilikan, Backlog Hunian, dan Sumber */
+function renderBacklogAggregate(){
+  const backlogRows = filterAggregateRows(RTLH_AGGREGATE_DATA.backlogKepemilikan);
+  const programRows = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const totalBacklogKepemilikan = sumRows(backlogRows, "backlog");
+  const totalProgramBacklog = (typeof programTotal === "function") ? programTotal(programRows, "backlog") : 0;
+  const totalMBR = (typeof programTotal === "function") ? programTotal(programRows, "mbr") : 0;
+  const selected = selectedAggregateKecamatan();
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const heroKepemilikan = document.getElementById("backlogHeroKepemilikan");
+  if(heroKepemilikan) heroKepemilikan.textContent = fmt(totalBacklogKepemilikan);
+
+  const heroHunian = document.getElementById("backlogHeroHunian");
+  if(heroHunian) heroHunian.textContent = fmt(RTLH_AGGREGATE_DATA.backlogHunian);
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Backlog Program", totalProgramBacklog, "estimasi kebutuhan rumah"],
+      ["MBR Terdata", totalMBR, "masyarakat berpenghasilan rendah"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const backlogBody = document.getElementById("backlogOwnershipBody");
+  if(backlogBody){
+    const sourceText = RTLH_AGGREGATE_DATA.sumberBacklog;
+    const rowsHtml = backlogRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    backlogBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>Total ${fmt(totalBacklogKepemilikan)} unit. Sumber: ${escapeHtml(RTLH_AGGREGATE_DATA.sumberBacklog)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog menjawab kebutuhan rumah; berbeda dari RTLH yang menjawab kualitas rumah yang sudah ada.</span>
+      </div>
+    `;
+  }
+}
+
+
+/* Final override: isi tabel Backlog Kepemilikan per Kecamatan sesuai tabel upload user */
+const BACKLOG_KEPEMILIKAN_FINAL = [
+  { kecamatan: "GERUNGGANG", backlog: 1977 },
+  { kecamatan: "BUKIT INTAN", backlog: 1420 },
+  { kecamatan: "TAMAN SARI", backlog: 1571 },
+  { kecamatan: "GABEK", backlog: 1322 },
+  { kecamatan: "RANGKUI", backlog: 3084 },
+  { kecamatan: "PANGKALBALAM", backlog: 1450 },
+  { kecamatan: "GIRIMAYA", backlog: 1338 }
+];
+
+function getBacklogKepemilikanRows(){
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  if(selected === "all") return BACKLOG_KEPEMILIKAN_FINAL;
+  const target = normalizeKecamatanName(selected);
+  return BACKLOG_KEPEMILIKAN_FINAL.filter(row => normalizeKecamatanName(row.kecamatan) === target);
+}
+
+function renderBacklogAggregate(){
+  const backlogRows = getBacklogKepemilikanRows();
+  const programRows = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const totalBacklogKepemilikan = sumRows(backlogRows, "backlog");
+  const totalProgramBacklog = (typeof programTotal === "function") ? programTotal(programRows, "backlog") : 0;
+  const totalMBR = (typeof programTotal === "function") ? programTotal(programRows, "mbr") : 0;
+  const selected = selectedAggregateKecamatan();
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+  const sumberBacklog = "BKBKN YANG DIOLAH OLEH DINAS PERUMAHAN DAN KAWASAN PERMUKIMAN KOTA PANGKAL PINANG";
+
+  const heroKepemilikan = document.getElementById("backlogHeroKepemilikan");
+  if(heroKepemilikan) heroKepemilikan.textContent = fmt(totalBacklogKepemilikan);
+
+  const heroHunian = document.getElementById("backlogHeroHunian");
+  if(heroHunian) heroHunian.textContent = fmt(RTLH_AGGREGATE_DATA.backlogHunian);
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Backlog Program", totalProgramBacklog, "estimasi kebutuhan rumah"],
+      ["MBR Terdata", totalMBR, "masyarakat berpenghasilan rendah"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const backlogBody = document.getElementById("backlogOwnershipBody");
+  if(backlogBody){
+    const rowsHtml = backlogRows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    backlogBody.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>Total ${fmt(totalBacklogKepemilikan)} unit. Sumber: ${escapeHtml(sumberBacklog)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog menjawab kebutuhan rumah; berbeda dari RTLH yang menjawab kualitas rumah yang sudah ada.</span>
+      </div>
+    `;
+  }
+}
+
+
+/* FINAL FIX BACKLOG TABLE + SAFE RENDER */
+const BACKLOG_KEPEMILIKAN_TABLE_FINAL = [
+  { kecamatan: "GERUNGGANG", backlog: 1977 },
+  { kecamatan: "BUKIT INTAN", backlog: 1420 },
+  { kecamatan: "TAMAN SARI", backlog: 1571 },
+  { kecamatan: "GABEK", backlog: 1322 },
+  { kecamatan: "RANGKUI", backlog: 3084 },
+  { kecamatan: "PANGKALBALAM", backlog: 1450 },
+  { kecamatan: "GIRIMAYA", backlog: 1338 }
+];
+
+function renderBacklogAggregate(){
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const selectedKey = normalizeKecamatanName(selected);
+  const rows = selected === "all"
+    ? BACKLOG_KEPEMILIKAN_TABLE_FINAL
+    : BACKLOG_KEPEMILIKAN_TABLE_FINAL.filter(row => normalizeKecamatanName(row.kecamatan) === selectedKey);
+
+  const totalBacklogKepemilikan = rows.reduce((sum, row) => sum + Number(row.backlog || 0), 0);
+  const programRows = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const totalProgramBacklog = (typeof programTotal === "function") ? programTotal(programRows, "backlog") : 0;
+  const totalMBR = (typeof programTotal === "function") ? programTotal(programRows, "mbr") : 0;
+  const sumberBacklog = "BKBKN YANG DIOLAH OLEH DINAS PERUMAHAN DAN KAWASAN PERMUKIMAN KOTA PANGKAL PINANG";
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const heroKepemilikan = document.getElementById("backlogHeroKepemilikan");
+  if(heroKepemilikan) heroKepemilikan.textContent = fmt(totalBacklogKepemilikan);
+
+  const heroHunian = document.getElementById("backlogHeroHunian");
+  if(heroHunian) heroHunian.textContent = fmt(RTLH_AGGREGATE_DATA.backlogHunian);
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Backlog Program", totalProgramBacklog, "estimasi kebutuhan rumah"],
+      ["MBR Terdata", totalMBR, "masyarakat berpenghasilan rendah"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const body = document.getElementById("backlogOwnershipBody");
+  if(body){
+    const rowSpan = rows.length + 1;
+    const rowsHtml = rows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    body.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>Total ${fmt(totalBacklogKepemilikan)} unit. Sumber: ${escapeHtml(sumberBacklog)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog menjawab kebutuhan rumah; berbeda dari RTLH yang menjawab kualitas rumah yang sudah ada.</span>
+      </div>
+    `;
+  }
+}
+
+function safeRenderSIRUMAH(fn, name){
+  try {
+    if(typeof fn === "function") fn();
+  } catch (err) {
+    console.error(`Gagal render ${name}:`, err);
+  }
+}
+
+function renderAll(){
+  safeRenderSIRUMAH(renderKPI, "KPI");
+  safeRenderSIRUMAH(renderProgressUnit, "Progress Unit");
+  safeRenderSIRUMAH(renderCatatanStats, "Catatan Penting");
+  safeRenderSIRUMAH(renderTopPrioritas, "Top Prioritas");
+  safeRenderSIRUMAH(renderTable, "Data Perumahan");
+  safeRenderSIRUMAH(renderCharts, "Grafik");
+  safeRenderSIRUMAH(renderPSU, "PSU");
+  safeRenderSIRUMAH(renderRanking, "Ranking");
+  safeRenderSIRUMAH(renderBacklog, "Backlog & MBR");
+  safeRenderSIRUMAH(renderRTLH, "RTLH & RLH");
+  safeRenderSIRUMAH(renderLayanan, "Layanan");
+  safeRenderSIRUMAH(renderKolaborasi, "Kolaborasi");
+  safeRenderSIRUMAH(renderReportStats, "Laporan");
+  safeRenderSIRUMAH(renderMap, "Peta");
+}
+
+
+/* FINAL FIX: tabel Backlog Kepemilikan tanpa kolom Sumber */
+function renderBacklogAggregate(){
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const selectedKey = normalizeKecamatanName(selected);
+  const rows = selected === "all"
+    ? BACKLOG_KEPEMILIKAN_TABLE_FINAL
+    : BACKLOG_KEPEMILIKAN_TABLE_FINAL.filter(row => normalizeKecamatanName(row.kecamatan) === selectedKey);
+
+  const totalBacklogKepemilikan = rows.reduce((sum, row) => sum + Number(row.backlog || 0), 0);
+  const programRows = (typeof programKecamatanRows === "function") ? programKecamatanRows() : [];
+  const totalProgramBacklog = (typeof programTotal === "function") ? programTotal(programRows, "backlog") : 0;
+  const totalMBR = (typeof programTotal === "function") ? programTotal(programRows, "mbr") : 0;
+  const sumberBacklog = "BKBKN YANG DIOLAH OLEH DINAS PERUMAHAN DAN KAWASAN PERMUKIMAN KOTA PANGKAL PINANG";
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const heroKepemilikan = document.getElementById("backlogHeroKepemilikan");
+  if(heroKepemilikan) heroKepemilikan.textContent = fmt(totalBacklogKepemilikan);
+
+  const heroHunian = document.getElementById("backlogHeroHunian");
+  if(heroHunian) heroHunian.textContent = fmt(RTLH_AGGREGATE_DATA.backlogHunian);
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Backlog Program", totalProgramBacklog, "estimasi kebutuhan rumah"],
+      ["MBR Terdata", totalMBR, "masyarakat berpenghasilan rendah"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const body = document.getElementById("backlogOwnershipBody");
+  if(body){
+    const rowsHtml = rows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    body.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>Total ${fmt(totalBacklogKepemilikan)} unit. Sumber: ${escapeHtml(sumberBacklog)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total kota sebesar ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Catatan</strong>
+        <span>Backlog menjawab kebutuhan rumah; berbeda dari RTLH yang menjawab kualitas rumah yang sudah ada.</span>
+      </div>
+    `;
+  }
+}
+
+
+/* FINAL OVERRIDE: Backlog & MBR tanpa angka MBR yang belum terverifikasi */
+const BACKLOG_KEPEMILIKAN_VERIFIED = [
+  { kecamatan: "GERUNGGANG", backlog: 1977 },
+  { kecamatan: "BUKIT INTAN", backlog: 1420 },
+  { kecamatan: "TAMAN SARI", backlog: 1571 },
+  { kecamatan: "GABEK", backlog: 1322 },
+  { kecamatan: "RANGKUI", backlog: 3084 },
+  { kecamatan: "PANGKALBALAM", backlog: 1450 },
+  { kecamatan: "GIRIMAYA", backlog: 1338 }
+];
+
+function getBacklogKepemilikanVerifiedRows(){
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  if(selected === "all") return BACKLOG_KEPEMILIKAN_VERIFIED;
+  const target = normalizeKecamatanName(selected);
+  return BACKLOG_KEPEMILIKAN_VERIFIED.filter(row => normalizeKecamatanName(row.kecamatan) === target);
+}
+
+function renderBacklogAggregate(){
+  const rows = getBacklogKepemilikanVerifiedRows();
+  const totalBacklogKepemilikan = rows.reduce((sum, row) => sum + Number(row.backlog || 0), 0);
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const noteWilayah = selected === "all" ? "data agregat kota" : `Kecamatan ${selected}`;
+
+  const summaryEl = document.getElementById("backlogSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Backlog Kepemilikan", totalBacklogKepemilikan, noteWilayah],
+      ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+      ["Kecamatan Terdata", rows.length, selected === "all" ? "kecamatan" : "hasil filter kecamatan"],
+      ["Status Data MBR", "Verifikasi", "belum ditampilkan sebagai angka tetap"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${typeof item[1] === "number" ? fmt(item[1]) : item[1]}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const body = document.getElementById("backlogOwnershipBody");
+  if(body){
+    const rowsHtml = rows.map((row, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(row.kecamatan)}</strong></td>
+        <td>${fmt(row.backlog)}</td>
+      </tr>
+    `).join("");
+
+    body.innerHTML = rowsHtml + `
+      <tr>
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong>${fmt(totalBacklogKepemilikan)}</strong></td>
+      </tr>
+    `;
+  }
+
+  const sourceEl = document.getElementById("backlogSourceList");
+  if(sourceEl){
+    sourceEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog</strong>
+        <span>Menjawab jumlah kebutuhan rumah atau rumah tangga yang membutuhkan rumah.</span>
+      </div>
+      <div class="stat-row">
+        <strong>MBR</strong>
+        <span>Menjadi kelompok sasaran prioritas untuk bantuan, subsidi, FLPP, CSR, BAZNAS, atau fasilitasi program.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Keputusan Dashboard</strong>
+        <span>Angka MBR tidak ditampilkan sampai tersedia data resmi yang terintegrasi dan terverifikasi.</span>
+      </div>
+    `;
+  }
+
+  const noteEl = document.getElementById("backlogNoteList");
+  if(noteEl){
+    noteEl.innerHTML = `
+      <div class="stat-row">
+        <strong>Backlog Kepemilikan</strong>
+        <span>BKBKN yang diolah oleh Dinas Perumahan dan Kawasan Permukiman Kota Pangkalpinang.</span>
+      </div>
+      <div class="stat-row">
+        <strong>Backlog Hunian</strong>
+        <span>Total Kota Pangkalpinang: ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}.</span>
+      </div>
+    `;
+  }
+}
+
+function renderBacklog(){
+  renderBacklogAggregate();
+}
+
+/* Beranda disesuaikan: MBR tidak ditampilkan sebagai angka karena belum terverifikasi */
+function renderKPI(){
+  const s = summary(filtered);
+  const backlogRows = getBacklogKepemilikanVerifiedRows();
+  const totalBacklogKepemilikan = backlogRows.reduce((sum, row) => sum + Number(row.backlog || 0), 0);
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+  const totalJumlahRumah = sumRows(rumahRows, "jumlah");
+  const totalRTLH = sumRows(rumahRows, "rtlh");
+  const totalRLH = sumRows(rumahRows, "rlh");
+
+  const items = [
+    ["Total Perumahan", s.total, "data perumahan aktif"],
+    ["Total Site Plan", s.siteplan, "unit rencana"],
+    ["Total Terbangun", s.terbangun, `${pct(s.terbangun,s.siteplan)}% dari site plan`],
+    ["Total Terhuni", s.terhuni, `${pct(s.terhuni,s.terbangun)}% dari terbangun`],
+    ["Backlog Kepemilikan", totalBacklogKepemilikan, "data agregat terverifikasi"],
+    ["Backlog Hunian", RTLH_AGGREGATE_DATA.backlogHunian, "total Kota Pangkalpinang"],
+    ["RTLH Terdata", totalRTLH, `${percentValue(totalRTLH,totalJumlahRumah)}% dari jumlah rumah`],
+    ["RLH Terdata", totalRLH, `${percentValue(totalRLH,totalJumlahRumah)}% dari jumlah rumah`]
+  ];
+
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+  el.innerHTML = items.map(i => `
+    <div class="card kpi">
+      <div class="label">${i[0]}</div>
+      <div class="value">${fmt(i[1])}</div>
+      <div class="note">${i[2]}</div>
+    </div>
+  `).join("");
+}
+
+/* Laporan disesuaikan: MBR dicatat sebagai proses verifikasi, bukan angka */
+function generateReport(){
+  const s = summary(filtered);
+  const kec = document.getElementById("globalKecamatan")?.value || "all";
+  const wilayah = kec === "all" ? "Kota Pangkalpinang" : `Kecamatan ${kec}`;
+  const backlogRows = getBacklogKepemilikanVerifiedRows();
+  const backlogKepemilikan = backlogRows.reduce((sum,row)=>sum+Number(row.backlog||0),0);
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+  const totalJumlahRumah = sumRows(rumahRows,"jumlah");
+  const rtlh = sumRows(rumahRows,"rtlh");
+  const rlh = sumRows(rumahRows,"rlh");
+  const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\\n");
+  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+
+Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+
+Data backlog yang telah dimasukkan terdiri atas Backlog Kepemilikan sebanyak ${fmt(backlogKepemilikan)} unit dan Backlog Hunian sebanyak ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}. Data MBR belum ditampilkan sebagai angka tetap karena masih perlu integrasi dan verifikasi dengan perangkat daerah terkait.
+
+Pada modul RTLH dan RLH, tercatat jumlah rumah sebanyak ${fmt(totalJumlahRumah)} unit, terdiri dari RTLH sebanyak ${fmt(rtlh)} unit dan RLH sebanyak ${fmt(rlh)} unit.
+
+Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.
+
+Daftar prioritas awal berdasarkan skor dashboard:\\n${top}
+
+Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+  const reportEl = document.getElementById("reportText");
+  if(reportEl) reportEl.value = txt;
+}
+
+
+/* FINAL OVERRIDE BERANDA: ringkasan utama digabung menjadi 2 card saja */
+function renderKPI(){
+  const s = summary(filtered);
+  const backlogRows = (typeof getBacklogKepemilikanVerifiedRows === "function")
+    ? getBacklogKepemilikanVerifiedRows()
+    : (typeof getBacklogKepemilikanRows === "function" ? getBacklogKepemilikanRows() : []);
+  const totalBacklogKepemilikan = backlogRows.reduce((sum, row) => sum + Number(row.backlog || 0), 0);
+  const rumahRows = filterAggregateRows(RTLH_AGGREGATE_DATA.rumah);
+  const totalJumlahRumah = sumRows(rumahRows, "jumlah");
+  const totalRTLH = sumRows(rumahRows, "rtlh");
+  const totalRLH = sumRows(rumahRows, "rlh");
+
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+
+  el.className = "beranda-summary-grid";
+  el.innerHTML = `
+    <div class="summary-combo-card">
+      <div class="summary-combo-head">
+        <div>
+          <h3>Ringkasan Data Perumahan</h3>
+          <p>Data perumahan aktif, site plan, unit terbangun, dan unit terhuni.</p>
+        </div>
+      </div>
+      <div class="summary-mini-grid">
+        <div class="summary-mini">
+          <div class="mini-label">Total Perumahan</div>
+          <div class="mini-value">${fmt(s.total)}</div>
+          <div class="mini-note">data perumahan aktif</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">Total Site Plan</div>
+          <div class="mini-value">${fmt(s.siteplan)}</div>
+          <div class="mini-note">unit rencana</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">Total Terbangun</div>
+          <div class="mini-value">${fmt(s.terbangun)}</div>
+          <div class="mini-note">${pct(s.terbangun,s.siteplan)}% dari site plan</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">Total Terhuni</div>
+          <div class="mini-value">${fmt(s.terhuni)}</div>
+          <div class="mini-note">${pct(s.terhuni,s.terbangun)}% dari terbangun</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-combo-card">
+      <div class="summary-combo-head">
+        <div>
+          <h3>Ringkasan Backlog dan Kualitas Hunian</h3>
+          <p>Backlog kepemilikan, backlog hunian, RTLH, dan RLH.</p>
+        </div>
+      </div>
+      <div class="summary-mini-grid">
+        <div class="summary-mini">
+          <div class="mini-label">Backlog Kepemilikan</div>
+          <div class="mini-value">${fmt(totalBacklogKepemilikan)}</div>
+          <div class="mini-note">data agregat terverifikasi</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">Backlog Hunian</div>
+          <div class="mini-value">${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}</div>
+          <div class="mini-note">total Kota Pangkalpinang</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">RTLH Terdata</div>
+          <div class="mini-value">${fmt(totalRTLH)}</div>
+          <div class="mini-note">${percentValue(totalRTLH,totalJumlahRumah)}% dari jumlah rumah</div>
+        </div>
+        <div class="summary-mini">
+          <div class="mini-label">RLH Terdata</div>
+          <div class="mini-value">${fmt(totalRLH)}</div>
+          <div class="mini-note">${percentValue(totalRLH,totalJumlahRumah)}% dari jumlah rumah</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+
+/* FINAL OVERRIDE GRAFIK BERANDA:
+   Disesuaikan dengan data SIRUMAH terbaru.
+   MBR tidak ditampilkan sebagai angka karena masih proses integrasi/verifikasi. */
+function getAggregateHousingQualityRows(){
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const selectedKey = normalizeKecamatanName(selected);
+  const rows = RTLH_AGGREGATE_DATA.rumah.map(row => {
+    const backlog = BACKLOG_KEPEMILIKAN_VERIFIED.find(item => normalizeKecamatanName(item.kecamatan) === normalizeKecamatanName(row.kecamatan));
+    return {
+      kecamatan: row.kecamatan,
+      backlog: backlog ? Number(backlog.backlog || 0) : 0,
+      rtlh: Number(row.rtlh || 0),
+      rlh: Number(row.rlh || 0),
+      jumlah: Number(row.jumlah || 0)
+    };
+  });
+  return selected === "all" ? rows : rows.filter(row => normalizeKecamatanName(row.kecamatan) === selectedKey);
+}
+
+function renderCharts(){
+  const g = groupByKecamatan(filtered);
+
+  // Grafik data perumahan eksisting
+  drawBar("kecamatanChart", g.map(x=>x.kecamatan), [
+    {name:"Total", values:g.map(x=>x.total), color:"#175b72"},
+    {name:"Sudah PSU", values:g.map(x=>x.sudah), color:"#16a34a"},
+    {name:"Belum PSU", values:g.map(x=>x.belum), color:"#dc2626"}
+  ]);
+
+  const s = summary(filtered);
+  drawDonut("statusChart", [s.sudah,s.belum], ["Sudah PSU","Belum PSU"], ["#16a34a","#dc2626"]);
+
+  // Grafik SIRUMAH: Backlog Kepemilikan, RTLH, dan RLH per Kecamatan
+  const agg = getAggregateHousingQualityRows();
+  drawBar("sirBerandaChart", agg.map(x=>x.kecamatan), [
+    {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog), color:"#2563eb"},
+    {name:"RTLH", values:agg.map(x=>x.rtlh), color:"#dc2626"},
+    {name:"RLH", values:agg.map(x=>x.rlh), color:"#16a34a"}
+  ]);
+
+  // Diagram SIRUMAH: Komposisi kualitas hunian RTLH vs RLH
+  const totalRTLH = agg.reduce((sum,x)=>sum+x.rtlh,0);
+  const totalRLH = agg.reduce((sum,x)=>sum+x.rlh,0);
+  drawDonut("sirStatusChart", [totalRTLH,totalRLH], ["RTLH","RLH"], ["#dc2626","#16a34a"]);
+
+  // Grafik halaman Backlog lama tidak lagi digunakan, tetapi dibuat aman jika elemennya ada.
+  const backlogCanvas = document.getElementById("backlogChart");
+  if(backlogCanvas){
+    drawBar("backlogChart", agg.map(x=>x.kecamatan), [
+      {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog), color:"#2563eb"},
+      {name:"RTLH", values:agg.map(x=>x.rtlh), color:"#dc2626"}
+    ]);
+  }
+
+  const kolabRows = (typeof filterByGlobalKec === "function") ? filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi") : [];
+  const kolabCanvas = document.getElementById("kolabChart");
+  if(kolabCanvas){
+    drawDonut("kolabChart", kolabRows.map(x=>Math.max(1, Math.round(Number(x.nilai||0)/1000000))), kolabRows.map(x=>x.mitra), ["#16a34a", "#2563eb", "#d97706", "#7c3aed", "#0f766e"]);
+  }
+}
+
+
+/* FINAL OVERRIDE: tema warna dan template seluruh grafik/diagram SIRUMAH */
+const SIRUMAH_CHART_THEME = {
+  primary: "#175b72",
+  primaryDark: "#0f3f50",
+  gold: "#d3c584",
+  goldSoft: "#eadf9f",
+  teal: "#0f766e",
+  tealSoft: "#75b5ac",
+  copper: "#b7793b",
+  clay: "#9a6a4f",
+  slate: "#64748b",
+  grid: "#e2e8f0",
+  card: "#ffffff"
+};
+
+function themeColor(label, index){
+  const key = String(label || "").toLowerCase();
+  if(key.includes("total")) return SIRUMAH_CHART_THEME.primary;
+  if(key.includes("sudah")) return SIRUMAH_CHART_THEME.teal;
+  if(key.includes("belum")) return SIRUMAH_CHART_THEME.copper;
+  if(key.includes("backlog")) return SIRUMAH_CHART_THEME.primaryDark;
+  if(key.includes("rtlh")) return SIRUMAH_CHART_THEME.copper;
+  if(key.includes("rlh")) return SIRUMAH_CHART_THEME.teal;
+  if(key.includes("baznas")) return SIRUMAH_CHART_THEME.teal;
+  if(key.includes("csr")) return SIRUMAH_CHART_THEME.primary;
+  if(key.includes("pengembang")) return SIRUMAH_CHART_THEME.gold;
+  if(key.includes("perbankan") || key.includes("bank")) return SIRUMAH_CHART_THEME.clay;
+  const palette = [
+    SIRUMAH_CHART_THEME.primary,
+    SIRUMAH_CHART_THEME.gold,
+    SIRUMAH_CHART_THEME.teal,
+    SIRUMAH_CHART_THEME.copper,
+    SIRUMAH_CHART_THEME.primaryDark,
+    SIRUMAH_CHART_THEME.tealSoft
+  ];
+  return palette[index % palette.length];
+}
+
+function drawTextWrapped(ctx, text, x, y, maxWidth, lineHeight){
+  const words = String(text || "").split(" ");
+  let line = "";
+  let lines = [];
+  words.forEach(word => {
+    const test = line ? line + " " + word : word;
+    if(ctx.measureText(test).width > maxWidth && line){
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if(line) lines.push(line);
+  lines.slice(0,2).forEach((ln, i) => ctx.fillText(ln, x, y + (i * lineHeight)));
+}
+
+function niceMax(value){
+  const v = Math.max(1, Number(value || 1));
+  const pow = Math.pow(10, Math.floor(Math.log10(v)));
+  const n = Math.ceil(v / pow);
+  const nice = n <= 2 ? 2 : n <= 5 ? 5 : 10;
+  return nice * pow;
+}
+
+function drawBar(id, labels, datasets){
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  const w = Math.max(rect.width, 320);
+  const h = 260;
+
+  canvas.width = w * ratio;
+  canvas.height = h * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const colored = datasets.map((d, index) => ({
+    ...d,
+    color: themeColor(d.name || d.label || d.dataKey, index)
+  }));
+
+  const p = {top: 36, right: 18, bottom: 66, left: 54};
+  const vals = colored.flatMap(d => d.values || []);
+  const max = niceMax(Math.max(...vals, 1));
+  const plotW = w - p.left - p.right;
+  const plotH = h - p.top - p.bottom;
+  const groupW = plotW / Math.max(labels.length, 1);
+  const barW = Math.max(5, Math.min(26, (groupW - 18) / Math.max(colored.length, 1)));
+
+  // Grid dan axis
+  ctx.strokeStyle = SIRUMAH_CHART_THEME.grid;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = SIRUMAH_CHART_THEME.slate;
+  ctx.font = "11px Arial";
+  ctx.textAlign = "right";
+
+  for(let i = 0; i <= 4; i++){
+    const y = p.top + plotH - (plotH * i / 4);
+    const val = Math.round(max * i / 4);
+    ctx.beginPath();
+    ctx.moveTo(p.left, y);
+    ctx.lineTo(w - p.right, y);
+    ctx.stroke();
+    ctx.fillText(fmt(val), p.left - 8, y + 4);
+  }
+
+  // Bars
+  colored.forEach((dataset, di) => {
+    (dataset.values || []).forEach((value, i) => {
+      const x = p.left + i * groupW + (groupW - (barW * colored.length)) / 2 + di * barW;
+      const bh = Math.max(0, (Number(value || 0) / max) * plotH);
+      const y = p.top + plotH - bh;
+
+      ctx.fillStyle = dataset.color;
+      roundRect(ctx, x, y, Math.max(3, barW - 4), bh, 7);
+      ctx.fill();
+
+      // subtle highlight
+      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      roundRect(ctx, x + 2, y + 2, Math.max(1, barW - 8), Math.max(0, bh - 4), 6);
+      ctx.fill();
+    });
+  });
+
+  // X labels
+  ctx.fillStyle = "#475569";
+  ctx.font = "11px Arial";
+  ctx.textAlign = "right";
+  labels.forEach((label, i) => {
+    const x = p.left + i * groupW + groupW / 2;
+    ctx.save();
+    ctx.translate(x, h - 35);
+    ctx.rotate(-0.38);
+    ctx.fillText(label, 0, 0);
+    ctx.restore();
+  });
+
+  // Legend
+  ctx.textAlign = "left";
+  ctx.font = "12px Arial";
+  let lx = p.left;
+  let ly = 16;
+  colored.forEach(dataset => {
+    const label = dataset.name || dataset.label || "";
+    const width = ctx.measureText(label).width + 34;
+    if(lx + width > w - p.right){
+      lx = p.left;
+      ly += 18;
+    }
+    ctx.fillStyle = dataset.color;
+    roundRect(ctx, lx, ly - 8, 11, 11, 3);
+    ctx.fill();
+    ctx.fillStyle = "#475569";
+    ctx.fillText(label, lx + 17, ly + 2);
+    lx += width;
+  });
+}
+
+function drawDonut(id, values, labels, colors){
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  const w = Math.max(rect.width, 320);
+  const h = 260;
+
+  canvas.width = w * ratio;
+  canvas.height = h * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const total = values.reduce((a,b) => a + Number(b || 0), 0) || 1;
+  const chartColors = labels.map((label, index) => colors?.[index] || themeColor(label, index));
+
+  const sideLegend = w >= 560;
+  const cx = sideLegend ? Math.min(w * 0.36, 250) : w / 2;
+  const cy = sideLegend ? 122 : 96;
+  const outer = sideLegend ? 78 : 72;
+  const inner = sideLegend ? 45 : 42;
+
+  let start = -Math.PI / 2;
+
+  values.forEach((value, i) => {
+    const angle = (Number(value || 0) / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, outer, start, start + angle);
+    ctx.closePath();
+    ctx.fillStyle = chartColors[i];
+    ctx.fill();
+
+    // separators
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    start += angle;
+  });
+
+  // inner hole
+  ctx.beginPath();
+  ctx.arc(cx, cy, inner, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  ctx.fillStyle = SIRUMAH_CHART_THEME.primaryDark;
+  ctx.font = "bold 22px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(fmt(total), cx, cy + 7);
+
+  // Legend
+  ctx.font = "12px Arial";
+  ctx.textAlign = "left";
+
+  const legendX = sideLegend ? Math.min(w * 0.62, w - 245) : 22;
+  let legendY = sideLegend ? 82 : 198;
+  const maxLabelW = sideLegend ? (w - legendX - 30) : (w / Math.min(labels.length, 2) - 45);
+
+  labels.forEach((label, i) => {
+    const x = sideLegend ? legendX : 22 + (i % 2) * (w / 2);
+    const y = sideLegend ? legendY + i * 32 : legendY + Math.floor(i / 2) * 22;
+
+    ctx.fillStyle = chartColors[i];
+    roundRect(ctx, x, y - 10, 11, 11, 3);
+    ctx.fill();
+
+    ctx.fillStyle = "#475569";
+    const txt = `${label}: ${fmt(values[i])} (${pct(values[i], total)}%)`;
+    drawTextWrapped(ctx, txt, x + 18, y, maxLabelW, 14);
+  });
+}
+
+function renderCharts(){
+  const g = groupByKecamatan(filtered);
+
+  // 1. Grafik jumlah perumahan dan status PSU per kecamatan
+  drawBar("kecamatanChart", g.map(x=>x.kecamatan), [
+    {name:"Total Perumahan", values:g.map(x=>x.total)},
+    {name:"PSU Sudah Diserahkan", values:g.map(x=>x.sudah)},
+    {name:"PSU Belum Diserahkan", values:g.map(x=>x.belum)}
+  ]);
+
+  // 2. Diagram status penyerahan PSU
+  const s = summary(filtered);
+  drawDonut("statusChart", [s.sudah, s.belum], ["PSU Sudah Diserahkan", "PSU Belum Diserahkan"]);
+
+  // 3. Grafik SIRUMAH: backlog kepemilikan dan RTLH per kecamatan
+  const agg = getAggregateHousingQualityRows();
+  drawBar("sirBerandaChart", agg.map(x=>x.kecamatan), [
+    {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog)},
+    {name:"RTLH", values:agg.map(x=>x.rtlh)}
+  ]);
+
+  // 4. Diagram kualitas hunian
+  const totalRTLH = agg.reduce((sum,x)=>sum+x.rtlh,0);
+  const totalRLH = agg.reduce((sum,x)=>sum+x.rlh,0);
+  drawDonut("sirStatusChart", [totalRTLH,totalRLH], ["RTLH", "RLH"]);
+
+  // 5. Grafik backlog bila elemen tersedia
+  if(document.getElementById("backlogChart")){
+    drawBar("backlogChart", agg.map(x=>x.kecamatan), [
+      {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog)},
+      {name:"RTLH", values:agg.map(x=>x.rtlh)}
+    ]);
+  }
+
+  // 6. Diagram kolaborasi bila elemen tersedia
+  const kolabRows = (typeof filterByGlobalKec === "function") ? filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi") : [];
+  if(document.getElementById("kolabChart") && kolabRows.length){
+    drawDonut(
+      "kolabChart",
+      kolabRows.map(x=>Math.max(1, Math.round(Number(x.nilai||0)/1000000))),
+      kolabRows.map(x=>x.mitra)
+    );
+  }
+}
+
+
+
+
+/* ================================
+   MODUL RUSUNAWA FINAL
+   Grafik/diagram, pengaduan, dan prioritas pemeliharaan sudah dihapus
+   ================================ */
+const RUSUNAWA_DATA = {
+  name: "RUSUNAWA Kota Pangkalpinang",
+  units: [
+    { block: "Blok A / Lantai 1", unit: "A-101", type: "Tipe 24", status: "Terisi", condition: "Baik", note: "Penghuni aktif" },
+    { block: "Blok A / Lantai 1", unit: "A-102", type: "Tipe 24", status: "Terisi", condition: "Baik", note: "Penghuni aktif" },
+    { block: "Blok A / Lantai 2", unit: "A-201", type: "Tipe 24", status: "Kosong", condition: "Baik", note: "Siap huni" },
+    { block: "Blok A / Lantai 2", unit: "A-202", type: "Tipe 24", status: "Dalam Perbaikan", condition: "Rusak Ringan", note: "Perbaikan plafon" },
+    { block: "Blok B / Lantai 1", unit: "B-101", type: "Tipe 24", status: "Terisi", condition: "Baik", note: "Penghuni aktif" },
+    { block: "Blok B / Lantai 1", unit: "B-102", type: "Tipe 24", status: "Terisi", condition: "Rusak Ringan", note: "Perlu perbaikan kran" },
+    { block: "Blok B / Lantai 2", unit: "B-201", type: "Tipe 24", status: "Kosong", condition: "Rusak Sedang", note: "Perlu pengecatan dan perbaikan pintu" },
+    { block: "Blok B / Lantai 2", unit: "B-202", type: "Tipe 24", status: "Terisi", condition: "Baik", note: "Penghuni aktif" }
+  ],
+  payments: [
+    { month: "Jan", target: 12000000, realization: 10800000, arrears: 1200000 },
+    { month: "Feb", target: 12000000, realization: 11100000, arrears: 900000 },
+    { month: "Mar", target: 12000000, realization: 9600000, arrears: 2400000 },
+    { month: "Apr", target: 12000000, realization: 11400000, arrears: 600000 },
+    { month: "Mei", target: 12000000, realization: 10200000, arrears: 1800000 },
+    { month: "Jun", target: 12000000, realization: 11600000, arrears: 400000 }
+  ],
+  facilities: [
+    { component: "Atap dan talang", condition: "Baik", priority: "Rendah", followup: "Pemeliharaan rutin" },
+    { component: "Air bersih", condition: "Gangguan Ringan", priority: "Sedang", followup: "Pemeriksaan pompa dan instalasi" },
+    { component: "Listrik koridor", condition: "Baik", priority: "Rendah", followup: "Pengecekan berkala" },
+    { component: "Drainase lingkungan", condition: "Perlu Pembersihan", priority: "Sedang", followup: "Pembersihan saluran" },
+    { component: "IPAL / septic tank", condition: "Perlu Pemantauan", priority: "Tinggi", followup: "Jadwalkan penyedotan/pemeriksaan" },
+    { component: "Tangga dan railing", condition: "Baik", priority: "Rendah", followup: "Pemeliharaan rutin" },
+    { component: "Area parkir", condition: "Rusak Ringan", priority: "Sedang", followup: "Tambal permukaan rusak" }
+  ]
+};
+
+function rupiah(value){
+  return "Rp" + fmt(value);
+}
+
+function countRusunawaBy(rows, key, value){
+  return rows.filter(row => String(row[key] || "").toLowerCase() === String(value || "").toLowerCase()).length;
+}
+
+function rusunawaBadge(status){
+  const s = String(status || "");
+  let cls = "blue";
+  const low = s.toLowerCase();
+  if(low.includes("baik") || low.includes("terisi") || low.includes("selesai") || low.includes("rendah")) cls = "green";
+  else if(low.includes("kosong") || low.includes("sedang") || low.includes("diverifikasi") || low.includes("ditindaklanjuti")) cls = "orange";
+  else if(low.includes("tinggi") || low.includes("rusak") || low.includes("masuk") || low.includes("perbaikan") || low.includes("gangguan")) cls = "red";
+  return `<span class="badge ${cls}">${escapeHtml(s)}</span>`;
+}
+
+function renderRusunawa(){
+  const units = RUSUNAWA_DATA.units;
+  const payments = RUSUNAWA_DATA.payments;
+
+  const totalUnits = units.length;
+  const filled = countRusunawaBy(units, "status", "Terisi");
+  const vacant = countRusunawaBy(units, "status", "Kosong");
+  const repair = countRusunawaBy(units, "status", "Dalam Perbaikan");
+  const occupancyRate = pct(filled, totalUnits);
+  const totalTarget = payments.reduce((sum,row)=>sum+Number(row.target||0),0);
+  const totalRealization = payments.reduce((sum,row)=>sum+Number(row.realization||0),0);
+  const totalArrears = payments.reduce((sum,row)=>sum+Number(row.arrears||0),0);
+  const goodUnits = countRusunawaBy(units, "condition", "Baik");
+  const needRepair = units.filter(row => String(row.condition || "").toLowerCase().includes("rusak")).length;
+
+  const summaryEl = document.getElementById("rusunawaSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Jumlah Unit", totalUnits, "unit RUSUNAWA terdata"],
+      ["Unit Terisi", filled, `${occupancyRate}% tingkat hunian`],
+      ["Unit Kosong", vacant, "siap/verifikasi pemanfaatan"],
+      ["Dalam Perbaikan", repair, "unit perlu tindak lanjut"],
+      ["Realisasi Retribusi", totalRealization, `${pct(totalRealization,totalTarget)}% dari target`, "rupiah"],
+      ["Tunggakan", totalArrears, "akumulasi data contoh", "rupiah"],
+      ["Kondisi Baik", goodUnits, "unit dalam kondisi baik"],
+      ["Perlu Perbaikan", needRepair, "unit rusak ringan/sedang"]
+    ];
+    summaryEl.innerHTML = items.map(item => `
+      <div class="card kpi">
+        <div class="label">${item[0]}</div>
+        <div class="value">${item[3] === "rupiah" ? rupiah(item[1]) : fmt(item[1])}</div>
+        <div class="note">${item[2]}</div>
+      </div>
+    `).join("");
+  }
+
+  const unitBody = document.getElementById("rusunawaUnitBody");
+  if(unitBody){
+    unitBody.innerHTML = units.map((row,index)=>`
+      <tr>
+        <td>${index+1}</td>
+        <td>${escapeHtml(row.block)}</td>
+        <td><strong>${escapeHtml(row.unit)}</strong></td>
+        <td>${escapeHtml(row.type)}</td>
+        <td>${rusunawaBadge(row.status)}</td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${escapeHtml(row.note)}</td>
+      </tr>
+    `).join("");
+  }
+
+  const paymentBody = document.getElementById("rusunawaPaymentBody");
+  if(paymentBody){
+    paymentBody.innerHTML = payments.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.month)}</strong></td>
+        <td>${rupiah(row.target)}</td>
+        <td>${rupiah(row.realization)}</td>
+        <td>${rupiah(row.arrears)}</td>
+        <td>${pct(row.realization,row.target)}%</td>
+      </tr>
+    `).join("") + `
+      <tr>
+        <td><strong>TOTAL</strong></td>
+        <td><strong>${rupiah(totalTarget)}</strong></td>
+        <td><strong>${rupiah(totalRealization)}</strong></td>
+        <td><strong>${rupiah(totalArrears)}</strong></td>
+        <td><strong>${pct(totalRealization,totalTarget)}%</strong></td>
+      </tr>
+    `;
+  }
+
+  const facilityBody = document.getElementById("rusunawaFacilityBody");
+  if(facilityBody){
+    facilityBody.innerHTML = RUSUNAWA_DATA.facilities.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.component)}</strong></td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${rusunawaBadge(row.priority)}</td>
+        <td>${escapeHtml(row.followup)}</td>
+      </tr>
+    `).join("");
+  }
+}
+
+/* FINAL OVERRIDE: renderAll memasukkan modul RUSUNAWA tanpa grafik/diagram */
+function renderAll(){
+  safeRenderSIRUMAH(renderKPI, "KPI");
+  safeRenderSIRUMAH(renderProgressUnit, "Progress Unit");
+  safeRenderSIRUMAH(renderCatatanStats, "Catatan Penting");
+  safeRenderSIRUMAH(renderTopPrioritas, "Top Prioritas");
+  safeRenderSIRUMAH(renderTable, "Data Perumahan");
+  safeRenderSIRUMAH(renderCharts, "Grafik");
+  safeRenderSIRUMAH(renderPSU, "PSU");
+  safeRenderSIRUMAH(renderRanking, "Ranking");
+  safeRenderSIRUMAH(renderBacklog, "Backlog & MBR");
+  safeRenderSIRUMAH(renderRTLH, "RTLH & RLH");
+  safeRenderSIRUMAH(renderRusunawa, "RUSUNAWA");
+  safeRenderSIRUMAH(renderLayanan, "Layanan");
+  safeRenderSIRUMAH(renderKolaborasi, "Kolaborasi");
+  safeRenderSIRUMAH(renderReportStats, "Laporan");
+  safeRenderSIRUMAH(renderMap, "Peta");
+}
+
+
+/* FINAL OVERRIDE RUSUNAWA v25:
+   - Ringkasan utama digabung menjadi satu card.
+   - Kolom Tunggakan pada tabel retribusi dihapus. */
+function renderRusunawa(){
+  const units = RUSUNAWA_DATA.units;
+  const payments = RUSUNAWA_DATA.payments;
+
+  const totalUnits = units.length;
+  const filled = countRusunawaBy(units, "status", "Terisi");
+  const vacant = countRusunawaBy(units, "status", "Kosong");
+  const repair = countRusunawaBy(units, "status", "Dalam Perbaikan");
+  const occupancyRate = pct(filled, totalUnits);
+  const totalTarget = payments.reduce((sum,row)=>sum+Number(row.target||0),0);
+  const totalRealization = payments.reduce((sum,row)=>sum+Number(row.realization||0),0);
+  const totalArrears = payments.reduce((sum,row)=>sum+Number(row.arrears||0),0);
+  const goodUnits = countRusunawaBy(units, "condition", "Baik");
+  const needRepair = units.filter(row => String(row.condition || "").toLowerCase().includes("rusak")).length;
+
+  const summaryEl = document.getElementById("rusunawaSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Jumlah Unit", totalUnits, "unit RUSUNAWA terdata"],
+      ["Unit Terisi", filled, `${occupancyRate}% tingkat hunian`],
+      ["Unit Kosong", vacant, "siap/verifikasi pemanfaatan"],
+      ["Dalam Perbaikan", repair, "unit perlu tindak lanjut"],
+      ["Realisasi Retribusi", totalRealization, `${pct(totalRealization,totalTarget)}% dari target`, "rupiah"],
+      ["Tunggakan", totalArrears, "rekap internal"],
+      ["Kondisi Baik", goodUnits, "unit dalam kondisi baik"],
+      ["Perlu Perbaikan", needRepair, "unit rusak ringan/sedang"]
+    ];
+
+    summaryEl.className = "rusunawa-summary-card";
+    summaryEl.innerHTML = `
+      <div class="summary-combo-card">
+        <div class="summary-combo-head">
+          <div>
+            <h3>Ringkasan Utama RUSUNAWA</h3>
+            <p>Rekap unit, tingkat hunian, retribusi, kondisi unit, dan kebutuhan perbaikan.</p>
+          </div>
+        </div>
+        <div class="summary-mini-grid">
+          ${items.map(item => `
+            <div class="summary-mini">
+              <div class="mini-label">${item[0]}</div>
+              <div class="mini-value">${item[3] === "rupiah" ? rupiah(item[1]) : fmt(item[1])}</div>
+              <div class="mini-note">${item[2]}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  const unitBody = document.getElementById("rusunawaUnitBody");
+  if(unitBody){
+    unitBody.innerHTML = units.map((row,index)=>`
+      <tr>
+        <td>${index+1}</td>
+        <td>${escapeHtml(row.block)}</td>
+        <td><strong>${escapeHtml(row.unit)}</strong></td>
+        <td>${escapeHtml(row.type)}</td>
+        <td>${rusunawaBadge(row.status)}</td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${escapeHtml(row.note)}</td>
+      </tr>
+    `).join("");
+  }
+
+  const paymentBody = document.getElementById("rusunawaPaymentBody");
+  if(paymentBody){
+    paymentBody.innerHTML = payments.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.month)}</strong></td>
+        <td>${rupiah(row.target)}</td>
+        <td>${rupiah(row.realization)}</td>
+        <td>${pct(row.realization,row.target)}%</td>
+      </tr>
+    `).join("") + `
+      <tr>
+        <td><strong>TOTAL</strong></td>
+        <td><strong>${rupiah(totalTarget)}</strong></td>
+        <td><strong>${rupiah(totalRealization)}</strong></td>
+        <td><strong>${pct(totalRealization,totalTarget)}%</strong></td>
+      </tr>
+    `;
+  }
+
+  const facilityBody = document.getElementById("rusunawaFacilityBody");
+  if(facilityBody){
+    facilityBody.innerHTML = RUSUNAWA_DATA.facilities.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.component)}</strong></td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${rusunawaBadge(row.priority)}</td>
+        <td>${escapeHtml(row.followup)}</td>
+      </tr>
+    `).join("");
+  }
+}
+
+
+/* FINAL OVERRIDE RUSUNAWA v26:
+   Card Tunggakan diganti menjadi Unit Siap Huni. */
+function renderRusunawa(){
+  const units = RUSUNAWA_DATA.units;
+  const payments = RUSUNAWA_DATA.payments;
+
+  const totalUnits = units.length;
+  const filled = countRusunawaBy(units, "status", "Terisi");
+  const vacant = countRusunawaBy(units, "status", "Kosong");
+  const repair = countRusunawaBy(units, "status", "Dalam Perbaikan");
+  const occupancyRate = pct(filled, totalUnits);
+  const totalTarget = payments.reduce((sum,row)=>sum+Number(row.target||0),0);
+  const totalRealization = payments.reduce((sum,row)=>sum+Number(row.realization||0),0);
+  const goodUnits = countRusunawaBy(units, "condition", "Baik");
+  const needRepair = units.filter(row => String(row.condition || "").toLowerCase().includes("rusak")).length;
+  const readyUnits = units.filter(row =>
+    String(row.status || "").toLowerCase() === "kosong" &&
+    String(row.condition || "").toLowerCase() === "baik"
+  ).length;
+
+  const summaryEl = document.getElementById("rusunawaSummaryGrid");
+  if(summaryEl){
+    const items = [
+      ["Jumlah Unit", totalUnits, "unit RUSUNAWA terdata"],
+      ["Unit Terisi", filled, `${occupancyRate}% tingkat hunian`],
+      ["Unit Kosong", vacant, "perlu verifikasi pemanfaatan"],
+      ["Dalam Perbaikan", repair, "unit perlu tindak lanjut"],
+      ["Realisasi Retribusi", totalRealization, `${pct(totalRealization,totalTarget)}% dari target`, "rupiah"],
+      ["Unit Siap Huni", readyUnits, "kosong dengan kondisi baik"],
+      ["Kondisi Baik", goodUnits, "unit dalam kondisi baik"],
+      ["Perlu Perbaikan", needRepair, "unit rusak ringan/sedang"]
+    ];
+
+    summaryEl.className = "rusunawa-summary-card";
+    summaryEl.innerHTML = `
+      <div class="summary-combo-card">
+        <div class="summary-combo-head">
+          <div>
+            <h3>Ringkasan Utama RUSUNAWA</h3>
+            <p>Rekap unit, tingkat hunian, retribusi, kondisi unit, dan kesiapan pemanfaatan unit.</p>
+          </div>
+        </div>
+        <div class="summary-mini-grid">
+          ${items.map(item => `
+            <div class="summary-mini">
+              <div class="mini-label">${item[0]}</div>
+              <div class="mini-value">${item[3] === "rupiah" ? rupiah(item[1]) : fmt(item[1])}</div>
+              <div class="mini-note">${item[2]}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  const unitBody = document.getElementById("rusunawaUnitBody");
+  if(unitBody){
+    unitBody.innerHTML = units.map((row,index)=>`
+      <tr>
+        <td>${index+1}</td>
+        <td>${escapeHtml(row.block)}</td>
+        <td><strong>${escapeHtml(row.unit)}</strong></td>
+        <td>${escapeHtml(row.type)}</td>
+        <td>${rusunawaBadge(row.status)}</td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${escapeHtml(row.note)}</td>
+      </tr>
+    `).join("");
+  }
+
+  const paymentBody = document.getElementById("rusunawaPaymentBody");
+  if(paymentBody){
+    paymentBody.innerHTML = payments.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.month)}</strong></td>
+        <td>${rupiah(row.target)}</td>
+        <td>${rupiah(row.realization)}</td>
+        <td>${pct(row.realization,row.target)}%</td>
+      </tr>
+    `).join("") + `
+      <tr>
+        <td><strong>TOTAL</strong></td>
+        <td><strong>${rupiah(totalTarget)}</strong></td>
+        <td><strong>${rupiah(totalRealization)}</strong></td>
+        <td><strong>${pct(totalRealization,totalTarget)}%</strong></td>
+      </tr>
+    `;
+  }
+
+  const facilityBody = document.getElementById("rusunawaFacilityBody");
+  if(facilityBody){
+    facilityBody.innerHTML = RUSUNAWA_DATA.facilities.map(row=>`
+      <tr>
+        <td><strong>${escapeHtml(row.component)}</strong></td>
+        <td>${rusunawaBadge(row.condition)}</td>
+        <td>${rusunawaBadge(row.priority)}</td>
+        <td>${escapeHtml(row.followup)}</td>
+      </tr>
+    `).join("");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);
