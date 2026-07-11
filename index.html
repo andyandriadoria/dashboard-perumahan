@@ -186,6 +186,8 @@
     .footer-note{font-size:12px;line-height:1.55;color:var(--muted);margin-top:18px;padding:14px 16px;border:1px dashed #cbd5e1;border-radius:14px;background:rgba(255,255,255,.72)}
     .public-note{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px}
     body.public-mode .private-only{display:none!important}
+    body.public-mode #layanan .grid.two-col{grid-template-columns:1fr}
+    body.public-mode #layanan .grid.two-col > .card:not(.private-only){grid-column:1/-1}
 
 
     /* Mode akses Publik / Internal */
@@ -991,7 +993,7 @@
         <button class="btn" type="button" onclick="exportSectionCSV('data-perumahan')">Export CSV Data Perumahan</button>
       </div>
       <div class="filters">
-        <input id="searchInput" placeholder="Cari nama perumahan, pengembang, alamat, catatan..." oninput="applyFilters()" />
+        <input id="searchInput" placeholder="Cari nama perumahan, pengembang, atau alamat..." oninput="applyFilters()" />
         <select id="filterKategori" onchange="applyFilters()"><option value="all">Semua Kategori</option></select>
         <select id="filterStatus" onchange="applyFilters()">
           <option value="all">Semua Status PSU</option>
@@ -1007,7 +1009,7 @@
         <button class="btn light" onclick="resetDataPerumahanFilters()">Reset Filter</button>
       </div>
 
-      <div class="filter-panel">
+      <div class="filter-panel private-only">
         <div class="filter-panel-title">Filter Catatan:</div>
         <div class="checkbox-grid">
           <label class="checkbox-option"><input type="checkbox" class="catatan-filter" value="pengembang tidak aktif" onchange="applyFilters()"> Pengembang tidak aktif</label>
@@ -1281,10 +1283,10 @@
     <section class="section" id="layanan">
         <div class="section-actionbar">
           <button class="btn light" type="button" onclick="printDashboardSection('layanan','Layanan dan Pengaduan SIRUMAH')">Cetak / PDF Layanan</button>
-          <button class="btn" type="button" onclick="exportSectionCSV('layanan')">Export CSV Layanan</button>
+          <button class="btn private-only" type="button" onclick="exportSectionCSV('layanan')">Export CSV Layanan</button>
         </div>
         <div class="grid two-col">
-          <div class="card pad">
+          <div class="card pad private-only">
             <h3 style="margin-bottom:12px;">Form Input Layanan / Pengaduan</h3>
             <div id="layananApiStatus" class="layanan-api-status loading">Menghubungkan rekap layanan ke Google Sheets…</div>
             <div class="form-grid">
@@ -1336,7 +1338,7 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:18px;">
+        <div class="card private-only" style="margin-top:18px;">
           <div class="card-header">
             <div>
               <h3>Daftar Layanan dan Pengaduan</h3>
@@ -1487,7 +1489,7 @@
     <section class="section" id="rusunawa">
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('rusunawa','Pengelolaan RUSUNAWA SIRUMAH')">Cetak / PDF RUSUNAWA</button>
-        <button class="btn" type="button" onclick="exportSectionCSV('rusunawa')">Export CSV RUSUNAWA</button>
+        <button class="btn private-only" type="button" onclick="exportSectionCSV('rusunawa')">Export CSV RUSUNAWA</button>
       </div>
       <div class="card pad" style="margin-bottom:18px;">
         <h3 style="margin-bottom:6px;">Pengelolaan RUSUNAWA Kota Pangkalpinang</h3>
@@ -1505,7 +1507,7 @@
 
       <div class="grid kpi-grid" id="rusunawaSummaryGrid" style="margin-bottom:18px;"></div>
 
-      <div class="grid two-col" style="margin-bottom:18px;">
+      <div class="grid two-col private-only" style="margin-bottom:18px;">
         <div class="card">
           <div class="card-header">
             <div>
@@ -1554,7 +1556,7 @@
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:18px;">
+      <div class="card private-only" style="margin-bottom:18px;">
         <div class="card-header">
           <div>
             <h3>Kondisi Bangunan dan Sarana Prasarana</h3>
@@ -1697,7 +1699,7 @@ let publicMode = true;
 
 /*
   KONFIGURASI AKSES SIRUMAH
-  - PIN sementara v39 adalah 2026.
+  - PIN sementara v40 adalah 2026.
   - Nilai yang disimpan adalah hash SHA-256, bukan teks PIN.
   - hiddenSections dapat diisi nanti, contoh: ["integrasi", "laporan"].
   - Elemen dengan class .private-only otomatis tidak tampil pada Mode Publik.
@@ -1707,8 +1709,8 @@ const SIRUMAH_ACCESS_CONFIG = {
   maxFailedAttempts: 5,
   lockDurationMs: 60 * 1000,
   publicMode: {
-    hiddenSections: [],
-    description: "Informasi internal dan data pribadi yang ditandai tidak ditampilkan."
+    hiddenSections: ["psu", "integrasi", "laporan"],
+    description: "Mode publik menampilkan data agregat. Menu PSU & RTH, Integrasi, Laporan, data individu, catatan internal, dan rincian operasional RUSUNAWA disembunyikan."
   }
 };
 let failedInternalPinAttempts = 0;
@@ -1940,14 +1942,17 @@ function applyFilters(){
   const tahun = document.getElementById("filterTahun")?.value || "all";
   const sortTahun = document.getElementById("sortTahun")?.value || "default";
 
-  const selectedCatatan = Array.from(document.querySelectorAll(".catatan-filter:checked"))
+  const selectedCatatan = publicMode ? [] : Array.from(document.querySelectorAll(".catatan-filter:checked"))
     .map(el => el.value.toLowerCase());
 
   const selectedUsia = Array.from(document.querySelectorAll(".usia-filter:checked"))
     .map(el => el.value);
 
   filtered = housing.filter(x => {
-    const text = [x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.statusPSU,x.tahunPSU,x.catatan].join(" ").toLowerCase();
+    const searchableFields = publicMode
+      ? [x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.asosiasi,x.statusPSU,x.tahunPSU]
+      : [x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.statusPSU,x.tahunPSU,x.catatan];
+    const text = searchableFields.join(" ").toLowerCase();
     const catatanText = String(x.catatan || "").toLowerCase();
 
     const matchCatatan = selectedCatatan.length === 0 ||
@@ -2062,7 +2067,7 @@ function renderTopPrioritas(){
 
 function renderTable(){
   const headersInternal = ["NO","NAMA PERUMAHAN","KATEGORI","TAHUN","ALAMAT","KELURAHAN","KECAMATAN","PENGEMBANG","DIREKTUR/PELAKSANA","ASOSIASI","SITE PLAN","TERBANGUN","TERHUNI","PROGRESS BANGUN","PROGRESS HUNI","STATUS PSU","TAHUN PSU","USIA","CATATAN"];
-  const headersPublic = headersInternal.filter(h => h !== "DIREKTUR/PELAKSANA");
+  const headersPublic = headersInternal.filter(h => !["DIREKTUR/PELAKSANA","CATATAN"].includes(h));
   const headers = publicMode ? headersPublic : headersInternal;
   document.getElementById("housingHead").innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr>`;
 
@@ -2091,7 +2096,10 @@ function renderTable(){
       badge(x.ageCat),
       noteBadges(x.catatan)
     ];
-    if(publicMode) cells.splice(8,1);
+    if(publicMode){
+      cells.splice(18,1); // CATATAN
+      cells.splice(8,1);  // DIREKTUR/PELAKSANA
+    }
     return `<tr>${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
   }).join("") : `<tr><td colspan="${headers.length}" style="text-align:center;color:#64748b;padding:28px;">Tidak ada data sesuai filter.</td></tr>`;
 
@@ -2229,7 +2237,7 @@ function renderMap(){
         ${escapeHtml(x.kelurahan)}, ${escapeHtml(x.kecamatan)}<br>
         ${badge(x.statusPSU)}<br>
         Site plan: ${fmt(x.siteplan)} unit<br>
-        ${noteBadges(x.catatan)}
+        ${publicMode ? "" : noteBadges(x.catatan)}
         <div style="margin-top:10px;display:grid;gap:4px;">
           <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="color:#2563eb;font-weight:800;text-decoration:underline;">&gt;&gt; Buka di Google Maps</a>
           <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" style="color:#dc2626;font-weight:800;text-decoration:underline;">&gt;&gt; Street View</a>
@@ -2306,7 +2314,7 @@ function exportCSV(fileName="data_perumahan_sirumah.csv"){
     ["Status PSU",x=>x.statusPSU],
     ["Tahun PSU",x=>x.tahunPSU],
     ["Usia",x=>x.ageCat],
-    ["Catatan",x=>x.catatan],
+    ["Catatan",x=>x.catatan,"private"],
     ["Latitude",x=>x.lat??""],
     ["Longitude",x=>x.lng??""],
     ["Skor Administrasi",x=>priorityMatrix(x).administrasi],
@@ -2321,12 +2329,17 @@ function exportCSV(fileName="data_perumahan_sirumah.csv"){
   downloadCsvV36([columns.map(column=>column[0]),...rows],fileName);
 }
 
+function isSectionHiddenInPublic(sectionId){
+  return publicMode && new Set(SIRUMAH_ACCESS_CONFIG.publicMode.hiddenSections || []).has(String(sectionId || ""));
+}
+
 function applyPublicVisibilityPolicy(){
   const hiddenSections = new Set(SIRUMAH_ACCESS_CONFIG.publicMode.hiddenSections || []);
   document.querySelectorAll(".nav button[data-section]").forEach(button=>{
     const shouldHide = publicMode && hiddenSections.has(button.dataset.section);
     button.classList.toggle("public-hidden", shouldHide);
     button.setAttribute("aria-hidden", shouldHide ? "true" : "false");
+    button.tabIndex = shouldHide ? -1 : 0;
   });
 
   const activeSection = document.querySelector(".section.active");
@@ -2372,8 +2385,14 @@ function setAccessMode(mode,{render=true}={}){
   publicMode = mode !== "internal";
   updateAccessModeUI();
   if(render){
-    try{ renderTable(); }catch(error){ console.error("Tabel gagal diperbarui setelah perubahan mode:",error); }
-    try{ renderReportStats(); }catch(_){ }
+    try{ applyFilters(); }
+    catch(error){
+      console.error("Dashboard gagal diperbarui setelah perubahan mode:",error);
+      try{ renderTable(); }catch(_){ }
+      try{ renderRusunawa(); }catch(_){ }
+      try{ renderRusunawaHomeV34(); }catch(_){ }
+      try{ renderLayanan(); }catch(_){ }
+    }
     try{ setupResponsiveStickyColumns(); }catch(_){ }
   }
 }
@@ -2486,6 +2505,10 @@ function initNavigation(){
   const sections = document.querySelectorAll(".section");
   buttons.forEach(btn=>{
     btn.addEventListener("click",()=>{
+      if(isSectionHiddenInPublic(btn.dataset.section)){
+        alert("Rincian menu ini hanya tersedia pada Mode Internal.");
+        return;
+      }
       const target = document.getElementById(btn.dataset.section);
       if(!target) return;
       buttons.forEach(b=>b.classList.remove("active"));
@@ -5211,7 +5234,9 @@ function renderRusunawa(){
   const realization=payments.reduce((sum,row)=>sum+Number(row.realization||0),0);
   const summaryEl=document.getElementById("rusunawaSummaryGrid");
   if(summaryEl){
-    const items=[["Jumlah Unit",totalUnits,"unit RUSUNAWA terdata"],["Unit Terisi",filled,`${pct(filled,totalUnits)}% tingkat hunian`],["Unit Kosong",vacant,"perlu verifikasi pemanfaatan"],["Dalam Perbaikan",repair,"unit perlu tindak lanjut"],["Realisasi Retribusi",realization,`${pct(realization,target)}% dari target`,"rupiah"],["Unit Siap Huni",ready,"kosong dengan kondisi baik"],["Kondisi Baik",good,"unit dalam kondisi baik"],["Perlu Perbaikan",needRepair,"unit dengan indikasi kerusakan"]];
+    const internalOnlyLabels = new Set(["Dalam Perbaikan","Realisasi Retribusi","Kondisi Baik","Perlu Perbaikan"]);
+    const items=[["Jumlah Unit",totalUnits,"unit RUSUNAWA terdata"],["Unit Terisi",filled,`${pct(filled,totalUnits)}% tingkat hunian`],["Unit Kosong",vacant,"perlu verifikasi pemanfaatan"],["Dalam Perbaikan",repair,"unit perlu tindak lanjut"],["Realisasi Retribusi",realization,`${pct(realization,target)}% dari target`,"rupiah"],["Unit Siap Huni",ready,"kosong dengan kondisi baik"],["Kondisi Baik",good,"unit dalam kondisi baik"],["Perlu Perbaikan",needRepair,"unit dengan indikasi kerusakan"]]
+      .filter(item=>!(publicMode && internalOnlyLabels.has(item[0])));
     summaryEl.className="rusunawa-summary-card";
     summaryEl.innerHTML=`<div class="summary-combo-card"><div class="summary-combo-head"><div><h3>Ringkasan Utama RUSUNAWA</h3><p>Rekap unit, tingkat hunian, retribusi, kondisi unit, dan kesiapan pemanfaatan unit.</p></div></div><div class="summary-mini-grid">${items.map(item=>`<div class="summary-mini"><div class="mini-label">${item[0]}</div><div class="mini-value">${item[3] === "rupiah" ? rupiah(item[1]) : fmt(item[1])}</div><div class="mini-note">${item[2]}</div></div>`).join("")}</div></div>`;
   }
@@ -5350,6 +5375,10 @@ function setupResponsiveStickyColumns(){
    BERANDA EKSEKUTIF SIRUMAH v38
    ========================================================= */
 function openDashboardSectionV34(sectionId){
+  if(isSectionHiddenInPublic(sectionId)){
+    alert("Rincian informasi ini tersedia pada Mode Internal.");
+    return;
+  }
   const button = document.querySelector(`.nav button[data-section="${sectionId}"]`);
   if(button) button.click();
 }
@@ -5545,8 +5574,8 @@ function renderRusunawaHomeV34(){
   el.innerHTML = `
     <div class="stat-row clickable" onclick="openDashboardSectionV34('rusunawa')"><div><strong>Tingkat Hunian</strong><br><span>${fmt(r.filled)} dari ${fmt(r.total)} unit terisi</span><div class="progress"><i style="width:${Math.min(r.occupancy,100)}%"></i></div></div><strong>${r.occupancy}%</strong></div>
     <div class="stat-row"><strong>Unit Kosong</strong><span>${fmt(r.vacant)} unit</span></div>
-    <div class="stat-row"><strong>Perlu Perbaikan</strong><span>${fmt(r.repair)} unit</span></div>
-    <div class="stat-row"><strong>Capaian Retribusi</strong><span>${r.achievement}%</span></div>
+    ${publicMode ? "" : `<div class="stat-row"><strong>Perlu Perbaikan</strong><span>${fmt(r.repair)} unit</span></div>`}
+    ${publicMode ? "" : `<div class="stat-row"><strong>Capaian Retribusi</strong><span>${r.achievement}%</span></div>`}
     <div class="stat-row"><strong>Sarpras Prioritas Tinggi</strong><span class="${r.highPriority?"data-quality-bad":"data-quality-good"}">${fmt(r.highPriority)} komponen</span></div>
     <button class="attention-link" type="button" style="margin:2px 0 0" onclick="openDashboardSectionV34('rusunawa')">Buka pengelolaan RUSUNAWA →</button>`;
 }
@@ -5644,6 +5673,10 @@ function renderAll(){
 let SIRUMAH_PRINT_TITLE_BACKUP = "";
 
 function printDashboardSection(sectionId, printTitle){
+  if(isSectionHiddenInPublic(sectionId)){
+    alert("Menu ini hanya dapat dicetak pada Mode Internal.");
+    return;
+  }
   const section = document.getElementById(sectionId);
   if(!section) return;
   const previousPage = typeof page === "number" ? page : 1;
@@ -5735,6 +5768,10 @@ function exportVisibleSectionTablesV36(sectionId){
 }
 
 function exportSectionCSV(sectionId){
+  if(isSectionHiddenInPublic(sectionId)){
+    alert("Data menu ini hanya dapat diekspor pada Mode Internal.");
+    return;
+  }
   if(sectionId === "data-perumahan"){
     exportCSV("data_perumahan_sirumah.csv");
     return;
@@ -5783,7 +5820,7 @@ function init(){
     .catch(error => console.error("Rekap layanan gagal dimuat:", error));
 }
 
-/* v39: default Mode Publik, indikator akses global, PIN Mode Internal, dan kebijakan visibilitas publik terpusat. */
+/* v40: kebijakan Mode Publik rinci untuk menu, tabel, RTLH, Layanan, dan RUSUNAWA. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
