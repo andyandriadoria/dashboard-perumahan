@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v46 — Data Terpadu, Hunian Lebih Baik</title>
+  <title>SIRUMAH Kota Pangkalpinang v46 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -924,7 +924,7 @@
       <div class="title-block">
         <button class="btn light mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
         <h2>SIRUMAH Kota Pangkalpinang</h2>
-        <p>Data Terpadu, Hunian Lebih Baik.</p>
+        <p>Satu Data, Hunian Layak untuk Semua.</p>
       </div>
       <div class="toolbar">
         <select id="globalKecamatan" onchange="applyFilters()" aria-label="Filter kecamatan seluruh dashboard">
@@ -1755,7 +1755,7 @@
     </section>
 
     <div class="footer-note">
-      Catatan: pada GitHub Pages, dashboard otomatis membaca <strong>data/Template_Resmi_Database_SIRUMAH.xlsx</strong>. Setiap pembaruan Excel harus disimpan dengan nama yang sama lalu di-commit ke repository. Jangan menempatkan data individu atau data internal pada repository publik.
+      Catatan: Data SIRUMAH diperbarui secara berkala sebagai bahan informasi, monitoring, dan pendukung pengambilan keputusan. Penggunaan resmi tetap memerlukan verifikasi teknis, administrasi, dan kondisi lapangan.
     </div>
   </main>
 </div>
@@ -1816,7 +1816,7 @@ const SIRUMAH_ACCESS_CONFIG = {
   lockDurationMs: 60 * 1000,
   publicMode: {
     hiddenSections: ["psu", "integrasi", "laporan"],
-    description: "Mode publik menampilkan data agregat dan Form Layanan/Pengaduan. Menu internal, tabel rinci layanan, sumber data, tombol cetak/ekspor, data individu, catatan internal, kartu Perlu Perhatian, dan rincian operasional RUSUNAWA disembunyikan."
+    description: "Mode publik menampilkan data untuk publik."
   }
 };
 let failedInternalPinAttempts = 0;
@@ -2480,8 +2480,8 @@ function updateAccessModeUI(){
     if(banner) banner.className = "access-mode-banner internal";
     if(icon) icon.textContent = "🔐";
     if(title) title.textContent = "Mode Internal Aktif";
-    if(description) description.textContent = "Informasi internal dan data operasional yang tersedia dapat ditampilkan kepada petugas.";
-    if(scope) scope.textContent = "AKSES PETUGAS";
+    if(description) description.textContent = "Informasi internal dan data operasional yang tersedia dapat ditampilkan kepada admin.";
+    if(scope) scope.textContent = "AKSES ADMIN";
   }
 
   applyPublicVisibilityPolicy();
@@ -5184,7 +5184,7 @@ async function loadExcelFromRepository(options = {}){
   try{
     if(typeof XLSX === "undefined") throw new Error("Pustaka pembaca Excel belum termuat. Pastikan koneksi internet tersedia, lalu muat ulang halaman.");
     if(button){ button.disabled = true; button.textContent = "Memuat…"; }
-    setExcelLoadingStatus(`Mengambil ${SIRUMAH_REMOTE_EXCEL_URL} tanpa cache lama.`);
+    setExcelLoadingStatus(`Mengambil ${SIRUMAH_REMOTE_EXCEL_URL}.`);
 
     const url = new URL(SIRUMAH_REMOTE_EXCEL_URL, window.location.href);
     url.searchParams.set("sirumah_refresh", String(Date.now()));
@@ -5271,7 +5271,7 @@ function updateExcelStatus(){
     bar.classList.add("import-success");
     const loaded = source.loadedAt ? new Date(source.loadedAt).toLocaleString("id-ID") : "";
     if(source.origin === "repository"){
-      main.innerHTML = `<strong>Sumber data GitHub aktif: ${escapeHtml(source.fileName)}</strong><span>Dimuat otomatis ${escapeHtml(loaded)} dari <b>${escapeHtml(source.url || SIRUMAH_REMOTE_EXCEL_URL)}</b> tanpa memakai cache lama.${source.warnings.length ? ` ${source.warnings.length} sheet masih kosong.` : ""}</span>`;
+      main.innerHTML = `<strong>Sumber data GitHub aktif: ${escapeHtml(source.fileName)}</strong><span>Dimuat otomatis ${escapeHtml(loaded)} dari <b>${escapeHtml(source.url || SIRUMAH_REMOTE_EXCEL_URL)}</b>.${source.warnings.length ? ` ${source.warnings.length} sheet masih kosong.` : ""}</span>`;
     }else{
       main.innerHTML = `<strong>Sumber data Excel lokal aktif: ${escapeHtml(source.fileName)}</strong><span>Dipilih dari perangkat pada ${escapeHtml(loaded)}. Data hanya diproses di browser.${source.warnings.length ? ` ${source.warnings.length} sheet masih kosong.` : ""}</span>`;
     }
