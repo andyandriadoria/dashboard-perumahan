@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard SIRUMAH Terintegrasi v38 - Kota Pangkalpinang</title>
+  <title>Dashboard SIRUMAH Terintegrasi v42 - Kota Pangkalpinang</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -186,8 +186,9 @@
     .footer-note{font-size:12px;line-height:1.55;color:var(--muted);margin-top:18px;padding:14px 16px;border:1px dashed #cbd5e1;border-radius:14px;background:rgba(255,255,255,.72)}
     .public-note{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:10px 12px}
     body.public-mode .private-only{display:none!important}
-    body.public-mode #layanan .grid.two-col{grid-template-columns:1fr}
-    body.public-mode #layanan .grid.two-col > .card:not(.private-only){grid-column:1/-1}
+    body.public-mode .section-actionbar{display:none!important}
+    body.public-mode #excelStatusBar{display:none!important}
+    body.public-mode .beranda-main-grid{grid-template-columns:minmax(0,1fr)!important}
 
 
     /* Mode akses Publik / Internal */
@@ -846,6 +847,8 @@
     .layanan-api-status.success::before{background:var(--green)}
     .layanan-api-status.error::before{background:var(--red)}
     .btn.small-action{min-height:36px;padding:8px 11px;font-size:12px}
+    .conditional-field[hidden]{display:none!important}
+    .field-help{font-size:11px;font-weight:500;color:#64748b;line-height:1.4}
 
   </style>
 </head>
@@ -944,7 +947,7 @@
           <div class="chart-footnote" id="primaryChartNote"></div>
         </div>
 
-        <div class="card attention-card">
+        <div class="card attention-card private-only">
           <div class="card-header">
             <div>
               <h3>Perlu Perhatian</h3>
@@ -975,11 +978,7 @@
         </div>
       </div>
 
-      <div class="grid two-col beranda-operational-grid">
-        <div class="card">
-          <div class="card-header"><div><h3>Kualitas Data</h3><p>Kelengkapan, verifikasi, koordinat, dan kemutakhiran data.</p></div></div>
-          <div class="stat-list" id="dataQualityList"></div>
-        </div>
+      <div class="grid beranda-operational-grid">
         <div class="card">
           <div class="card-header"><div><h3>Ringkasan RUSUNAWA</h3><p>Hunian, retribusi, dan sarpras prioritas seluruh RUSUNAWA.</p></div></div>
           <div class="stat-list" id="rusunawaHomeSummary"></div>
@@ -1286,7 +1285,7 @@
           <button class="btn private-only" type="button" onclick="exportSectionCSV('layanan')">Export CSV Layanan</button>
         </div>
         <div class="grid two-col">
-          <div class="card pad private-only">
+          <div class="card pad">
             <h3 style="margin-bottom:12px;">Form Input Layanan / Pengaduan</h3>
             <div id="layananApiStatus" class="layanan-api-status loading">Menghubungkan rekap layanan ke Google Sheets…</div>
             <div class="form-grid">
@@ -1297,12 +1296,13 @@
                 <input id="fHp" placeholder="08xxxxxxxxxx" inputmode="tel" required />
               </label>
               <label>Jenis Layanan
-                <select id="fJenis">
-                  <option>Informasi Rumah Subsidi</option>
-                  <option>Konsultasi RTLH</option>
-                  <option>Pengaduan PSU</option>
-                  <option>Konsultasi Program 3 Juta Rumah</option>
-                  <option>Informasi Bantuan Perumahan</option>
+                <select id="fJenis" onchange="toggleJenisLayananLainnya()">
+                  <option value="Informasi Perumahan dan Rumah Subsidi">Informasi Perumahan dan Rumah Subsidi</option>
+                  <option value="Pengaduan PSU Perumahan — jalan, drainase, atau RTH">Pengaduan PSU Perumahan — jalan, drainase, atau RTH</option>
+                  <option value="Informasi Bantuan RTLH">Informasi Bantuan RTLH</option>
+                  <option value="Informasi atau Pengaduan RUSUNAWA">Informasi atau Pengaduan RUSUNAWA</option>
+                  <option value="Kolaborasi atau CSR Bidang Perumahan">Kolaborasi atau CSR Bidang Perumahan</option>
+                  <option value="Lainnya">Lainnya / Tidak ada dalam daftar</option>
                 </select>
               </label>
               <label>Kecamatan
@@ -1315,6 +1315,10 @@
                   <option>Rangkui</option>
                   <option>Taman Sari</option>
                 </select>
+              </label>
+              <label class="full conditional-field" id="fJenisLainnyaWrap" hidden>Jenis Layanan Lainnya
+                <input id="fJenisLainnya" maxlength="120" placeholder="Tuliskan jenis layanan atau pengaduan secara singkat" />
+                <span class="field-help">Isi bidang ini apabila pilihan yang tersedia belum sesuai dengan kebutuhan Anda.</span>
               </label>
               <label class="full">Uraian
                 <textarea id="fUraian" placeholder="Tuliskan uraian singkat..." required></textarea>
@@ -1699,7 +1703,7 @@ let publicMode = true;
 
 /*
   KONFIGURASI AKSES SIRUMAH
-  - PIN sementara v40 adalah 2026.
+  - PIN sementara v42 adalah 2026.
   - Nilai yang disimpan adalah hash SHA-256, bukan teks PIN.
   - hiddenSections dapat diisi nanti, contoh: ["integrasi", "laporan"].
   - Elemen dengan class .private-only otomatis tidak tampil pada Mode Publik.
@@ -1710,7 +1714,7 @@ const SIRUMAH_ACCESS_CONFIG = {
   lockDurationMs: 60 * 1000,
   publicMode: {
     hiddenSections: ["psu", "integrasi", "laporan"],
-    description: "Mode publik menampilkan data agregat. Menu PSU & RTH, Integrasi, Laporan, data individu, catatan internal, dan rincian operasional RUSUNAWA disembunyikan."
+    description: "Mode publik menampilkan data agregat dan Form Layanan/Pengaduan. Menu internal, tabel rinci layanan, sumber data, tombol cetak/ekspor, data individu, catatan internal, kartu Perlu Perhatian, dan rincian operasional RUSUNAWA disembunyikan."
   }
 };
 let failedInternalPinAttempts = 0;
@@ -2751,15 +2755,31 @@ function renderKolaborasi(){
   `).join("") : `<tr><td colspan="6" class="empty">Belum ada kolaborasi pada wilayah ini.</td></tr>`;
 }
 
+function toggleJenisLayananLainnya(){
+  const select = document.getElementById("fJenis");
+  const wrap = document.getElementById("fJenisLainnyaWrap");
+  const input = document.getElementById("fJenisLainnya");
+  const isOther = select?.value === "Lainnya";
+  if(wrap) wrap.hidden = !isOther;
+  if(input){
+    input.required = Boolean(isOther);
+    if(!isOther) input.value = "";
+  }
+}
+
 async function addLayanan(buttonEl){
   const nama = document.getElementById("fNama")?.value.trim();
   const hp = document.getElementById("fHp")?.value.trim();
-  const jenis = document.getElementById("fJenis")?.value;
+  const jenisPilihan = document.getElementById("fJenis")?.value || "";
+  const jenisLainnya = document.getElementById("fJenisLainnya")?.value.trim() || "";
+  const jenis = jenisPilihan === "Lainnya" ? jenisLainnya : jenisPilihan;
   const kecamatan = document.getElementById("fKecamatan")?.value;
   const uraian = document.getElementById("fUraian")?.value.trim();
 
   if(!nama || !hp || !jenis || !kecamatan || !uraian){
-    alert("Nama pemohon, nomor HP, jenis layanan, kecamatan, dan uraian wajib diisi.");
+    alert(jenisPilihan === "Lainnya" && !jenisLainnya
+      ? "Tuliskan jenis layanan lainnya terlebih dahulu."
+      : "Nama pemohon, nomor HP, jenis layanan, kecamatan, dan uraian wajib diisi.");
     return;
   }
   const hpNormal = hp.replace(/[\s().-]/g,"");
@@ -2808,7 +2828,15 @@ async function addLayanan(buttonEl){
     if(btn){ btn.disabled = false; btn.textContent = oldText; }
   }
 }
-function resetForm(){ ["fNama","fHp","fUraian"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; }); }
+function resetForm(){
+  ["fNama","fHp","fUraian","fJenisLainnya"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+  const jenis = document.getElementById("fJenis");
+  if(jenis){
+    jenis.selectedIndex = 0;
+    jenis.value = "Informasi Perumahan dan Rumah Subsidi";
+  }
+  toggleJenisLayananLainnya();
+}
 function openAddDataForm(type){ alert("Fitur tambah data " + String(type).toUpperCase() + " dapat dikembangkan dengan form input khusus atau terhubung ke database SIRUMAH."); }
 
 /* Override beranda agar menggabungkan data perumahan eksisting + modul SIRUMAH sebelumnya */
@@ -5651,7 +5679,6 @@ function renderAll(){
   safeRenderSIRUMAH(renderCatatanStats,"Ringkasan Isu");
   safeRenderSIRUMAH(renderTopPrioritas,"Perlu Perhatian");
   safeRenderSIRUMAH(renderHousingQualityV34,"Kualitas Hunian Beranda");
-  safeRenderSIRUMAH(renderDataQualityV34,"Kualitas Data");
   safeRenderSIRUMAH(renderRusunawaHomeV34,"Ringkasan RUSUNAWA Beranda");
   safeRenderSIRUMAH(renderTable,"Data Perumahan");
   safeRenderSIRUMAH(renderCharts,"Grafik");
@@ -5820,7 +5847,7 @@ function init(){
     .catch(error => console.error("Rekap layanan gagal dimuat:", error));
 }
 
-/* v40: kebijakan Mode Publik rinci untuk menu, tabel, RTLH, Layanan, dan RUSUNAWA. */
+/* v42: Pilihan jenis layanan disederhanakan; Kualitas Data dihapus; Perlu Perhatian hanya tampil pada Mode Internal. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
