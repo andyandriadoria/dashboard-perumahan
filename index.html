@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard SIRUMAH Terintegrasi v37 - Kota Pangkalpinang</title>
+  <title>Dashboard SIRUMAH Terintegrasi v38 - Kota Pangkalpinang</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -2314,6 +2314,21 @@ function renderLayanan(){
   if(statEl) statEl.innerHTML = stats.map(s => `<div class="stat-row"><strong>${s[0]}</strong><span>${fmt(s[1])} layanan</span></div>`).join("");
 }
 
+function renderKolaborasi(){
+  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi, "lokasi");
+  const el = document.getElementById("kolaborasiTable"); if(!el) return;
+  el.innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td><strong>${escapeHtml(r.mitra)}</strong></td>
+      <td>${escapeHtml(r.dukungan)}</td>
+      <td>${escapeHtml(r.lokasi)}</td>
+      <td>${formatMoney(r.nilai)}</td>
+      <td>${fmt(r.rumah)}</td>
+      <td>${programBadge(r.status)}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6" class="empty">Belum ada kolaborasi pada wilayah ini.</td></tr>`;
+}
+
 async function addLayanan(buttonEl){
   const nama = document.getElementById("fNama")?.value.trim();
   const hp = document.getElementById("fHp")?.value.trim();
@@ -4112,7 +4127,7 @@ function renderRusunawa(){
 
 
 /* =========================================================
-   INTEGRASI DATABASE EXCEL SIRUMAH v37 — GITHUB READY + MATRIKS PRIORITAS + FREEZE KOLOM RESPONSIF
+   INTEGRASI DATABASE EXCEL SIRUMAH v38 — GITHUB READY + MATRIKS PRIORITAS + FREEZE KOLOM RESPONSIF
    Satu workbook dengan tujuh sheet resmi. Seluruh penerapan
    data bersifat atomik: dashboard tidak berubah bila validasi gagal.
    ========================================================= */
@@ -4933,7 +4948,7 @@ function setupResponsiveStickyColumns(){
 
 
 /* =========================================================
-   BERANDA EKSEKUTIF SIRUMAH v37
+   BERANDA EKSEKUTIF SIRUMAH v38
    ========================================================= */
 function openDashboardSectionV34(sectionId){
   const button = document.querySelector(`.nav button[data-section="${sectionId}"]`);
@@ -5225,7 +5240,7 @@ function renderAll(){
 
 
 /* =========================================================
-   AKSI KONTEKSTUAL PER MENU SIRUMAH v37
+   AKSI KONTEKSTUAL PER MENU SIRUMAH v38
    ========================================================= */
 let SIRUMAH_PRINT_TITLE_BACKUP = "";
 
@@ -5333,14 +5348,40 @@ function exportSectionCSV(sectionId){
 }
 
 function init(){
-  applyRuntimeData(cloneSirumah(SIRUMAH_DEFAULT_RUNTIME));
-  initNavigation();
-  setupResponsiveStickyColumns();
-  updateExcelStatus();
-  // Setelah antarmuka siap, ambil workbook dan rekap layanan terbaru.
-  Promise.resolve().then(() => loadExcelFromRepository({showAlert:false}));
-  Promise.resolve().then(() => loadLayananSummary({showAlert:false}));
+  // Navigasi dipasang terlebih dahulu agar kegagalan satu modul tidak
+  // membuat seluruh menu dashboard berhenti berfungsi.
+  try{
+    initNavigation();
+  }catch(error){
+    console.error("Navigasi SIRUMAH gagal diinisialisasi:", error);
+  }
+
+  try{
+    applyRuntimeData(cloneSirumah(SIRUMAH_DEFAULT_RUNTIME));
+  }catch(error){
+    console.error("Data awal SIRUMAH gagal dirender:", error);
+    // Tetap coba render komponen yang tidak bergantung pada modul bermasalah.
+    try{ populateFilters(); }catch(_){}
+    try{ applyFilters(); }catch(_){}
+  }
+
+  try{ setupResponsiveStickyColumns(); }
+  catch(error){ console.error("Sticky column gagal diinisialisasi:", error); }
+
+  try{ updateExcelStatus(); }
+  catch(error){ console.error("Status Excel gagal diperbarui:", error); }
+
+  // Pemuatan data eksternal tidak memblokir navigasi maupun menu lain.
+  Promise.resolve()
+    .then(() => loadExcelFromRepository({showAlert:false}))
+    .catch(error => console.error("Excel repository gagal dimuat:", error));
+
+  Promise.resolve()
+    .then(() => loadLayananSummary({showAlert:false}))
+    .catch(error => console.error("Rekap layanan gagal dimuat:", error));
 }
+
+/* v38 repair: renderKolaborasi dipulihkan dan bootstrap dibuat fault-tolerant. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
