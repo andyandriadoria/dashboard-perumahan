@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v45 — Data Terpadu, Hunian Lebih Baik</title>
+  <title>SIRUMAH Kota Pangkalpinang v46 — Data Terpadu, Hunian Lebih Baik</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -33,7 +33,8 @@
     .app{display:grid;grid-template-columns:288px 1fr;min-height:100vh}
     .sidebar{
       background:linear-gradient(180deg,#175b72 0%,#0f3f50 100%);
-      color:#fff;padding:22px;position:sticky;top:0;height:100vh;overflow-y:auto
+      color:#fff;padding:22px;position:sticky;top:0;height:100vh;overflow-y:auto;
+      display:flex;flex-direction:column
     }
     .brand{display:flex;gap:12px;align-items:center;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:18px}
     .logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#d3c584,#fff0a8);color:#0f3f50;display:grid;place-items:center;font-weight:900;letter-spacing:-1px;box-shadow:0 14px 26px rgba(0,0,0,.2)}
@@ -44,6 +45,23 @@
     .nav button{width:100%;border:0;background:transparent;color:#eef7fa;text-align:left;padding:12px;border-radius:12px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:14px;transition:.2s}
     .nav button:hover,.nav button.active{background:rgba(255,255,255,.12);transform:translateX(2px)}
     .nav .icon{width:24px;text-align:center}
+    .sidebar-owner-card{
+      margin-top:auto;padding:14px;border-radius:16px;
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+      box-shadow:0 12px 28px rgba(0,0,0,.14);color:#eef7fa
+    }
+    .sidebar-owner-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .sidebar-owner-icon{
+      width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+      background:rgba(211,197,132,.18);font-size:18px;flex:0 0 auto
+    }
+    .sidebar-owner-label{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:#d6e7ec;font-weight:900}
+    .sidebar-owner-name{font-size:12px;line-height:1.5;font-weight:800;color:#fff}
+    .sidebar-owner-note{
+      margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.13);
+      color:#dbe8ed;font-size:11px;line-height:1.45
+    }
+    .sidebar-owner-version{display:block;margin-top:6px;color:var(--gold);font-weight:900;letter-spacing:.2px}
     .main{padding:26px;overflow:hidden}
     .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
     .title-block h2{font-size:29px;letter-spacing:-.7px;color:#0f3f50;margin-bottom:6px}
@@ -883,6 +901,22 @@
       <button data-section="integrasi"><span class="icon">🔗</span> Integrasi SIRUMAH</button>
       <button data-section="laporan"><span class="icon">📄</span> Laporan</button>
     </nav>
+
+    <div class="sidebar-owner-card" aria-label="Informasi pengelola SIRUMAH">
+      <div class="sidebar-owner-head">
+        <div class="sidebar-owner-icon" aria-hidden="true">🏛️</div>
+        <div class="sidebar-owner-label">Dikelola oleh</div>
+      </div>
+      <div class="sidebar-owner-name">
+        Dinas Perumahan dan<br>
+        Kawasan Permukiman<br>
+        Kota Pangkalpinang
+      </div>
+      <div class="sidebar-owner-note">
+        Data diperbarui secara berkala
+        <span class="sidebar-owner-version">SIRUMAH v1.0 · 2026</span>
+      </div>
+    </div>
   </aside>
 
   <main class="main">
@@ -926,8 +960,6 @@
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
       </div>
-      <div class="executive-status" id="executiveStatusBar"></div>
-
       <div class="executive-kpi-grid" id="kpiGrid"></div>
 
       <div class="beranda-main-grid">
@@ -5852,7 +5884,6 @@ function renderCharts(){
 }
 
 function renderAll(){
-  safeRenderSIRUMAH(renderExecutiveStatusV34,"Status Eksekutif");
   safeRenderSIRUMAH(renderKPI,"KPI Eksekutif");
   safeRenderSIRUMAH(renderCatatanStats,"Ringkasan Isu");
   safeRenderSIRUMAH(renderTopPrioritas,"Perlu Perhatian");
@@ -6027,6 +6058,7 @@ function init(){
 
 
 /* v45: daftar rinci layanan disinkronkan dari Google Sheets setelah autentikasi Mode Internal. */
+/* v46: kartu pengelola ditambahkan di bawah sidebar dan Status Dashboard Beranda dihapus. */
 function reportSourceTextV44(){
   if(SIRUMAH_RUNTIME.source.mode !== "excel") return "Belum ada workbook aktif";
   const origin = SIRUMAH_RUNTIME.source.origin === "repository" ? "GitHub" : "Excel lokal";
