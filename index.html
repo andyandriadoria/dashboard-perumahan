@@ -188,6 +188,197 @@
     body.public-mode .private-only{display:none!important}
 
 
+    /* Mode akses Publik / Internal */
+    .access-mode-control{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .mode-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      min-height:36px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.45px;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+    .mode-badge.public{
+      color:#075985;
+      background:#e0f2fe;
+      border-color:#bae6fd;
+    }
+    .mode-badge.internal{
+      color:#7c2d12;
+      background:#ffedd5;
+      border-color:#fed7aa;
+    }
+    .access-mode-banner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:13px 16px;
+      margin-bottom:16px;
+      border-radius:15px;
+      border:1px solid;
+      box-shadow:0 5px 16px rgba(15,23,42,.05);
+    }
+    .access-mode-banner .access-mode-main{
+      display:flex;
+      align-items:flex-start;
+      gap:11px;
+      min-width:0;
+    }
+    .access-mode-banner .access-mode-icon{
+      font-size:22px;
+      line-height:1;
+      flex:0 0 auto;
+    }
+    .access-mode-banner strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:3px;
+    }
+    .access-mode-banner span{
+      display:block;
+      font-size:12px;
+      line-height:1.45;
+    }
+    .access-mode-banner.public{
+      color:#0c4a6e;
+      background:#f0f9ff;
+      border-color:#bae6fd;
+    }
+    .access-mode-banner.internal{
+      color:#7c2d12;
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+    .access-mode-banner .access-mode-scope{
+      flex:0 0 auto;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.7);
+      border:1px solid currentColor;
+      font-size:11px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .public-hidden{display:none!important}
+
+    .access-modal{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(15,23,42,.62);
+      backdrop-filter:blur(4px);
+    }
+    .access-modal.open{display:flex}
+    .access-modal-card{
+      width:min(440px,100%);
+      background:#fff;
+      border-radius:22px;
+      border:1px solid #e2e8f0;
+      box-shadow:0 28px 70px rgba(15,23,42,.28);
+      overflow:hidden;
+    }
+    .access-modal-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      padding:20px 22px 14px;
+      border-bottom:1px solid #e2e8f0;
+    }
+    .access-modal-head h3{
+      color:#0f3f50;
+      font-size:20px;
+      margin-bottom:5px;
+    }
+    .access-modal-head p{
+      color:#64748b;
+      font-size:13px;
+      line-height:1.5;
+    }
+    .access-modal-close{
+      border:0;
+      background:#f1f5f9;
+      color:#475569;
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .access-modal-body{padding:20px 22px 22px}
+    .pin-input-wrap{position:relative}
+    .pin-input-wrap input{
+      width:100%;
+      min-height:50px;
+      padding-right:48px;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:5px;
+      text-align:center;
+    }
+    .pin-toggle{
+      position:absolute;
+      right:8px;
+      top:50%;
+      transform:translateY(-50%);
+      width:34px;
+      height:34px;
+      border:0;
+      border-radius:9px;
+      background:#f1f5f9;
+      cursor:pointer;
+    }
+    .pin-error{
+      display:none;
+      margin-top:10px;
+      padding:9px 11px;
+      border-radius:10px;
+      background:#fee2e2;
+      color:#991b1b;
+      font-size:12px;
+      font-weight:800;
+    }
+    .pin-error.show{display:block}
+    .access-modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:16px;
+    }
+    .access-security-note{
+      margin-top:14px;
+      padding:10px 12px;
+      border-radius:11px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+      color:#64748b;
+      font-size:11px;
+      line-height:1.5;
+    }
+    @media(max-width:720px){
+      .access-mode-control{justify-content:flex-start}
+      .access-mode-banner{align-items:flex-start;flex-direction:column}
+      .access-mode-banner .access-mode-scope{align-self:flex-start}
+    }
+
+
     /* Mode pilihan checkbox untuk Filter Catatan dan Filter Usia Perumahan */
     .filter-panel{
       width:100%;
@@ -466,7 +657,7 @@
     @media(max-width:680px){.priority-matrix-grid{grid-template-columns:1fr}}
 
     @media print{
-      .sidebar,.topbar,.toolbar,.filters,.pagination,.mobile-menu,.btn,.section-actionbar,.data-source-bar,.footer-note{display:none!important}
+      .sidebar,.topbar,.toolbar,.filters,.pagination,.mobile-menu,.btn,.section-actionbar,.data-source-bar,.footer-note,.access-mode-banner,.access-modal{display:none!important}
       .app{display:block}.main{padding:0;overflow:visible}
       body.print-section-mode .section{display:none!important}
       body.print-section-mode .section.print-target{display:block!important;animation:none!important}
@@ -657,7 +848,7 @@
   </style>
 </head>
 
-<body>
+<body class="public-mode">
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
@@ -700,8 +891,22 @@
         <select id="globalKecamatan" onchange="applyFilters()" aria-label="Filter kecamatan seluruh dashboard">
           <option value="all">Semua Kecamatan</option>
         </select>
-        <button class="btn gold" onclick="togglePublicMode()">Mode Internal/Publik</button>
+        <div class="access-mode-control">
+          <span id="modeBadge" class="mode-badge public" aria-live="polite">🌐 MODE PUBLIK</span>
+          <button id="modeToggleButton" class="btn gold" type="button" onclick="toggleAccessMode()">🔒 Masuk Mode Internal</button>
+        </div>
       </div>
+    </div>
+
+    <div id="accessModeBanner" class="access-mode-banner public" role="status" aria-live="polite">
+      <div class="access-mode-main">
+        <div class="access-mode-icon" id="accessModeIcon">🌐</div>
+        <div>
+          <strong id="accessModeTitle">Mode Publik Aktif</strong>
+          <span id="accessModeDescription">Informasi internal dan data pribadi yang ditandai tidak ditampilkan.</span>
+        </div>
+      </div>
+      <div class="access-mode-scope" id="accessModeScope">AKSES PUBLIK</div>
     </div>
 
     <div id="excelStatusBar" class="data-source-bar" aria-live="polite">
@@ -716,10 +921,6 @@
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
       </div>
-      <div id="modeNote" class="public-note" style="display:none;margin-bottom:16px;">
-        Mode Publik aktif: kolom Direktur/Pelaksana, data individu RTLH, dan informasi internal disembunyikan.
-      </div>
-
       <div class="executive-status" id="executiveStatusBar"></div>
 
       <div class="executive-kpi-grid" id="kpiGrid"></div>
@@ -1451,6 +1652,33 @@
   </main>
 </div>
 
+<div id="internalPinModal" class="access-modal" aria-hidden="true" onclick="closeInternalPinModalOnBackdrop(event)">
+  <div class="access-modal-card" role="dialog" aria-modal="true" aria-labelledby="internalPinTitle">
+    <div class="access-modal-head">
+      <div>
+        <h3 id="internalPinTitle">Masuk Mode Internal</h3>
+        <p>Masukkan PIN petugas untuk menampilkan informasi internal SIRUMAH.</p>
+      </div>
+      <button class="access-modal-close" type="button" onclick="closeInternalPinModal()" aria-label="Tutup">×</button>
+    </div>
+    <form class="access-modal-body" onsubmit="submitInternalPin(event)">
+      <label for="internalPinInput">PIN Mode Internal</label>
+      <div class="pin-input-wrap">
+        <input id="internalPinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••" required />
+        <button class="pin-toggle" type="button" onclick="togglePinVisibility()" aria-label="Tampilkan atau sembunyikan PIN">👁️</button>
+      </div>
+      <div id="internalPinError" class="pin-error" role="alert"></div>
+      <div class="access-modal-actions">
+        <button class="btn light" type="button" onclick="closeInternalPinModal()">Batal</button>
+        <button id="internalPinSubmit" class="btn" type="submit">Buka Mode Internal</button>
+      </div>
+      <div class="access-security-note">
+        PIN pada HTML statis hanya membatasi tampilan antarmuka. File Excel atau data yang ditempatkan pada repository publik tetap dapat diakses melalui alamat file.
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1465,7 +1693,26 @@ let page = 1;
 let pageSize = 20;
 let map = null;
 let mapLayer = null;
-let publicMode = false;
+let publicMode = true;
+
+/*
+  KONFIGURASI AKSES SIRUMAH
+  - PIN sementara v39 adalah 2026.
+  - Nilai yang disimpan adalah hash SHA-256, bukan teks PIN.
+  - hiddenSections dapat diisi nanti, contoh: ["integrasi", "laporan"].
+  - Elemen dengan class .private-only otomatis tidak tampil pada Mode Publik.
+*/
+const SIRUMAH_ACCESS_CONFIG = {
+  internalPinHash: "158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab",
+  maxFailedAttempts: 5,
+  lockDurationMs: 60 * 1000,
+  publicMode: {
+    hiddenSections: [],
+    description: "Informasi internal dan data pribadi yang ditandai tidak ditampilkan."
+  }
+};
+let failedInternalPinAttempts = 0;
+let internalPinLockedUntil = 0;
 
 function toNum(v){
   if(v === null || v === undefined || v === "" || String(v).trim().toUpperCase() === "NN") return 0;
@@ -2074,12 +2321,164 @@ function exportCSV(fileName="data_perumahan_sirumah.csv"){
   downloadCsvV36([columns.map(column=>column[0]),...rows],fileName);
 }
 
-function togglePublicMode(){
-  publicMode = !publicMode;
-  document.body.classList.toggle("public-mode", publicMode);
-  document.getElementById("modeNote").style.display = publicMode ? "block" : "none";
-  renderTable();
+function applyPublicVisibilityPolicy(){
+  const hiddenSections = new Set(SIRUMAH_ACCESS_CONFIG.publicMode.hiddenSections || []);
+  document.querySelectorAll(".nav button[data-section]").forEach(button=>{
+    const shouldHide = publicMode && hiddenSections.has(button.dataset.section);
+    button.classList.toggle("public-hidden", shouldHide);
+    button.setAttribute("aria-hidden", shouldHide ? "true" : "false");
+  });
+
+  const activeSection = document.querySelector(".section.active");
+  if(publicMode && activeSection && hiddenSections.has(activeSection.id)){
+    document.querySelector('.nav button[data-section="beranda"]')?.click();
+  }
 }
+
+function updateAccessModeUI(){
+  const badge = document.getElementById("modeBadge");
+  const button = document.getElementById("modeToggleButton");
+  const banner = document.getElementById("accessModeBanner");
+  const icon = document.getElementById("accessModeIcon");
+  const title = document.getElementById("accessModeTitle");
+  const description = document.getElementById("accessModeDescription");
+  const scope = document.getElementById("accessModeScope");
+
+  document.body.classList.toggle("public-mode", publicMode);
+  document.body.classList.toggle("internal-mode", !publicMode);
+
+  if(publicMode){
+    if(badge){ badge.className = "mode-badge public"; badge.textContent = "🌐 MODE PUBLIK"; }
+    if(button){ button.textContent = "🔒 Masuk Mode Internal"; button.className = "btn gold"; }
+    if(banner) banner.className = "access-mode-banner public";
+    if(icon) icon.textContent = "🌐";
+    if(title) title.textContent = "Mode Publik Aktif";
+    if(description) description.textContent = SIRUMAH_ACCESS_CONFIG.publicMode.description;
+    if(scope) scope.textContent = "AKSES PUBLIK";
+  }else{
+    if(badge){ badge.className = "mode-badge internal"; badge.textContent = "🔐 MODE INTERNAL"; }
+    if(button){ button.textContent = "🌐 Kembali ke Mode Publik"; button.className = "btn light"; }
+    if(banner) banner.className = "access-mode-banner internal";
+    if(icon) icon.textContent = "🔐";
+    if(title) title.textContent = "Mode Internal Aktif";
+    if(description) description.textContent = "Informasi internal dan data operasional yang tersedia dapat ditampilkan kepada petugas.";
+    if(scope) scope.textContent = "AKSES PETUGAS";
+  }
+
+  applyPublicVisibilityPolicy();
+}
+
+function setAccessMode(mode,{render=true}={}){
+  publicMode = mode !== "internal";
+  updateAccessModeUI();
+  if(render){
+    try{ renderTable(); }catch(error){ console.error("Tabel gagal diperbarui setelah perubahan mode:",error); }
+    try{ renderReportStats(); }catch(_){ }
+    try{ setupResponsiveStickyColumns(); }catch(_){ }
+  }
+}
+
+function toggleAccessMode(){
+  if(publicMode){
+    openInternalPinModal();
+  }else{
+    setAccessMode("public");
+  }
+}
+
+// Kompatibilitas dengan pemanggilan pada versi lama.
+function togglePublicMode(){ toggleAccessMode(); }
+
+function openInternalPinModal(){
+  const modal = document.getElementById("internalPinModal");
+  const input = document.getElementById("internalPinInput");
+  const error = document.getElementById("internalPinError");
+  if(!modal) return;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+  if(error){ error.classList.remove("show"); error.textContent = ""; }
+  if(input){ input.value = ""; input.type = "password"; setTimeout(()=>input.focus(),60); }
+}
+
+function closeInternalPinModal(){
+  const modal = document.getElementById("internalPinModal");
+  if(!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+}
+
+function closeInternalPinModalOnBackdrop(event){
+  if(event.target?.id === "internalPinModal") closeInternalPinModal();
+}
+
+function togglePinVisibility(){
+  const input = document.getElementById("internalPinInput");
+  if(input) input.type = input.type === "password" ? "text" : "password";
+}
+
+async function sha256Text(value){
+  if(!window.crypto?.subtle) throw new Error("Browser tidak mendukung verifikasi PIN yang aman.");
+  const data = new TextEncoder().encode(String(value));
+  const digest = await window.crypto.subtle.digest("SHA-256",data);
+  return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,"0")).join("");
+}
+
+async function submitInternalPin(event){
+  event?.preventDefault();
+  const input = document.getElementById("internalPinInput");
+  const error = document.getElementById("internalPinError");
+  const submit = document.getElementById("internalPinSubmit");
+  const now = Date.now();
+
+  if(now < internalPinLockedUntil){
+    const seconds = Math.ceil((internalPinLockedUntil-now)/1000);
+    if(error){ error.textContent = `Terlalu banyak percobaan. Coba kembali dalam ${seconds} detik.`; error.classList.add("show"); }
+    return;
+  }
+
+  const pin = String(input?.value || "").trim();
+  if(!pin){
+    if(error){ error.textContent = "PIN wajib diisi."; error.classList.add("show"); }
+    input?.focus();
+    return;
+  }
+
+  if(submit){ submit.disabled = true; submit.textContent = "Memeriksa…"; }
+  try{
+    const hash = await sha256Text(pin);
+    if(hash !== SIRUMAH_ACCESS_CONFIG.internalPinHash){
+      failedInternalPinAttempts += 1;
+      const remaining = Math.max(0,SIRUMAH_ACCESS_CONFIG.maxFailedAttempts-failedInternalPinAttempts);
+      if(failedInternalPinAttempts >= SIRUMAH_ACCESS_CONFIG.maxFailedAttempts){
+        internalPinLockedUntil = Date.now()+SIRUMAH_ACCESS_CONFIG.lockDurationMs;
+        failedInternalPinAttempts = 0;
+        if(error){ error.textContent = "Terlalu banyak PIN salah. Akses dikunci selama 60 detik."; error.classList.add("show"); }
+      }else if(error){
+        error.textContent = `PIN tidak sesuai. Sisa percobaan: ${remaining}.`;
+        error.classList.add("show");
+      }
+      if(input){ input.value = ""; input.focus(); }
+      return;
+    }
+
+    failedInternalPinAttempts = 0;
+    internalPinLockedUntil = 0;
+    closeInternalPinModal();
+    setAccessMode("internal");
+  }catch(err){
+    if(error){ error.textContent = err.message || "Verifikasi PIN gagal."; error.classList.add("show"); }
+  }finally{
+    if(submit){ submit.disabled = false; submit.textContent = "Buka Mode Internal"; }
+  }
+}
+
+function setupAccessMode(){
+  setAccessMode("public",{render:false});
+  document.addEventListener("keydown",event=>{
+    if(event.key === "Escape") closeInternalPinModal();
+  });
+}
+
 function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("open"); }
 
 function initNavigation(){
@@ -5348,6 +5747,9 @@ function exportSectionCSV(sectionId){
 }
 
 function init(){
+  try{ setupAccessMode(); }
+  catch(error){ console.error("Mode akses gagal diinisialisasi:", error); }
+
   // Navigasi dipasang terlebih dahulu agar kegagalan satu modul tidak
   // membuat seluruh menu dashboard berhenti berfungsi.
   try{
@@ -5381,7 +5783,7 @@ function init(){
     .catch(error => console.error("Rekap layanan gagal dimuat:", error));
 }
 
-/* v38 repair: renderKolaborasi dipulihkan dan bootstrap dibuat fault-tolerant. */
+/* v39: default Mode Publik, indikator akses global, PIN Mode Internal, dan kebijakan visibilitas publik terpusat. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
