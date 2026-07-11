@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard SIRUMAH Terintegrasi v29 - Kota Pangkalpinang</title>
+  <title>Dashboard SIRUMAH Terintegrasi v35 - Kota Pangkalpinang</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -77,11 +77,75 @@
     .kpi .note{font-size:12px;color:var(--muted);margin-top:8px}
     .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
     .filters input{min-width:280px;flex:1}
-    .table-wrap{overflow:auto;max-height:580px}
-    table{width:100%;border-collapse:collapse;white-space:nowrap}
+    .table-wrap{
+      overflow:auto;
+      max-height:580px;
+      position:relative;
+      isolation:isolate;
+      /* Nilai awal; JavaScript menyesuaikan lebar kolom pertama per tabel. */
+      --sticky-col-1-width:64px;
+      --sticky-col-2-width:250px;
+    }
+    table{width:100%;border-collapse:separate;border-spacing:0;white-space:nowrap}
     th,td{border-bottom:1px solid var(--line);padding:12px 14px;text-align:left;font-size:13px;vertical-align:top}
     th{background:var(--primary);color:var(--gold);font-weight:800;text-transform:uppercase;position:sticky;top:0;z-index:5;text-align:center}
     tr:hover{background:#eef7fa}
+
+    /* Bekukan kolom pertama dan kedua pada seluruh tabel saat digeser horizontal. */
+    .table-wrap th:nth-child(1),
+    .table-wrap tbody td:not([colspan]):nth-child(1){
+      position:sticky;
+      left:0;
+      width:var(--sticky-col-1-width);
+      min-width:var(--sticky-col-1-width);
+      max-width:var(--sticky-col-1-width);
+      padding-left:8px;
+      padding-right:8px;
+      white-space:normal;
+      overflow-wrap:anywhere;
+    }
+    .table-wrap th:nth-child(2),
+    .table-wrap tbody td:not([colspan]):nth-child(2){
+      position:sticky;
+      left:var(--sticky-col-1-width);
+      width:var(--sticky-col-2-width);
+      min-width:var(--sticky-col-2-width);
+      max-width:var(--sticky-col-2-width);
+      white-space:normal;
+      box-shadow:8px 0 12px -12px rgba(15,23,42,.65);
+    }
+    .table-wrap tbody td:not([colspan]):nth-child(1),
+    .table-wrap tbody td:not([colspan]):nth-child(2){
+      background:var(--card);
+      z-index:3;
+    }
+    .table-wrap tbody td:not([colspan]):nth-child(2){z-index:4}
+    .table-wrap th:nth-child(1),
+    .table-wrap th:nth-child(2){
+      top:0;
+      background:var(--primary);
+      color:var(--gold);
+      z-index:8;
+    }
+    .table-wrap tbody tr:hover td:not([colspan]):nth-child(1),
+    .table-wrap tbody tr:hover td:not([colspan]):nth-child(2){background:#eef7fa}
+
+    @media(max-width:680px){
+      .table-wrap{
+        --sticky-col-1-width:52px;
+        --sticky-col-2-width:190px;
+      }
+      .table-wrap th:nth-child(2),
+      .table-wrap tbody td:not([colspan]):nth-child(2){
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .table-wrap th:nth-child(1),
+      .table-wrap tbody td:not([colspan]):nth-child(1){
+        padding-left:7px;
+        padding-right:7px;
+      }
+    }
     .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
     .badge.green{background:#dcfce7;color:#166534}
     .badge.red{background:#fee2e2;color:#991b1b}
@@ -383,6 +447,24 @@
       .filters input{min-width:100%}
     }
 
+    /* Matriks skor prioritas PSU — total maksimal 100 poin */
+    .priority-matrix-card{margin-bottom:18px}
+    .priority-matrix-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:18px}
+    .priority-matrix-item{border:1px solid var(--line);background:#f8fafc;border-radius:14px;padding:14px;min-height:138px}
+    .priority-matrix-item h4{display:flex;justify-content:space-between;gap:8px;align-items:center;color:#0f3f50;margin-bottom:8px;font-size:14px}
+    .priority-matrix-item h4 span{font-size:12px;background:#e2e8f0;color:#334155;border-radius:999px;padding:4px 8px;white-space:nowrap}
+    .priority-matrix-item p{font-size:12px;color:#64748b;line-height:1.55}
+    .priority-levels{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 18px}
+    .priority-score{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:6px 9px;border-radius:10px;font-weight:900;background:#e2e8f0;color:#0f3f50}
+    .priority-level{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}
+    .priority-level.very-high{background:#fee2e2;color:#991b1b}
+    .priority-level.high{background:#ffedd5;color:#9a3412}
+    .priority-level.medium{background:#dbeafe;color:#1e40af}
+    .priority-level.low{background:#dcfce7;color:#166534}
+    .score-sub{font-weight:900;text-align:center;color:#0f3f50}
+    @media(max-width:1100px){.priority-matrix-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:680px){.priority-matrix-grid{grid-template-columns:1fr}}
+
     @media print{
       .sidebar,.toolbar,.filters,.pagination,.mobile-menu,.btn{display:none!important}
       .app{display:block}.main{padding:0}.section{display:block!important;page-break-after:always}
@@ -426,6 +508,95 @@
       .data-source-bar{flex-direction:column}
       .sheet-counts{justify-content:flex-start}
       .excel-info-grid{grid-template-columns:1fr}
+    }
+
+
+    /* Beranda Eksekutif SIRUMAH v35 */
+    .executive-status{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      padding:12px 14px;margin-bottom:16px;border:1px solid #dbe7ec;
+      border-radius:15px;background:linear-gradient(135deg,#ffffff 0%,#f7fbfc 100%);
+      box-shadow:0 7px 20px rgba(15,23,42,.05);
+    }
+    .executive-status-label{font-size:12px;color:#64748b;font-weight:800;margin-right:2px}
+    .executive-status-pill{
+      display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #e2e8f0;
+      border-radius:999px;background:#fff;color:#334155;font-size:12px;font-weight:750;line-height:1.2;
+    }
+    .executive-status-pill strong{color:#0f3f50}
+    .executive-status-pill.good{background:#ecfdf5;border-color:#bbf7d0;color:#166534}
+    .executive-status-pill.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+    .executive-status-pill.info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+
+    .executive-kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .executive-kpi{
+      position:relative;overflow:hidden;text-align:left;border:1px solid rgba(226,232,240,.9);
+      border-radius:17px;background:#fff;padding:17px;box-shadow:var(--shadow);cursor:pointer;
+      transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    }
+    .executive-kpi:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(15,23,42,.11);border-color:#b9d3dc}
+    .executive-kpi:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px}
+    .executive-kpi:after{content:"";position:absolute;right:-28px;top:-30px;width:94px;height:94px;border-radius:50%;background:rgba(23,91,114,.06)}
+    .executive-kpi-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;position:relative;z-index:1}
+    .executive-kpi-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#edf6f8;font-size:20px;flex:0 0 auto}
+    .executive-kpi-label{font-size:12px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:.45px}
+    .executive-kpi-value{font-size:29px;line-height:1.05;color:#0f3f50;font-weight:950;letter-spacing:-.7px;margin-top:9px;position:relative;z-index:1}
+    .executive-kpi-note{font-size:12px;color:#64748b;margin-top:7px;line-height:1.4;position:relative;z-index:1}
+    .executive-kpi.danger{border-left:5px solid #dc2626}.executive-kpi.danger .executive-kpi-icon{background:#fee2e2}
+    .executive-kpi.warning{border-left:5px solid #d97706}.executive-kpi.warning .executive-kpi-icon{background:#ffedd5}
+    .executive-kpi.success{border-left:5px solid #16a34a}.executive-kpi.success .executive-kpi-icon{background:#dcfce7}
+    .executive-kpi.info{border-left:5px solid #2563eb}.executive-kpi.info .executive-kpi-icon{background:#dbeafe}
+    .executive-kpi.purple{border-left:5px solid #7c3aed}.executive-kpi.purple .executive-kpi-icon{background:#ede9fe}
+    .executive-kpi.primary{border-left:5px solid #175b72}
+
+    .beranda-main-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(330px,.8fr);gap:18px;margin-bottom:18px}
+    .executive-card-header{align-items:center}
+    .compact-select{min-height:38px;padding:8px 10px;min-width:170px;font-size:12px;font-weight:800;color:#0f3f50}
+    .chart-footnote{padding:0 18px 16px;color:#64748b;font-size:12px;line-height:1.45}
+    .attention-card{display:flex;flex-direction:column}
+    .attention-section{padding:14px 18px 0}
+    .attention-title{font-size:11px;text-transform:uppercase;letter-spacing:.65px;font-weight:900;color:#64748b;margin-bottom:9px}
+    .attention-list{display:grid;gap:9px}
+    .attention-item{
+      border:1px solid #e2e8f0;border-radius:13px;padding:11px;background:#f8fafc;cursor:pointer;
+      display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;transition:.16s ease;
+    }
+    .attention-item:hover{background:#eef7fa;border-color:#c5dce4;transform:translateX(2px)}
+    .attention-item strong{font-size:13px;color:#0f3f50;line-height:1.35;display:block}
+    .attention-item small{display:block;color:#64748b;font-size:11px;line-height:1.45;margin-top:4px}
+    .attention-score{display:grid;place-items:center;min-width:42px;height:36px;border-radius:11px;background:#fee2e2;color:#991b1b;font-weight:950;font-size:15px}
+    .attention-issues-section{padding-top:16px}
+    .issue-chip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .issue-chip{border:1px solid #e2e8f0;border-radius:12px;padding:9px;background:#fff;display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .issue-chip span{font-size:11px;color:#64748b;line-height:1.3}.issue-chip strong{font-size:16px;color:#0f3f50}
+    .attention-link{margin:16px 18px 18px;border:0;background:transparent;color:#175b72;font-weight:900;text-align:left;cursor:pointer;padding:0;font-size:12px}
+
+    .beranda-secondary-grid,.beranda-operational-grid{margin-top:18px}
+    .housing-quality{padding:18px;display:grid;gap:14px}
+    .quality-number-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .quality-number{border:1px solid #e2e8f0;border-radius:13px;background:#f8fafc;padding:12px}
+    .quality-number span{font-size:11px;color:#64748b;font-weight:800}.quality-number strong{display:block;margin-top:5px;font-size:22px;color:#0f3f50}
+    .quality-meter{height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden;display:flex;border:1px solid #dbe4ea}
+    .quality-meter .rtlh{background:linear-gradient(90deg,#dc2626,#f97316);min-width:2px}
+    .quality-meter .rlh{background:linear-gradient(90deg,#16a34a,#22c55e)}
+    .quality-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#475569}
+    .quality-legend span{display:inline-flex;align-items:center;gap:6px}.quality-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+    .quality-insight{border-left:4px solid #175b72;background:#f0f7f9;border-radius:10px;padding:10px 12px;color:#334155;font-size:12px;line-height:1.5}
+
+    .data-quality-good{color:#166534!important}.data-quality-warn{color:#9a3412!important}.data-quality-bad{color:#991b1b!important}
+    .stat-row.clickable{cursor:pointer;transition:.16s ease}.stat-row.clickable:hover{background:#eef7fa;border-color:#c5dce4}
+
+    @media(max-width:1200px){
+      .executive-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .beranda-main-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:760px){
+      .executive-kpi-grid{grid-template-columns:1fr}
+      .executive-card-header{align-items:flex-start;flex-direction:column}
+      .compact-select{width:100%}
+      .quality-number-row{grid-template-columns:1fr}
+      .issue-chip-grid{grid-template-columns:1fr}
+      .executive-status{align-items:stretch}.executive-status-pill{border-radius:11px}
     }
 
   </style>
@@ -497,63 +668,66 @@
         Mode Publik aktif: kolom Direktur/Pelaksana, data individu RTLH, dan informasi internal disembunyikan.
       </div>
 
-      <div class="beranda-summary-grid" id="kpiGrid"></div>
+      <div class="executive-status" id="executiveStatusBar"></div>
 
-      <div class="grid two-col">
+      <div class="executive-kpi-grid" id="kpiGrid"></div>
+
+      <div class="beranda-main-grid">
         <div class="card">
-          <div class="card-header">
+          <div class="card-header executive-card-header">
             <div>
-              <h3>Jumlah Perumahan per Kecamatan</h3>
-              <p>Grafik dihitung langsung dari data perumahan yang terintegrasi.</p>
+              <h3>Analisis Kondisi per Kecamatan</h3>
+              <p>Gunakan pilihan tampilan untuk melihat tingkat prioritas, status PSU, atau kebutuhan hunian.</p>
             </div>
+            <select id="berandaAnalysisMode" class="compact-select" onchange="changeBerandaAnalysisMode()">
+              <option value="priority">Tingkat Prioritas</option>
+              <option value="psu">Status PSU</option>
+              <option value="housing">RTLH & Backlog</option>
+            </select>
           </div>
           <div class="chart"><canvas id="kecamatanChart"></canvas></div>
+          <div class="chart-footnote" id="primaryChartNote"></div>
         </div>
-        <div class="card">
+
+        <div class="card attention-card">
           <div class="card-header">
             <div>
-              <h3>Status Penyerahan PSU</h3>
-              <p>Komposisi PSU sudah dan belum diserahkan.</p>
+              <h3>Perlu Perhatian</h3>
+              <p>Prioritas tertinggi dan isu yang paling banyak ditemukan pada filter aktif.</p>
             </div>
           </div>
-          <div class="chart"><canvas id="statusChart"></canvas></div>
+          <div class="attention-section">
+            <div class="attention-title">Perumahan prioritas</div>
+            <div class="attention-list" id="topPrioritas"></div>
+          </div>
+          <div class="attention-section attention-issues-section">
+            <div class="attention-title">Ringkasan isu</div>
+            <div class="issue-chip-grid" id="catatanStats"></div>
+          </div>
+          <button class="attention-link" type="button" onclick="openDashboardSectionV34('psu')">Lihat matriks dan ranking lengkap →</button>
         </div>
       </div>
 
-
-      <div class="grid two-col" style="margin-top:18px;">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Backlog Kepemilikan dan RTLH per Kecamatan</h3>
-              <p>Perbandingan backlog kepemilikan dan RTLH berdasarkan data SIRUMAH.</p>
-            </div>
-          </div>
-          <div class="chart"><canvas id="sirBerandaChart"></canvas></div>
-        </div>
+      <div class="grid beranda-secondary-grid">
         <div class="card">
           <div class="card-header">
             <div>
               <h3>Komposisi Kualitas Hunian</h3>
-              <p>Perbandingan Rumah Tidak Layak Huni (RTLH) dan Rumah Layak Huni (RLH).</p>
+              <p>Proporsi RTLH terhadap jumlah rumah dan posisi RLH pada wilayah aktif.</p>
             </div>
           </div>
-          <div class="chart"><canvas id="sirStatusChart"></canvas></div>
+          <div class="housing-quality" id="housingQualitySummary"></div>
         </div>
       </div>
 
-      <div class="grid three-col" style="margin-top:18px;">
+      <div class="grid two-col beranda-operational-grid">
         <div class="card">
-          <div class="card-header"><div><h3>Progress Unit</h3><p>Site plan, terbangun, dan terhuni.</p></div></div>
-          <div class="stat-list" id="progressUnit"></div>
+          <div class="card-header"><div><h3>Kualitas Data</h3><p>Kelengkapan, verifikasi, koordinat, dan kemutakhiran data.</p></div></div>
+          <div class="stat-list" id="dataQualityList"></div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>Catatan Penting</h3><p>Isu yang paling sering muncul pada data.</p></div></div>
-          <div class="stat-list" id="catatanStats"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div><h3>Top Prioritas</h3><p>Perumahan dengan skor prioritas tertinggi.</p></div></div>
-          <div class="stat-list" id="topPrioritas"></div>
+          <div class="card-header"><div><h3>Ringkasan RUSUNAWA</h3><p>Hunian, retribusi, dan sarpras prioritas seluruh RUSUNAWA.</p></div></div>
+          <div class="stat-list" id="rusunawaHomeSummary"></div>
         </div>
       </div>
     </section>
@@ -984,21 +1158,55 @@
         </div>
       </div>
       <div style="height:18px;"></div>
+
+      <div class="card priority-matrix-card">
+        <div class="card-header">
+          <div>
+            <h3>Matriks Skor Prioritas PSU</h3>
+            <p>Skor maksimal 100 poin. Nilai merupakan alat bantu penyaringan awal dan tetap memerlukan verifikasi administrasi serta lapangan.</p>
+          </div>
+        </div>
+        <div class="priority-matrix-grid">
+          <div class="priority-matrix-item">
+            <h4>Administrasi <span>Maks. 30</span></h4>
+            <p>PSU belum diserahkan 20; dalam proses 10; status tidak diketahui 8. Pengembang tidak aktif menambah 10 selama PSU belum diserahkan.</p>
+          </div>
+          <div class="priority-matrix-item">
+            <h4>Kondisi Teknis <span>Maks. 40</span></h4>
+            <p>Jalan maksimal 20, kondisi RTH maksimal 10, dan usia perumahan maksimal 10. Setiap subaspek hanya mengambil satu kondisi terberat.</p>
+          </div>
+          <div class="priority-matrix-item">
+            <h4>Risiko <span>Maks. 20</span></h4>
+            <p>Perumahan dengan catatan titik rawan genangan atau banjir memperoleh 20 poin.</p>
+          </div>
+          <div class="priority-matrix-item">
+            <h4>Penerima Manfaat <span>Maks. 10</span></h4>
+            <p>Dihitung dari unit terhuni: 1–24 = 2; 25–49 = 4; 50–99 = 6; 100–199 = 8; ≥200 = 10.</p>
+          </div>
+        </div>
+        <div class="priority-levels">
+          <span class="priority-level very-high">75–100 Sangat Tinggi</span>
+          <span class="priority-level high">50–74 Tinggi</span>
+          <span class="priority-level medium">25–49 Sedang</span>
+          <span class="priority-level low">0–24 Rendah</span>
+        </div>
+      </div>
+
       <div class="grid two-col">
         <div class="card">
-          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pengembang</h3><p>Perumahan belum serah terima PSU dengan isu teknis dan administratif.</p></div></div>
+          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pengembang</h3><p>Urutan berdasarkan matriks administrasi, teknis, risiko, dan jumlah unit terhuni.</p></div></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Catatan</th><th>Skor</th></tr></thead>
+              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Adm.</th><th>Teknis</th><th>Risiko</th><th>Manfaat</th><th>Total</th><th>Level</th><th>Catatan</th></tr></thead>
               <tbody id="rankBelumBody"></tbody>
             </table>
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pemda</h3><p>Perumahan sudah diserahkan, namun masih memiliki catatan penanganan kawasan.</p></div></div>
+          <div class="card-header"><div><h3>Ranking Prioritas - PSU Milik Pemda</h3><p>PSU telah diserahkan; urutan terutama ditentukan kondisi teknis, risiko, usia, dan penerima manfaat.</p></div></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Catatan</th><th>Skor</th></tr></thead>
+              <thead><tr><th>Rank</th><th>Perumahan</th><th>Kecamatan</th><th>Adm.</th><th>Teknis</th><th>Risiko</th><th>Manfaat</th><th>Total</th><th>Level</th><th>Catatan</th></tr></thead>
               <tbody id="rankSudahBody"></tbody>
             </table>
           </div>
@@ -1576,26 +1784,114 @@ function normalizeRow(row, index){
   };
   item.progressBangun = pct(item.terbangun, item.siteplan);
   item.progressHuni = pct(item.terhuni, item.terbangun);
-  item.score = priorityScore(item);
+  item.priority = priorityMatrix(item);
+  item.score = item.priority.total;
   return item;
 }
 
+function priorityMatrix(x){
+  const note = String(x?.catatan || "").toLowerCase();
+  const status = String(x?.statusPSU || "").toUpperCase();
+  const age = Number(x?.age);
+  const occupied = Math.max(0, Number(x?.terhuni || 0));
+
+  let administrasi = 0;
+  let teknis = 0;
+  let risiko = 0;
+  let manfaat = 0;
+  const rincian = [];
+
+  // A. ADMINISTRASI — maksimum 30 poin.
+  if(status.includes("BELUM")){
+    administrasi += 20;
+    rincian.push("PSU belum diserahkan +20");
+  }else if(status.includes("DALAM PROSES")){
+    administrasi += 10;
+    rincian.push("PSU dalam proses +10");
+  }else if(status.includes("TIDAK DIKETAHUI") || !status || status === "NN"){
+    administrasi += 8;
+    rincian.push("Status PSU belum diketahui +8");
+  }
+  if(!status.includes("SUDAH") && note.includes("pengembang tidak aktif")){
+    administrasi += 10;
+    rincian.push("Pengembang tidak aktif +10");
+  }
+
+  // B. KONDISI TEKNIS — maksimum 40 poin.
+  // Jalan: hanya satu kondisi terberat yang dihitung, maksimum 20.
+  if(note.includes("jalan belum perkerasan")){
+    teknis += 20;
+    rincian.push("Jalan belum perkerasan +20");
+  }else if(note.includes("jalan rusak berat")){
+    teknis += 18;
+    rincian.push("Jalan rusak berat +18");
+  }else if(note.includes("jalan rusak sedang")){
+    teknis += 12;
+    rincian.push("Jalan rusak sedang +12");
+  }else if(note.includes("jalan rusak ringan")){
+    teknis += 6;
+    rincian.push("Jalan rusak ringan +6");
+  }
+
+  // RTH: hanya satu kondisi terberat yang dihitung, maksimum 10.
+  if(note.includes("rth beralih fungsi")){
+    teknis += 10;
+    rincian.push("RTH beralih fungsi +10");
+  }else if(note.includes("rth belum terbangun")){
+    teknis += 7;
+    rincian.push("RTH belum terbangun +7");
+  }else if(note.includes("rth tidak tersedia") || note.includes("tidak tersedia")){
+    teknis += 4;
+    rincian.push("RTH tidak tersedia +4");
+  }
+
+  // Usia perumahan: maksimum 10.
+  if(Number.isFinite(age)){
+    if(age > 15){
+      teknis += 10;
+      rincian.push("Usia >15 tahun +10");
+    }else if(age > 10){
+      teknis += 8;
+      rincian.push("Usia 11–15 tahun +8");
+    }else if(age > 5){
+      teknis += 4;
+      rincian.push("Usia 6–10 tahun +4");
+    }
+  }
+
+  // C. RISIKO — maksimum 20 poin.
+  if(note.includes("titik rawan genangan") || note.includes("banjir") || note.includes("genangan")){
+    risiko = 20;
+    rincian.push("Rawan genangan/banjir +20");
+  }
+
+  // D. PENERIMA MANFAAT — maksimum 10 poin, memakai unit terhuni.
+  if(occupied >= 200) manfaat = 10;
+  else if(occupied >= 100) manfaat = 8;
+  else if(occupied >= 50) manfaat = 6;
+  else if(occupied >= 25) manfaat = 4;
+  else if(occupied > 0) manfaat = 2;
+  if(manfaat) rincian.push(`${occupied} unit terhuni +${manfaat}`);
+
+  // Pengaman agar subtotal dan total tidak melebihi batas matriks.
+  administrasi = Math.min(30, administrasi);
+  teknis = Math.min(40, teknis);
+  risiko = Math.min(20, risiko);
+  manfaat = Math.min(10, manfaat);
+  const total = administrasi + teknis + risiko + manfaat;
+  const level = total >= 75 ? "Sangat Tinggi" : total >= 50 ? "Tinggi" : total >= 25 ? "Sedang" : "Rendah";
+
+  return {administrasi, teknis, risiko, manfaat, total, level, rincian};
+}
+
 function priorityScore(x){
-  const note = x.catatan.toLowerCase();
-  let s = 0;
-  if(x.statusPSU.includes("BELUM")) s += 50;
-  if(note.includes("pengembang tidak aktif")) s += 25;
-  if(note.includes("titik rawan genangan") || note.includes("banjir")) s += 20;
-  if(note.includes("jalan belum perkerasan")) s += 18;
-  if(note.includes("jalan rusak berat")) s += 18;
-  if(note.includes("jalan rusak sedang")) s += 12;
-  if(note.includes("jalan rusak ringan")) s += 8;
-  if(note.includes("rth belum terbangun")) s += 12;
-  if(note.includes("rth beralih fungsi")) s += 18;
-  if(x.ageCat === "Lama") s += 12;
-  if(x.siteplan >= 100) s += 8;
-  if(x.siteplan >= 200) s += 8;
-  return s;
+  return priorityMatrix(x).total;
+}
+
+function priorityLevelBadge(level){
+  const value = String(level || "Rendah");
+  const cls = value === "Sangat Tinggi" ? "very-high" : value === "Tinggi" ? "high" : value === "Sedang" ? "medium" : "low";
+  return `<span class="priority-level ${cls}">${escapeHtml(value)}</span>`;
 }
 
 function badge(status){
@@ -1769,12 +2065,14 @@ function renderCatatanStats(){
 
 function renderTopPrioritas(){
   const rows = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5);
-  document.getElementById("topPrioritas").innerHTML = rows.map((x,i)=>`
+  document.getElementById("topPrioritas").innerHTML = rows.length ? rows.map((x,i)=>{
+    const m = priorityMatrix(x);
+    return `
     <div class="stat-row">
-      <div><strong>${i+1}. ${escapeHtml(x.nama)}</strong><br><span>${escapeHtml(x.kecamatan)} · ${escapeHtml(x.statusPSU)}</span></div>
-      <strong>${x.score}</strong>
-    </div>
-  `).join("");
+      <div><strong>${i+1}. ${escapeHtml(x.nama)}</strong><br><span>${escapeHtml(x.kecamatan)} · ${escapeHtml(x.statusPSU)} · ${escapeHtml(m.level)}</span></div>
+      <span class="priority-score" title="Administrasi ${m.administrasi}; Teknis ${m.teknis}; Risiko ${m.risiko}; Manfaat ${m.manfaat}">${m.total}</span>
+    </div>`;
+  }).join("") : `<div class="empty-state">Belum ada data prioritas pada filter aktif.</div>`;
 }
 
 function renderTable(){
@@ -1894,11 +2192,26 @@ function renderPSU(){
 }
 
 function renderRanking(){
-  const belum = filtered.filter(x=>x.statusPSU.includes("BELUM")).sort((a,b)=>b.score-a.score).slice(0,25);
-  const sudah = filtered.filter(x=>x.statusPSU.includes("SUDAH")).sort((a,b)=>b.score-a.score).slice(0,25);
-  const row = (x,i) => `<tr><td>${i+1}</td><td><strong>${escapeHtml(x.nama)}</strong></td><td>${escapeHtml(x.kecamatan)}</td><td>${noteBadges(x.catatan)}</td><td><strong>${x.score}</strong></td></tr>`;
-  document.getElementById("rankBelumBody").innerHTML = belum.map(row).join("");
-  document.getElementById("rankSudahBody").innerHTML = sudah.map(row).join("");
+  const belum = filtered.filter(x=>x.statusPSU.includes("BELUM")).sort((a,b)=>b.score-a.score || b.terhuni-a.terhuni || a.nama.localeCompare(b.nama)).slice(0,25);
+  const sudah = filtered.filter(x=>x.statusPSU.includes("SUDAH")).sort((a,b)=>b.score-a.score || b.terhuni-a.terhuni || a.nama.localeCompare(b.nama)).slice(0,25);
+  const row = (x,i) => {
+    const m = priorityMatrix(x);
+    const detail = m.rincian.length ? m.rincian.join("; ") : "Tidak ada indikator prioritas yang terdeteksi";
+    return `<tr title="${escapeHtml(detail)}">
+      <td>${i+1}</td>
+      <td><strong>${escapeHtml(x.nama)}</strong><br><span style="font-size:11px;color:#64748b;">${fmt(x.terhuni)} unit terhuni</span></td>
+      <td>${escapeHtml(x.kecamatan)}</td>
+      <td class="score-sub">${m.administrasi}/30</td>
+      <td class="score-sub">${m.teknis}/40</td>
+      <td class="score-sub">${m.risiko}/20</td>
+      <td class="score-sub">${m.manfaat}/10</td>
+      <td><span class="priority-score">${m.total}</span></td>
+      <td>${priorityLevelBadge(m.level)}</td>
+      <td>${noteBadges(x.catatan)}</td>
+    </tr>`;
+  };
+  document.getElementById("rankBelumBody").innerHTML = belum.length ? belum.map(row).join("") : `<tr><td colspan="10" class="empty-state">Tidak ada data PSU milik pengembang pada filter aktif.</td></tr>`;
+  document.getElementById("rankSudahBody").innerHTML = sudah.length ? sudah.map(row).join("") : `<tr><td colspan="10" class="empty-state">Tidak ada data PSU milik Pemda pada filter aktif.</td></tr>`;
 }
 
 function initMap(){
@@ -1989,13 +2302,16 @@ function copyReport(){
 }
 
 function exportCSV(){
-  const headers = ["No","Nama Perumahan","Kategori","Tahun","Alamat","Kelurahan","Kecamatan","Pengembang","Direktur/Pelaksana","Asosiasi","Site Plan","Terbangun","Terhuni","Progress Bangun","Progress Huni","Status PSU","Tahun PSU","Usia","Catatan","Latitude","Longitude","Skor"];
-  const rows = filtered.map((x,i)=>[i+1,x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.siteplan,x.terbangun,x.terhuni,x.progressBangun+"%",x.progressHuni+"%",x.statusPSU,x.tahunPSU,x.ageCat,x.catatan,x.lat??"",x.lng??"",x.score]);
+  const headers = ["No","Nama Perumahan","Kategori","Tahun","Alamat","Kelurahan","Kecamatan","Pengembang","Direktur/Pelaksana","Asosiasi","Site Plan","Terbangun","Terhuni","Progress Bangun","Progress Huni","Status PSU","Tahun PSU","Usia","Catatan","Latitude","Longitude","Skor Administrasi","Skor Teknis","Skor Risiko","Skor Penerima Manfaat","Skor Total","Level Prioritas","Rincian Skor"];
+  const rows = filtered.map((x,i)=>{
+    const m = priorityMatrix(x);
+    return [i+1,x.nama,x.kategori,x.tahun,x.alamat,x.kelurahan,x.kecamatan,x.pengembang,x.direktur,x.asosiasi,x.siteplan,x.terbangun,x.terhuni,x.progressBangun+"%",x.progressHuni+"%",x.statusPSU,x.tahunPSU,x.ageCat,x.catatan,x.lat??"",x.lng??"",m.administrasi,m.teknis,m.risiko,m.manfaat,m.total,m.level,m.rincian.join("; ")];
+  });
   const csv = [headers,...rows].map(r=>r.map(c=>`"${String(c).replaceAll('"','""')}"`).join(",")).join("\n");
-  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const blob = new Blob(["\uFEFF",csv], {type:"text/csv;charset=utf-8;"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href=url; a.download="data_sirumah_terintegrasi.csv"; a.click();
+  a.href=url; a.download="data_sirumah_dengan_matriks_prioritas.csv"; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -2027,7 +2343,6 @@ function initNavigation(){
 
 function renderAll(){
   renderKPI();
-  renderProgressUnit();
   renderCatatanStats();
   renderTopPrioritas();
   renderTable();
@@ -2271,11 +2586,6 @@ function renderCharts(){
   drawDonut("statusChart", [s.sudah,s.belum], ["Sudah PSU","Belum PSU"], ["#16a34a","#dc2626"]);
 
   const pk = programKecamatanRows();
-  drawBar("sirBerandaChart", pk.map(x=>x.nama), [
-    {name:"RTLH", values:pk.map(x=>x.rtlh), color:"#dc2626"},
-    {name:"Tertangani", values:pk.map(x=>x.tertangani), color:"#16a34a"},
-    {name:"Backlog", values:pk.map(x=>x.backlog), color:"#2563eb"}
-  ]);
   const statusCounts = ["Belum Diverifikasi", "Sudah Diverifikasi", "Masuk Prioritas", "Dalam Pelaksanaan", "Selesai"].map(st => filterByGlobalKec(SIRUMAH_PROGRAM.rtlh).filter(x=>x.status===st).length);
   drawDonut("sirStatusChart", statusCounts, ["Belum", "Verif", "Prioritas", "Berjalan", "Selesai"], ["#dc2626", "#d97706", "#7c3aed", "#2563eb", "#16a34a"]);
   drawBar("backlogChart", pk.map(x=>x.nama), [
@@ -2311,7 +2621,7 @@ Catatan penting yang perlu menjadi perhatian antara lain RTH belum terbangun seb
 
 Kolaborasi yang tercatat sebanyak ${fmt(kolabRows.length)} mitra/kegiatan dengan estimasi nilai dukungan sebesar Rp${fmt(nilaiKolab)}.
 
-Daftar prioritas awal berdasarkan skor dashboard:\n${top}
+Daftar prioritas awal berdasarkan matriks 100 poin (Administrasi 30, Teknis 40, Risiko 20, Penerima Manfaat 10):\n${top}
 
 Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
   document.getElementById("reportText").value = txt;
@@ -2319,7 +2629,6 @@ Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pan
 
 function renderAll(){
   renderKPI();
-  renderProgressUnit();
   renderCatatanStats();
   renderTopPrioritas();
   renderTable();
@@ -3004,7 +3313,6 @@ function safeRenderSIRUMAH(fn, name){
 
 function renderAll(){
   safeRenderSIRUMAH(renderKPI, "KPI");
-  safeRenderSIRUMAH(renderProgressUnit, "Progress Unit");
   safeRenderSIRUMAH(renderCatatanStats, "Catatan Penting");
   safeRenderSIRUMAH(renderTopPrioritas, "Top Prioritas");
   safeRenderSIRUMAH(renderTable, "Data Perumahan");
@@ -3370,11 +3678,6 @@ function renderCharts(){
 
   // Grafik SIRUMAH: Backlog Kepemilikan, RTLH, dan RLH per Kecamatan
   const agg = getAggregateHousingQualityRows();
-  drawBar("sirBerandaChart", agg.map(x=>x.kecamatan), [
-    {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog), color:"#2563eb"},
-    {name:"RTLH", values:agg.map(x=>x.rtlh), color:"#dc2626"},
-    {name:"RLH", values:agg.map(x=>x.rlh), color:"#16a34a"}
-  ]);
 
   // Diagram SIRUMAH: Komposisi kualitas hunian RTLH vs RLH
   const totalRTLH = agg.reduce((sum,x)=>sum+x.rtlh,0);
@@ -3649,10 +3952,6 @@ function renderCharts(){
 
   // 3. Grafik SIRUMAH: backlog kepemilikan dan RTLH per kecamatan
   const agg = getAggregateHousingQualityRows();
-  drawBar("sirBerandaChart", agg.map(x=>x.kecamatan), [
-    {name:"Backlog Kepemilikan", values:agg.map(x=>x.backlog)},
-    {name:"RTLH", values:agg.map(x=>x.rtlh)}
-  ]);
 
   // 4. Diagram kualitas hunian
   const totalRTLH = agg.reduce((sum,x)=>sum+x.rtlh,0);
@@ -3822,7 +4121,6 @@ function renderRusunawa(){
 /* FINAL OVERRIDE: renderAll memasukkan modul RUSUNAWA tanpa grafik/diagram */
 function renderAll(){
   safeRenderSIRUMAH(renderKPI, "KPI");
-  safeRenderSIRUMAH(renderProgressUnit, "Progress Unit");
   safeRenderSIRUMAH(renderCatatanStats, "Catatan Penting");
   safeRenderSIRUMAH(renderTopPrioritas, "Top Prioritas");
   safeRenderSIRUMAH(renderTable, "Data Perumahan");
@@ -4045,7 +4343,7 @@ function renderRusunawa(){
 
 
 /* =========================================================
-   INTEGRASI DATABASE EXCEL SIRUMAH v30 — GITHUB READY
+   INTEGRASI DATABASE EXCEL SIRUMAH v33 — GITHUB READY + MATRIKS PRIORITAS + FREEZE KOLOM RESPONSIF
    Satu workbook dengan tujuh sheet resmi. Seluruh penerapan
    data bersifat atomik: dashboard tidak berubah bila validasi gagal.
    ========================================================= */
@@ -4257,7 +4555,8 @@ function buildHousingFromExcel(rows){
     };
     item.progressBangun = pct(item.terbangun,item.siteplan);
     item.progressHuni = pct(item.terhuni,item.terbangun);
-    item.score = priorityScore(item);
+    item.priority = priorityMatrix(item);
+  item.score = item.priority.total;
     if(!Number.isFinite(item.lat) || item.lat < -90 || item.lat > 90) item.lat = null;
     if(!Number.isFinite(item.lng) || item.lng < -180 || item.lng > 180) item.lng = null;
     return item;
@@ -4757,7 +5056,7 @@ function generateReport(){
   const backlog=sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
   const quality=filterAggregateRows(SIRUMAH_RUNTIME.rtlhAggregate);
   const jumlah=sumRows(quality,"jumlah"), rtlh=sumRows(quality,"rtlh"), rlh=sumRows(quality,"rlh");
-  const top=[...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((row,index)=>`${index+1}. ${row.nama} (${row.kecamatan}, skor ${row.score})`).join("\n") || "Belum ada data prioritas pada filter aktif.";
+  const top=[...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((row,index)=>{ const m=priorityMatrix(row); return `${index+1}. ${row.nama} (${row.kecamatan}, skor ${m.total}/100, ${m.level}; Adm ${m.administrasi}, Teknis ${m.teknis}, Risiko ${m.risiko}, Manfaat ${m.manfaat})`; }).join("\n") || "Belum ada data prioritas pada filter aktif.";
   const source=SIRUMAH_RUNTIME.source.mode === "excel" ? `Workbook ${SIRUMAH_RUNTIME.source.fileName}` : "data bawaan HTML";
   const text=`LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI\n\nSumber data aktif: ${source}.\n\nBerdasarkan data aktif untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.\n\nBacklog Kepemilikan tercatat sebanyak ${fmt(backlog)} unit, sedangkan Backlog Hunian tingkat kota sebanyak ${fmt(SIRUMAH_RUNTIME.backlogHunian)}. Data MBR belum ditampilkan sebagai angka tetap karena masih memerlukan integrasi dan verifikasi.\n\nPada modul RTLH dan RLH, tercatat jumlah rumah sebanyak ${fmt(jumlah)} unit, terdiri atas RTLH sebanyak ${fmt(rtlh)} unit dan RLH sebanyak ${fmt(rlh)} unit.\n\nDari aspek PSU, terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.\n\nDaftar prioritas awal berdasarkan skor dashboard:\n${top}\n\nData ini menjadi bagian dari SIRUMAH sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
   const report=document.getElementById("reportText"); if(report) report.value=text;
@@ -4787,9 +5086,387 @@ drawDonut = function(id,values,labels,colors){
   canvas.width=w*ratio; canvas.height=h*ratio; ctx.setTransform(ratio,0,0,ratio,0,0); drawNoData(ctx,w,h,"Belum ada data diagram");
 };
 
+/*
+ * Menyesuaikan lebar kolom pertama secara otomatis untuk setiap tabel.
+ * Kolom kedua tetap sticky dan posisi kirinya mengikuti lebar aktual kolom pertama.
+ */
+let stickyColumnResizeFrame = 0;
+let stickyColumnObserver = null;
+const stickyColumnMeasureCanvas = document.createElement("canvas");
+
+function measureStickyCellWidth(cell){
+  if(!cell) return 0;
+  const style = window.getComputedStyle(cell);
+  const context = stickyColumnMeasureCanvas.getContext("2d");
+  if(!context) return 0;
+
+  const fontStyle = style.fontStyle || "normal";
+  const fontVariant = style.fontVariant || "normal";
+  const fontWeight = style.fontWeight || "400";
+  const fontSize = style.fontSize || "13px";
+  const fontFamily = style.fontFamily || "Arial";
+  context.font = `${fontStyle} ${fontVariant} ${fontWeight} ${fontSize} ${fontFamily}`;
+
+  let text = (cell.innerText || cell.textContent || "").trim();
+  if(style.textTransform === "uppercase") text = text.toUpperCase();
+  else if(style.textTransform === "lowercase") text = text.toLowerCase();
+
+  const lines = text.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  const widestText = (lines.length ? lines : [""]).reduce(
+    (maximum,line)=>Math.max(maximum,context.measureText(line).width),
+    0
+  );
+
+  const horizontalPadding = (parseFloat(style.paddingLeft)||0) + (parseFloat(style.paddingRight)||0);
+  const horizontalBorder = (parseFloat(style.borderLeftWidth)||0) + (parseFloat(style.borderRightWidth)||0);
+  // Tambahan kecil mengakomodasi teks tebal/elemen inline di dalam sel.
+  return Math.ceil(widestText + horizontalPadding + horizontalBorder + 8);
+}
+
+function resizeStickyFirstColumns(){
+  const mobile = window.matchMedia("(max-width:680px)").matches;
+  const minimumWidth = mobile ? 42 : 46;
+  const maximumWidth = mobile ? 170 : 220;
+
+  document.querySelectorAll(".table-wrap").forEach(wrapper=>{
+    const table = wrapper.querySelector("table");
+    if(!table) return;
+
+    const cells = [
+      table.querySelector("thead th:first-child"),
+      ...table.querySelectorAll("tbody td:first-child:not([colspan]), tfoot td:first-child:not([colspan])")
+    ].filter(Boolean);
+
+    if(!cells.length) return;
+    const measuredWidth = cells.reduce(
+      (maximum,cell)=>Math.max(maximum,measureStickyCellWidth(cell)),
+      minimumWidth
+    );
+    const finalWidth = Math.min(maximumWidth,Math.max(minimumWidth,measuredWidth));
+    wrapper.style.setProperty("--sticky-col-1-width", `${finalWidth}px`);
+  });
+}
+
+function scheduleStickyColumnResize(){
+  if(stickyColumnResizeFrame) cancelAnimationFrame(stickyColumnResizeFrame);
+  stickyColumnResizeFrame = requestAnimationFrame(()=>{
+    stickyColumnResizeFrame = 0;
+    resizeStickyFirstColumns();
+  });
+}
+
+function setupResponsiveStickyColumns(){
+  scheduleStickyColumnResize();
+
+  if(stickyColumnObserver) stickyColumnObserver.disconnect();
+  const main = document.querySelector(".main") || document.body;
+  stickyColumnObserver = new MutationObserver(mutations=>{
+    if(mutations.some(mutation=>mutation.type === "childList" || mutation.type === "characterData")){
+      scheduleStickyColumnResize();
+    }
+  });
+  stickyColumnObserver.observe(main,{childList:true,subtree:true,characterData:true});
+
+  window.addEventListener("resize",scheduleStickyColumnResize,{passive:true});
+  window.addEventListener("load",scheduleStickyColumnResize,{once:true});
+}
+
+
+/* =========================================================
+   BERANDA EKSEKUTIF SIRUMAH v35
+   ========================================================= */
+function openDashboardSectionV34(sectionId){
+  const button = document.querySelector(`.nav button[data-section="${sectionId}"]`);
+  if(button) button.click();
+}
+
+function parseSirumahDateV34(value){
+  const text = String(value || "").trim();
+  if(!text) return null;
+  let match = text.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(match){
+    const date = new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
+    return Number.isFinite(date.getTime()) ? date : null;
+  }
+  match = text.match(/^(\d{4})[\/.-](\d{1,2})[\/.-](\d{1,2})$/);
+  if(match){
+    const date = new Date(Number(match[1]),Number(match[2])-1,Number(match[3]));
+    return Number.isFinite(date.getTime()) ? date : null;
+  }
+  const parsed = new Date(text);
+  return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
+function verificationIsValidV34(value){
+  const status = String(value || "").trim().toUpperCase();
+  if(!status || status.includes("BELUM") || status.includes("DRAFT") || status.includes("PERLU")) return false;
+  return status.includes("TERVERIFIKASI") || status.includes("SUDAH DIVERIFIKASI") || status.includes("VALID");
+}
+
+function getBerandaDataQualityV34(){
+  const rows = filtered || [];
+  const total = rows.length;
+  const verified = rows.filter(row=>verificationIsValidV34(row.statusVerifikasi)).length;
+  const missingCoords = rows.filter(row=>!Number.isFinite(row.lat) || !Number.isFinite(row.lng)).length;
+  const missingYear = rows.filter(row=>!row.tahun || String(row.tahun).toUpperCase()==="NN" || Number(row.tahun)<=0).length;
+  const missingDeveloper = rows.filter(row=>!row.pengembang || ["NN","-"].includes(String(row.pengembang).trim().toUpperCase())).length;
+  const dates = rows.map(row=>parseSirumahDateV34(row.tanggalUpdate)).filter(Boolean);
+  const latest = dates.length ? new Date(Math.max(...dates.map(date=>date.getTime()))) : null;
+  const staleLimit = Date.now() - (365 * 24 * 60 * 60 * 1000);
+  const stale = rows.filter(row=>{
+    const date = parseSirumahDateV34(row.tanggalUpdate);
+    return date && date.getTime() < staleLimit;
+  }).length;
+  const missingUpdate = rows.filter(row=>!parseSirumahDateV34(row.tanggalUpdate)).length;
+  return {total,verified,verifiedPct:pct(verified,total),missingCoords,missingYear,missingDeveloper,latest,stale,missingUpdate};
+}
+
+function getBerandaRusunawaV34(){
+  const units = SIRUMAH_RUNTIME?.rusunawaUnits || [];
+  const payments = SIRUMAH_RUNTIME?.rusunawaPayments || [];
+  const facilities = SIRUMAH_RUNTIME?.rusunawaFacilities || [];
+  const total = units.length;
+  const filled = units.filter(row=>String(row.status||"").toLowerCase().includes("terisi")).length;
+  const vacant = units.filter(row=>String(row.status||"").toLowerCase().includes("kosong")).length;
+  const repair = units.filter(row=>/perbaikan|rusak|gangguan/i.test(`${row.status||""} ${row.condition||""}`)).length;
+  const target = payments.reduce((sum,row)=>sum+Number(row.target||0),0);
+  const realization = payments.reduce((sum,row)=>sum+Number(row.realization||0),0);
+  const highPriority = facilities.filter(row=>/tinggi|mendesak|urgent/i.test(String(row.priority||""))).length;
+  return {total,filled,vacant,repair,occupancy:pct(filled,total),target,realization,achievement:pct(realization,target),highPriority};
+}
+
+function renderExecutiveStatusV34(){
+  const el = document.getElementById("executiveStatusBar");
+  if(!el) return;
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const wilayah = selected === "all" ? "Kota Pangkalpinang" : `Kecamatan ${selected}`;
+  const quality = getBerandaDataQualityV34();
+  const counts = SIRUMAH_RUNTIME?.counts || {};
+  const loadedSheets = SIRUMAH_SHEET_NAMES.filter(name=>Number(counts[name]||0)>0).length;
+  const source = SIRUMAH_RUNTIME?.source || {};
+  const sourceLabel = source.mode === "excel" ? (source.origin === "repository" ? "Excel GitHub" : "Excel Lokal") : "Data Bawaan";
+  const latestLabel = quality.latest ? new Intl.DateTimeFormat("id-ID",{day:"2-digit",month:"short",year:"numeric"}).format(quality.latest) : "Belum tersedia";
+  const verificationClass = quality.verifiedPct >= 80 ? "good" : quality.verifiedPct >= 50 ? "warn" : "";
+  el.innerHTML = `
+    <span class="executive-status-label">STATUS DASHBOARD</span>
+    <span class="executive-status-pill info">📍 <strong>${escapeHtml(wilayah)}</strong></span>
+    <span class="executive-status-pill">🗄️ Sumber: <strong>${escapeHtml(sourceLabel)}</strong></span>
+    <span class="executive-status-pill ${loadedSheets===SIRUMAH_SHEET_NAMES.length?"good":"warn"}">📑 Sheet aktif: <strong>${loadedSheets}/${SIRUMAH_SHEET_NAMES.length}</strong></span>
+    <span class="executive-status-pill ${verificationClass}">✅ Terverifikasi: <strong>${quality.verifiedPct}%</strong></span>
+    <span class="executive-status-pill ${quality.latest?"good":"warn"}">🕒 Update terakhir: <strong>${escapeHtml(latestLabel)}</strong></span>`;
+}
+
+function renderKPI(){
+  const s = summary(filtered);
+  const backlog = sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
+  const qualityRows = filterAggregateRows(SIRUMAH_RUNTIME.rtlhAggregate);
+  const totalHouses = sumRows(qualityRows,"jumlah");
+  const rtlh = sumRows(qualityRows,"rtlh");
+  const veryHigh = filtered.filter(row=>priorityMatrix(row).total>=75).length;
+  const psuPct = pct(s.belum,s.total);
+  const builtPct = pct(s.terbangun,s.siteplan);
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+  const items = [
+    {label:"Total Perumahan",value:s.total,note:`${unique(filtered.map(row=>row.kecamatan)).length} kecamatan pada filter aktif`,icon:"🏘️",tone:"primary",target:"data-perumahan"},
+    {label:"PSU Belum Diserahkan",value:s.belum,note:`${psuPct}% dari total perumahan`,icon:"🛣️",tone:"danger",target:"psu"},
+    {label:"Unit Terbangun",value:s.terbangun,note:`${builtPct}% dari ${fmt(s.siteplan)} unit site plan`,icon:"🏗️",tone:"success",target:"data-perumahan"},
+    {label:"Backlog Kepemilikan",value:backlog,note:"kebutuhan kepemilikan rumah",icon:"🔑",tone:"info",target:"backlog"},
+    {label:"RTLH Terdata",value:rtlh,note:`${percentValue(rtlh,totalHouses)}% dari ${fmt(totalHouses)} rumah`,icon:"🧱",tone:"warning",target:"rtlh"},
+    {label:"Prioritas Sangat Tinggi",value:veryHigh,note:"skor matriks 75–100",icon:"🚨",tone:"purple",target:"psu"}
+  ];
+  el.className = "executive-kpi-grid";
+  el.innerHTML = items.map(item=>`
+    <div class="executive-kpi ${item.tone}" role="button" tabindex="0" onclick="openDashboardSectionV34('${item.target}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openDashboardSectionV34('${item.target}')}" aria-label="Buka ${escapeHtml(item.label)}">
+      <div class="executive-kpi-head"><div><div class="executive-kpi-label">${escapeHtml(item.label)}</div></div><div class="executive-kpi-icon">${item.icon}</div></div>
+      <div class="executive-kpi-value">${fmt(item.value)}</div>
+      <div class="executive-kpi-note">${escapeHtml(item.note)} · klik untuk detail</div>
+    </div>`).join("");
+}
+
+function renderProgressUnit(){
+  const s = summary(filtered);
+  const builtPct = pct(s.terbangun,s.siteplan);
+  const occupiedPct = pct(s.terhuni,s.terbangun);
+  const notBuilt = Math.max(0,s.siteplan-s.terbangun);
+  const notOccupied = Math.max(0,s.terbangun-s.terhuni);
+  const el = document.getElementById("progressUnit");
+  if(!el) return;
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>Progress Terbangun</strong><br><span>${fmt(s.terbangun)} dari ${fmt(s.siteplan)} unit</span><div class="progress"><i style="width:${Math.min(builtPct,100)}%"></i></div></div><strong>${builtPct}%</strong></div>
+    <div class="stat-row"><div><strong>Progress Terhuni</strong><br><span>${fmt(s.terhuni)} dari ${fmt(s.terbangun)} unit terbangun</span><div class="progress"><i style="width:${Math.min(occupiedPct,100)}%"></i></div></div><strong>${occupiedPct}%</strong></div>
+    <div class="stat-row"><div><strong>Belum Terbangun</strong><br><span>Selisih site plan dan realisasi</span></div><strong>${fmt(notBuilt)}</strong></div>
+    <div class="stat-row"><div><strong>Terbangun Belum Terhuni</strong><br><span>Potensi unit belum dimanfaatkan</span></div><strong>${fmt(notOccupied)}</strong></div>`;
+}
+
+function renderCatatanStats(){
+  const rows = [
+    ["Rawan banjir",filtered.filter(row=>/banjir|genangan/i.test(row.catatan)).length],
+    ["Jalan belum keras",filtered.filter(row=>/jalan belum perkerasan/i.test(row.catatan)).length],
+    ["Jalan rusak",filtered.filter(row=>/jalan rusak/i.test(row.catatan)).length],
+    ["RTH belum/beralih",filtered.filter(row=>/rth belum terbangun|rth beralih fungsi/i.test(row.catatan)).length],
+    ["Pengembang nonaktif",filtered.filter(row=>/pengembang tidak aktif/i.test(row.catatan)).length],
+    ["PSU belum serah",filtered.filter(row=>String(row.statusPSU).includes("BELUM")).length]
+  ];
+  const el = document.getElementById("catatanStats");
+  if(!el) return;
+  el.innerHTML = rows.map(row=>`<div class="issue-chip"><span>${escapeHtml(row[0])}</span><strong>${fmt(row[1])}</strong></div>`).join("");
+}
+
+function renderTopPrioritas(){
+  const rows = [...filtered].sort((a,b)=>b.score-a.score || b.terhuni-a.terhuni).slice(0,4);
+  const el = document.getElementById("topPrioritas");
+  if(!el) return;
+  el.innerHTML = rows.length ? rows.map((row,index)=>{
+    const matrix = priorityMatrix(row);
+    const reasons = matrix.rincian.slice(0,3).map(reason=>reason.replace(/\s*\+\d+$/,""));
+    return `<div class="attention-item" role="button" tabindex="0" onclick="openDashboardSectionV34('psu')" onkeydown="if(event.key==='Enter'){openDashboardSectionV34('psu')}">
+      <div><strong>${index+1}. ${escapeHtml(row.nama)}</strong><small>${escapeHtml(row.kecamatan)} · ${escapeHtml(reasons.join(" · ") || "Belum ada indikator khusus")}</small></div>
+      <div class="attention-score" title="${escapeHtml(matrix.level)}">${matrix.total}</div>
+    </div>`;
+  }).join("") : `<div class="empty-state">Belum ada data prioritas pada filter aktif.</div>`;
+}
+
+function renderHousingQualityV34(){
+  const rows = filterAggregateRows(SIRUMAH_RUNTIME.rtlhAggregate);
+  const houses = sumRows(rows,"jumlah");
+  const rtlh = sumRows(rows,"rtlh");
+  const rlh = sumRows(rows,"rlh");
+  const rtlhPct = houses ? Math.min(100,Math.max(0,(rtlh/houses)*100)) : 0;
+  const rlhPct = houses ? Math.min(100,Math.max(0,(rlh/houses)*100)) : 0;
+  const highest = [...rows].sort((a,b)=>Number(b.rtlh||0)-Number(a.rtlh||0))[0];
+  const el = document.getElementById("housingQualitySummary");
+  if(!el) return;
+  el.innerHTML = `
+    <div class="quality-number-row">
+      <div class="quality-number"><span>Jumlah Rumah</span><strong>${fmt(houses)}</strong></div>
+      <div class="quality-number"><span>RTLH</span><strong>${fmt(rtlh)}</strong></div>
+      <div class="quality-number"><span>RLH</span><strong>${fmt(rlh)}</strong></div>
+    </div>
+    <div class="quality-meter" aria-label="Komposisi kualitas hunian"><div class="rtlh" style="width:${rtlhPct}%"></div><div class="rlh" style="width:${rlhPct}%"></div></div>
+    <div class="quality-legend"><span><i style="background:#dc2626"></i>RTLH ${percentValue(rtlh,houses)}%</span><span><i style="background:#16a34a"></i>RLH ${percentValue(rlh,houses)}%</span></div>
+    <div class="quality-insight">${highest ? `RTLH terbanyak pada data aktif berada di <strong>${escapeHtml(highest.kecamatan)}</strong> sebanyak <strong>${fmt(highest.rtlh)}</strong> rumah.` : "Belum ada data kualitas hunian pada filter aktif."}</div>
+    <button class="attention-link" type="button" style="margin:0" onclick="openDashboardSectionV34('rtlh')">Buka rincian RTLH & RLH →</button>`;
+}
+
+function renderDataQualityV34(){
+  const q = getBerandaDataQualityV34();
+  const latest = q.latest ? new Intl.DateTimeFormat("id-ID",{day:"2-digit",month:"short",year:"numeric"}).format(q.latest) : "Belum tersedia";
+  const el = document.getElementById("dataQualityList");
+  if(!el) return;
+  const verifiedClass = q.verifiedPct >= 80 ? "data-quality-good" : q.verifiedPct >= 50 ? "data-quality-warn" : "data-quality-bad";
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>Data Terverifikasi</strong><br><span>${fmt(q.verified)} dari ${fmt(q.total)} perumahan</span><div class="progress"><i style="width:${Math.min(q.verifiedPct,100)}%"></i></div></div><strong class="${verifiedClass}">${q.verifiedPct}%</strong></div>
+    <div class="stat-row"><strong>Tanpa Koordinat</strong><span class="${q.missingCoords?"data-quality-warn":"data-quality-good"}">${fmt(q.missingCoords)} data</span></div>
+    <div class="stat-row"><strong>Tanpa Tahun Site Plan</strong><span class="${q.missingYear?"data-quality-warn":"data-quality-good"}">${fmt(q.missingYear)} data</span></div>
+    <div class="stat-row"><strong>Tanpa Pengembang</strong><span class="${q.missingDeveloper?"data-quality-warn":"data-quality-good"}">${fmt(q.missingDeveloper)} data</span></div>
+    <div class="stat-row"><strong>Belum Ada Tanggal Update</strong><span class="${q.missingUpdate?"data-quality-warn":"data-quality-good"}">${fmt(q.missingUpdate)} data</span></div>
+    <div class="stat-row"><strong>Update Terakhir</strong><span>${escapeHtml(latest)}</span></div>`;
+}
+
+function renderRusunawaHomeV34(){
+  const r = getBerandaRusunawaV34();
+  const el = document.getElementById("rusunawaHomeSummary");
+  if(!el) return;
+  el.innerHTML = `
+    <div class="stat-row clickable" onclick="openDashboardSectionV34('rusunawa')"><div><strong>Tingkat Hunian</strong><br><span>${fmt(r.filled)} dari ${fmt(r.total)} unit terisi</span><div class="progress"><i style="width:${Math.min(r.occupancy,100)}%"></i></div></div><strong>${r.occupancy}%</strong></div>
+    <div class="stat-row"><strong>Unit Kosong</strong><span>${fmt(r.vacant)} unit</span></div>
+    <div class="stat-row"><strong>Perlu Perbaikan</strong><span>${fmt(r.repair)} unit</span></div>
+    <div class="stat-row"><strong>Capaian Retribusi</strong><span>${r.achievement}%</span></div>
+    <div class="stat-row"><strong>Sarpras Prioritas Tinggi</strong><span class="${r.highPriority?"data-quality-bad":"data-quality-good"}">${fmt(r.highPriority)} komponen</span></div>
+    <button class="attention-link" type="button" style="margin:2px 0 0" onclick="openDashboardSectionV34('rusunawa')">Buka pengelolaan RUSUNAWA →</button>`;
+}
+
+function getPriorityByKecamatanV34(){
+  const map = new Map();
+  filtered.forEach(row=>{
+    const key = row.kecamatan || "Tidak diketahui";
+    if(!map.has(key)) map.set(key,{kecamatan:key,"Sangat Tinggi":0,"Tinggi":0,"Sedang":0,"Rendah":0});
+    const level = priorityMatrix(row).level;
+    map.get(key)[level] += 1;
+  });
+  return [...map.values()].sort((a,b)=>{
+    const aWeight=a["Sangat Tinggi"]*4+a.Tinggi*3+a.Sedang*2+a.Rendah;
+    const bWeight=b["Sangat Tinggi"]*4+b.Tinggi*3+b.Sedang*2+b.Rendah;
+    return bWeight-aWeight;
+  });
+}
+
+function changeBerandaAnalysisMode(){
+  renderPrimaryBerandaChartV34();
+}
+
+function renderPrimaryBerandaChartV34(){
+  const mode = document.getElementById("berandaAnalysisMode")?.value || "priority";
+  const note = document.getElementById("primaryChartNote");
+  if(mode === "psu"){
+    const rows = groupByKecamatan(filtered);
+    drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+      {name:"PSU Sudah Diserahkan",values:rows.map(row=>row.sudah)},
+      {name:"PSU Belum Diserahkan",values:rows.map(row=>row.belum)}
+    ]);
+    if(note) note.textContent = "Memperlihatkan jumlah perumahan berdasarkan status penyerahan PSU pada setiap kecamatan.";
+    return;
+  }
+  if(mode === "housing"){
+    const rows = getAggregateHousingQualityRows();
+    drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+      {name:"Backlog Kepemilikan",values:rows.map(row=>row.backlog)},
+      {name:"RTLH",values:rows.map(row=>row.rtlh)}
+    ]);
+    if(note) note.textContent = "Backlog menunjukkan kebutuhan kepemilikan rumah, sedangkan RTLH menunjukkan kualitas rumah yang perlu ditangani.";
+    return;
+  }
+  const rows = getPriorityByKecamatanV34();
+  drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+    {name:"Sangat Tinggi",values:rows.map(row=>row["Sangat Tinggi"])},
+    {name:"Tinggi",values:rows.map(row=>row.Tinggi)},
+    {name:"Sedang",values:rows.map(row=>row.Sedang)},
+    {name:"Rendah",values:rows.map(row=>row.Rendah)}
+  ]);
+  if(note) note.textContent = "Klasifikasi menggunakan matriks prioritas 100 poin: administrasi, teknis, risiko, dan penerima manfaat.";
+}
+
+function renderCharts(){
+  renderPrimaryBerandaChartV34();
+  const aggregate = getAggregateHousingQualityRows();
+  if(document.getElementById("backlogChart")){
+    drawBar("backlogChart",aggregate.map(row=>row.kecamatan),[
+      {name:"Backlog Kepemilikan",values:aggregate.map(row=>row.backlog)},
+      {name:"RTLH",values:aggregate.map(row=>row.rtlh)}
+    ]);
+  }
+  const kolabRows = typeof filterByGlobalKec === "function" ? filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi") : [];
+  if(document.getElementById("kolabChart")){
+    drawDonut("kolabChart",kolabRows.map(row=>Math.max(1,Math.round(Number(row.nilai||0)/1000000))),kolabRows.map(row=>row.mitra));
+  }
+}
+
+function renderAll(){
+  safeRenderSIRUMAH(renderExecutiveStatusV34,"Status Eksekutif");
+  safeRenderSIRUMAH(renderKPI,"KPI Eksekutif");
+  safeRenderSIRUMAH(renderCatatanStats,"Ringkasan Isu");
+  safeRenderSIRUMAH(renderTopPrioritas,"Perlu Perhatian");
+  safeRenderSIRUMAH(renderHousingQualityV34,"Kualitas Hunian Beranda");
+  safeRenderSIRUMAH(renderDataQualityV34,"Kualitas Data");
+  safeRenderSIRUMAH(renderRusunawaHomeV34,"Ringkasan RUSUNAWA Beranda");
+  safeRenderSIRUMAH(renderTable,"Data Perumahan");
+  safeRenderSIRUMAH(renderCharts,"Grafik");
+  safeRenderSIRUMAH(renderPSU,"PSU");
+  safeRenderSIRUMAH(renderRanking,"Ranking");
+  safeRenderSIRUMAH(renderBacklog,"Backlog & MBR");
+  safeRenderSIRUMAH(renderRTLH,"RTLH & RLH");
+  safeRenderSIRUMAH(renderRusunawa,"RUSUNAWA");
+  safeRenderSIRUMAH(renderLayanan,"Layanan");
+  safeRenderSIRUMAH(renderKolaborasi,"Kolaborasi");
+  safeRenderSIRUMAH(renderReportStats,"Laporan");
+  safeRenderSIRUMAH(renderMap,"Peta");
+}
+
 function init(){
   applyRuntimeData(cloneSirumah(SIRUMAH_DEFAULT_RUNTIME));
   initNavigation();
+  setupResponsiveStickyColumns();
   updateExcelStatus();
   // Setelah antarmuka siap, ambil workbook terbaru dari repository.
   Promise.resolve().then(() => loadExcelFromRepository({showAlert:false}));
