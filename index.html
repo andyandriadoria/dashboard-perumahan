@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard SIRUMAH Terintegrasi v42 - Kota Pangkalpinang</title>
+  <title>SIRUMAH Kota Pangkalpinang v44 — Data Terpadu, Hunian Lebih Baik</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -866,10 +866,10 @@
 
     <div class="tagline">
       <strong>Tagline:</strong><br>
-      Satu Data, Satu Layanan, Satu Kolaborasi Menuju Rumah Layak Huni untuk Semua.
+      Satu Data, Hunian Layak untuk Semua.
     </div>
 
-    <div class="nav-title">Dashboard Terintegrasi</div>
+    <div class="nav-title">Menu Utama</div>
     <nav class="nav" id="nav">
       <button class="active" data-section="beranda"><span class="icon">🏠</span> Beranda</button>
       <button data-section="data-perumahan"><span class="icon">🏘️</span> Data Perumahan</button>
@@ -889,8 +889,8 @@
     <div class="topbar">
       <div class="title-block">
         <button class="btn light mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
-        <h2>Dashboard SIRUMAH Terintegrasi</h2>
-        <p>Data Perumahan, PSU, RTH, RUSUNAWA, dan Prioritas Penanganan Kota Pangkalpinang.</p>
+        <h2>SIRUMAH Kota Pangkalpinang</h2>
+        <p>Data Terpadu, Hunian Lebih Baik.</p>
       </div>
       <div class="toolbar">
         <select id="globalKecamatan" onchange="applyFilters()" aria-label="Filter kecamatan seluruh dashboard">
@@ -1036,7 +1036,7 @@
         <div class="card-header">
           <div>
             <h3>Modul Data Perumahan</h3>
-            <p>Data dari dashboard perumahan eksisting telah menjadi bagian dari Dashboard SIRUMAH.</p>
+            <p>Data dari dashboard perumahan eksisting telah menjadi bagian dari SIRUMAH Kota Pangkalpinang.</p>
           </div>
           <div class="small"><strong id="tableCount">0</strong> data</div>
         </div>
@@ -1597,28 +1597,91 @@
       </div>
       <div class="card pad">
         <div class="info-block">
-          <h3 style="color:#0f3f50;margin-bottom:10px;">Model Integrasi Dashboard Perumahan ke SIRUMAH</h3>
+          <h3 style="color:#0f3f50;margin-bottom:10px;">Arsitektur Integrasi SIRUMAH Kota Pangkalpinang</h3>
           <p>
-            Dashboard perumahan eksisting diposisikan sebagai <strong>Modul Data Perumahan dan PSU</strong> dalam SIRUMAH.
-            Data ini menjadi basis awal untuk mendukung prinsip <strong>Satu Data</strong>, khususnya terkait perumahan formal,
-            rumah subsidi/komersil, status penyerahan PSU, RTH, jalan lingkungan, titik rawan genangan, dan sebaran lokasi perumahan.
+            <strong>SIRUMAH Kota Pangkalpinang</strong> merupakan dashboard data, monitoring, dan layanan perumahan
+            dengan semangat <strong>“Satu Data, Hunian Layak untuk Semua”</strong>. Sistem ini menghubungkan database
+            sektoral perumahan, pemetaan, kebutuhan rumah, kualitas hunian, pengelolaan RUSUNAWA, layanan masyarakat,
+            kolaborasi, serta laporan eksekutif dalam satu antarmuka.
           </p>
+        </div>
+      </div>
 
-          <h4>Posisi dalam SIRUMAH</h4>
-          <ul>
-            <li><strong>Satu Data:</strong> data perumahan, unit site plan, terbangun, terhuni, status PSU, koordinat, dan catatan teknis.</li>
-            <li><strong>Satu Layanan:</strong> data menjadi rujukan untuk layanan informasi perumahan, pengaduan PSU, dan konsultasi pengembang.</li>
-            <li><strong>Satu Kolaborasi:</strong> daftar perumahan dan pengembang menjadi bahan koordinasi dengan pengembang, bank, CSR, BAZNAS, dan perangkat daerah terkait.</li>
-            <li><strong>Satu Monitoring:</strong> status PSU, RTH, jalan, dan progress unit dipantau secara berkala melalui dashboard.</li>
-          </ul>
+      <div class="grid two-col" style="margin-top:18px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Sumber Data Terintegrasi</h3>
+              <p>Sumber data dibedakan berdasarkan karakter data berkala dan data transaksi.</p>
+            </div>
+          </div>
+          <div class="stat-list">
+            <div class="stat-row">
+              <strong>Database Excel GitHub</strong>
+              <span>Tujuh sheet: PERUMAHAN, BACKLOG_KECAMATAN, RTLH_RLH_KECAMATAN, RTLH_INDIVIDU, RUSUNAWA_UNIT, RUSUNAWA_RETRIBUSI, dan RUSUNAWA_SARPRAS.</span>
+            </div>
+            <div class="stat-row">
+              <strong>Google Sheets Layanan</strong>
+              <span>Form Layanan &amp; Pengaduan dikirim melalui Google Apps Script dan direkap berdasarkan status penanganan.</span>
+            </div>
+            <div class="stat-row">
+              <strong>GitHub Pages</strong>
+              <span>Menyajikan dashboard dan memuat workbook terbaru dari folder <code>data</code> tanpa menggunakan data contoh bawaan.</span>
+            </div>
+          </div>
+        </div>
 
-          <h4>Catatan Penggunaan</h4>
-          <ul>
-            <li>Data ini dapat digunakan untuk kerja internal Dinas Perkim dan bahan laporan kepada pimpinan.</li>
-            <li>Untuk versi publik, sebaiknya data pribadi seperti nama direktur/pelaksana disembunyikan.</li>
-            <li>Data tanpa koordinat tetap masuk dalam rekap, tetapi tidak muncul pada peta.</li>
-            <li>Nilai skor prioritas bersifat alat bantu awal dan tetap perlu verifikasi lapangan.</li>
-          </ul>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Cakupan Menu SIRUMAH</h3>
+              <p>Setiap menu menggunakan sumber data dan fungsi yang sesuai.</p>
+            </div>
+          </div>
+          <div class="stat-list">
+            <div class="stat-row"><strong>Beranda</strong><span>Ringkasan eksekutif, indikator utama, analisis kecamatan, kualitas hunian, dan RUSUNAWA.</span></div>
+            <div class="stat-row"><strong>Perumahan &amp; Peta</strong><span>Data perumahan, unit, pengembang, status PSU, lokasi, serta persebaran koordinat.</span></div>
+            <div class="stat-row"><strong>Backlog, MBR, RTLH &amp; RLH</strong><span>Kebutuhan rumah, kualitas hunian, rekap kecamatan, dan data individu khusus internal.</span></div>
+            <div class="stat-row"><strong>PSU &amp; RTH</strong><span>Rekap penyerahan, isu teknis, dan ranking prioritas berbasis matriks 100 poin.</span></div>
+            <div class="stat-row"><strong>RUSUNAWA</strong><span>Unit, tingkat hunian, retribusi, kondisi bangunan, dan sarana prasarana.</span></div>
+            <div class="stat-row"><strong>Layanan &amp; Kolaborasi</strong><span>Pengaduan masyarakat, rekap status layanan, serta dukungan lintas mitra.</span></div>
+            <div class="stat-row"><strong>Integrasi &amp; Laporan</strong><span>Pengelolaan sumber data dan narasi laporan otomatis untuk kebutuhan internal.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-header">
+          <div>
+            <h3>Tata Kelola, Akses, dan Penggunaan Data</h3>
+            <p>Prinsip penggunaan dashboard untuk publik dan petugas internal.</p>
+          </div>
+        </div>
+        <div class="stat-list">
+          <div class="stat-row">
+            <strong>Mode Publik</strong>
+            <span>Menjadi tampilan awal dan hanya memperlihatkan menu, kolom, kartu, serta rekap yang telah ditetapkan untuk masyarakat.</span>
+          </div>
+          <div class="stat-row">
+            <strong>Mode Internal</strong>
+            <span>Diakses menggunakan PIN untuk membuka informasi teknis, data rinci, integrasi, laporan, cetak/PDF, dan ekspor CSV.</span>
+          </div>
+          <div class="stat-row">
+            <strong>Ketersediaan Data</strong>
+            <span>Sheet yang belum terisi ditampilkan sebagai <em>belum tersedia</em>, bukan dianggap sebagai nilai nol resmi.</span>
+          </div>
+          <div class="stat-row">
+            <strong>Pemetaan</strong>
+            <span>Data tanpa koordinat tetap masuk rekap, tetapi tidak dapat ditampilkan pada Peta Perumahan.</span>
+          </div>
+          <div class="stat-row">
+            <strong>Prioritas Penanganan</strong>
+            <span>Skor prioritas merupakan alat bantu penyaringan awal dan tetap memerlukan verifikasi lapangan, status aset, kewenangan, serta kesiapan anggaran.</span>
+          </div>
+          <div class="stat-row">
+            <strong>Perlindungan Data</strong>
+            <span>Data pribadi dan informasi internal tidak boleh ditempatkan pada repository publik atau diekspos melalui menu publik.</span>
+          </div>
         </div>
       </div>
 
@@ -1639,14 +1702,14 @@
       </div>
       <div class="grid two-col">
         <div class="card pad">
-          <h3 style="color:#0f3f50;margin-bottom:8px;">Generator Laporan SIRUMAH</h3>
-          <p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:14px;">Narasi otomatis berdasarkan data dan filter yang sedang aktif.</p>
+          <h3 style="color:#0f3f50;margin-bottom:8px;">Generator Laporan Eksekutif SIRUMAH</h3>
+          <p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:14px;">Narasi otomatis menyesuaikan filter wilayah dan hanya menggunakan modul yang telah memiliki data.</p>
           <button class="btn" onclick="generateReport()">Buat Narasi Laporan</button>
           <button class="btn light" onclick="copyReport()">Salin Narasi</button>
           <textarea id="reportText" class="report-box" style="margin-top:14px;"></textarea>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>Ringkasan Data Aktif</h3><p>Rekap berdasarkan filter yang sedang digunakan.</p></div></div>
+          <div class="card-header"><div><h3>Ringkasan Indikator Aktif</h3><p>Indikator mengikuti filter wilayah; sumber yang kosong ditandai belum tersedia.</p></div></div>
           <div class="stat-list" id="reportStats"></div>
         </div>
       </div>
@@ -1703,7 +1766,7 @@ let publicMode = true;
 
 /*
   KONFIGURASI AKSES SIRUMAH
-  - PIN sementara v42 adalah 2026.
+  - PIN sementara v44 adalah 2026.
   - Nilai yang disimpan adalah hash SHA-256, bukan teks PIN.
   - hiddenSections dapat diisi nanti, contoh: ["integrasi", "laporan"].
   - Elemen dengan class .private-only otomatis tidak tampil pada Mode Publik.
@@ -2280,9 +2343,9 @@ function generateReport(){
   const kec = document.getElementById("globalKecamatan").value;
   const wilayah = kec === "all" ? "Kota Pangkalpinang" : `Kecamatan ${kec}`;
   const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\n");
-  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+  const txt = `LAPORAN SINGKAT SIRUMAH KOTA PANGKALPINANG
 
-Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+Berdasarkan data aktif pada SIRUMAH Kota Pangkalpinang untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
 
 Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.
 
@@ -2291,7 +2354,7 @@ Catatan penting yang perlu menjadi perhatian antara lain RTH belum terbangun seb
 Daftar prioritas awal berdasarkan skor dashboard:
 ${top}
 
-Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+Data ini menjadi bagian dari SIRUMAH Kota Pangkalpinang dengan semangat “Satu Data, Hunian Layak untuk Semua”.`;
   document.getElementById("reportText").value = txt;
 }
 function copyReport(){
@@ -2907,9 +2970,9 @@ function generateReport(){
   const kolabRows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi");
   const nilaiKolab = kolabRows.reduce((sum,x)=>sum+Number(x.nilai||0),0);
   const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\n");
-  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+  const txt = `LAPORAN SINGKAT SIRUMAH KOTA PANGKALPINANG
 
-Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+Berdasarkan data aktif pada SIRUMAH Kota Pangkalpinang untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
 
 Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.
 
@@ -2921,7 +2984,7 @@ Kolaborasi yang tercatat sebanyak ${fmt(kolabRows.length)} mitra/kegiatan dengan
 
 Daftar prioritas awal berdasarkan matriks 100 poin (Administrasi 30, Teknis 40, Risiko 20, Penerima Manfaat 10):\n${top}
 
-Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+Data ini menjadi bagian dari SIRUMAH Kota Pangkalpinang dengan semangat “Satu Data, Hunian Layak untuk Semua”.`;
   document.getElementById("reportText").value = txt;
 }
 
@@ -3802,9 +3865,9 @@ function generateReport(){
   const rtlh = sumRows(rumahRows,"rtlh");
   const rlh = sumRows(rumahRows,"rlh");
   const top = [...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((x,i)=>`${i+1}. ${x.nama} (${x.kecamatan}, skor ${x.score})`).join("\\n");
-  const txt = `LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI
+  const txt = `LAPORAN SINGKAT SIRUMAH KOTA PANGKALPINANG
 
-Berdasarkan data aktif pada Dashboard SIRUMAH untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
+Berdasarkan data aktif pada SIRUMAH Kota Pangkalpinang untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.
 
 Data backlog yang telah dimasukkan terdiri atas Backlog Kepemilikan sebanyak ${fmt(backlogKepemilikan)} unit dan Backlog Hunian sebanyak ${fmt(RTLH_AGGREGATE_DATA.backlogHunian)}. Data MBR belum ditampilkan sebagai angka tetap karena masih perlu integrasi dan verifikasi dengan perangkat daerah terkait.
 
@@ -3814,7 +3877,7 @@ Dari aspek Prasarana, Sarana, dan Utilitas (PSU), terdapat ${fmt(s.sudah)} perum
 
 Daftar prioritas awal berdasarkan skor dashboard:\\n${top}
 
-Data ini menjadi bagian dari SIRUMAH (Sistem Integrasi Rumah Layak Huni Kota Pangkalpinang) sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+Data ini menjadi bagian dari SIRUMAH Kota Pangkalpinang dengan semangat “Satu Data, Hunian Layak untuk Semua”.`;
   const reportEl = document.getElementById("reportText");
   if(reportEl) reportEl.value = txt;
 }
@@ -5285,7 +5348,7 @@ function generateReport(){
   const jumlah=sumRows(quality,"jumlah"), rtlh=sumRows(quality,"rtlh"), rlh=sumRows(quality,"rlh");
   const top=[...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((row,index)=>{ const m=priorityMatrix(row); return `${index+1}. ${row.nama} (${row.kecamatan}, skor ${m.total}/100, ${m.level}; Adm ${m.administrasi}, Teknis ${m.teknis}, Risiko ${m.risiko}, Manfaat ${m.manfaat})`; }).join("\n") || "Belum ada data prioritas pada filter aktif.";
   const source=SIRUMAH_RUNTIME.source.mode === "excel" ? `Workbook ${SIRUMAH_RUNTIME.source.fileName}` : "data kosong";
-  const text=`LAPORAN SINGKAT DASHBOARD SIRUMAH TERINTEGRASI\n\nSumber data aktif: ${source}.\n\nBerdasarkan data aktif untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.\n\nBacklog Kepemilikan tercatat sebanyak ${fmt(backlog)} unit, sedangkan Backlog Hunian tingkat kota sebanyak ${fmt(SIRUMAH_RUNTIME.backlogHunian)}. Data MBR belum ditampilkan sebagai angka tetap karena masih memerlukan integrasi dan verifikasi.\n\nPada modul RTLH dan RLH, tercatat jumlah rumah sebanyak ${fmt(jumlah)} unit, terdiri atas RTLH sebanyak ${fmt(rtlh)} unit dan RLH sebanyak ${fmt(rlh)} unit.\n\nDari aspek PSU, terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.\n\nDaftar prioritas awal berdasarkan skor dashboard:\n${top}\n\nData ini menjadi bagian dari SIRUMAH sebagai instrumen Satu Data, Satu Layanan, dan Satu Kolaborasi menuju rumah layak huni untuk semua.`;
+  const text=`LAPORAN SINGKAT SIRUMAH KOTA PANGKALPINANG\n\nSumber data aktif: ${source}.\n\nBerdasarkan data aktif untuk wilayah ${wilayah}, tercatat ${fmt(s.total)} data perumahan. Total unit berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun sebanyak ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}% dari site plan. Dari unit yang telah terbangun, sebanyak ${fmt(s.terhuni)} unit tercatat telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.\n\nBacklog Kepemilikan tercatat sebanyak ${fmt(backlog)} unit, sedangkan Backlog Hunian tingkat kota sebanyak ${fmt(SIRUMAH_RUNTIME.backlogHunian)}. Data MBR belum ditampilkan sebagai angka tetap karena masih memerlukan integrasi dan verifikasi.\n\nPada modul RTLH dan RLH, tercatat jumlah rumah sebanyak ${fmt(jumlah)} unit, terdiri atas RTLH sebanyak ${fmt(rtlh)} unit dan RLH sebanyak ${fmt(rlh)} unit.\n\nDari aspek PSU, terdapat ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Data yang memiliki koordinat dan dapat ditampilkan pada peta sebanyak ${fmt(s.coords)} titik.\n\nDaftar prioritas awal berdasarkan skor dashboard:\n${top}\n\nData ini menjadi bagian dari SIRUMAH Kota Pangkalpinang dengan semangat “Satu Data, Hunian Layak untuk Semua”.`;
   const report=document.getElementById("reportText"); if(report) report.value=text;
 }
 
@@ -5847,7 +5910,152 @@ function init(){
     .catch(error => console.error("Rekap layanan gagal dimuat:", error));
 }
 
-/* v42: Pilihan jenis layanan disederhanakan; Kualitas Data dihapus; Perlu Perhatian hanya tampil pada Mode Internal. */
+
+/* v44: pembaruan Integrasi dan Laporan mengikuti arsitektur, menu, dan sumber data terbaru SIRUMAH. */
+function reportSourceTextV44(){
+  if(SIRUMAH_RUNTIME.source.mode !== "excel") return "Belum ada workbook aktif";
+  const origin = SIRUMAH_RUNTIME.source.origin === "repository" ? "GitHub" : "Excel lokal";
+  return `${origin}: ${SIRUMAH_RUNTIME.source.fileName}`;
+}
+
+function activeExcelSheetsV44(){
+  return SIRUMAH_SHEET_NAMES.filter(name=>Number(SIRUMAH_RUNTIME.counts?.[name] || 0) > 0);
+}
+
+function reportUnavailableV44(count, value, suffix=""){
+  return Number(count || 0) > 0 ? `${fmt(value)}${suffix}` : "Belum tersedia";
+}
+
+function renderReportStats(){
+  const el=document.getElementById("reportStats");
+  if(!el) return;
+  const s=summary(filtered);
+  const activeSheets=activeExcelSheetsV44();
+  const backlog=sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
+  const quality=filterAggregateRows(SIRUMAH_RUNTIME.rtlhAggregate);
+  const jumlah=sumRows(quality,"jumlah");
+  const rtlh=sumRows(quality,"rtlh");
+  const rlh=sumRows(quality,"rlh");
+  const units=SIRUMAH_RUNTIME.rusunawaUnits || [];
+  const filled=units.filter(row=>String(row.status||"").toLowerCase().includes("terisi")).length;
+  const layanan=SIRUMAH_LAYANAN_REMOTE.loaded ? `${fmt(SIRUMAH_LAYANAN_REMOTE.summary.total)} layanan` : "Belum dimuat";
+
+  const rows=[
+    ["Sumber Data",reportSourceTextV44()],
+    ["Sheet Excel Terisi",`${activeSheets.length} dari ${SIRUMAH_SHEET_NAMES.length} sheet`],
+    ["Total Perumahan",fmt(s.total)],
+    ["Site Plan",`${fmt(s.siteplan)} unit`],
+    ["Terbangun",`${fmt(s.terbangun)} unit`],
+    ["Terhuni",`${fmt(s.terhuni)} unit`],
+    ["Progress Bangun",`${pct(s.terbangun,s.siteplan)}%`],
+    ["Progress Huni",`${pct(s.terhuni,s.terbangun)}%`],
+    ["PSU Sudah Diserahkan",`${fmt(s.sudah)} perumahan`],
+    ["PSU Belum Diserahkan",`${fmt(s.belum)} perumahan`],
+    ["Data Berkoordinat",`${fmt(s.coords)} titik`],
+    ["Backlog Kepemilikan",reportUnavailableV44(SIRUMAH_RUNTIME.counts.BACKLOG_KECAMATAN,backlog," unit")],
+    ["RTLH / RLH",Number(SIRUMAH_RUNTIME.counts.RTLH_RLH_KECAMATAN||0)>0 ? `${fmt(rtlh)} / ${fmt(rlh)} rumah` : "Belum tersedia"],
+    ["Jumlah Rumah Agregat",reportUnavailableV44(SIRUMAH_RUNTIME.counts.RTLH_RLH_KECAMATAN,jumlah," rumah")],
+    ["Unit RUSUNAWA",reportUnavailableV44(SIRUMAH_RUNTIME.counts.RUSUNAWA_UNIT,units.length," unit")],
+    ["Tingkat Hunian RUSUNAWA",Number(SIRUMAH_RUNTIME.counts.RUSUNAWA_UNIT||0)>0 ? `${pct(filled,units.length)}%` : "Belum tersedia"],
+    ["Rekap Layanan",layanan]
+  ];
+  el.innerHTML=rows.map(row=>`<div class="stat-row"><strong>${escapeHtml(row[0])}</strong><span>${escapeHtml(String(row[1]))}</span></div>`).join("");
+}
+
+function generateReport(){
+  const s=summary(filtered);
+  const kec=document.getElementById("globalKecamatan")?.value || "all";
+  const wilayah=kec === "all" ? "Kota Pangkalpinang" : `Kecamatan ${kec}`;
+  const activeSheets=activeExcelSheetsV44();
+  const source=reportSourceTextV44();
+  const loadedAt=SIRUMAH_RUNTIME.source.loadedAt ? new Date(SIRUMAH_RUNTIME.source.loadedAt).toLocaleString("id-ID") : "belum tersedia";
+  const paragraphs=[];
+
+  paragraphs.push("LAPORAN RINGKAS SIRUMAH KOTA PANGKALPINANG");
+  paragraphs.push("Data Terpadu, Hunian Lebih Baik");
+  paragraphs.push(`Wilayah laporan: ${wilayah}.`);
+  paragraphs.push(`Sumber data aktif: ${source}. Waktu pemuatan: ${loadedAt}. Workbook memuat ${activeSheets.length} dari ${SIRUMAH_SHEET_NAMES.length} sheet yang telah berisi data${activeSheets.length ? `, yaitu ${activeSheets.join(", ")}` : ""}.`);
+
+  if(s.total>0){
+    paragraphs.push(`Pada modul Data Perumahan tercatat ${fmt(s.total)} perumahan. Total rencana berdasarkan site plan sebanyak ${fmt(s.siteplan)} unit, dengan realisasi terbangun ${fmt(s.terbangun)} unit atau ${pct(s.terbangun,s.siteplan)}%. Dari unit terbangun, ${fmt(s.terhuni)} unit telah terhuni atau ${pct(s.terhuni,s.terbangun)}%.`);
+    paragraphs.push(`Dari aspek PSU, ${fmt(s.sudah)} perumahan berstatus sudah diserahkan dan ${fmt(s.belum)} perumahan berstatus belum diserahkan. Sebanyak ${fmt(s.coords)} data memiliki koordinat dan dapat ditampilkan pada Peta Perumahan.`);
+    const issueFlood=filtered.filter(row=>/genangan|banjir/i.test(String(row.catatan||""))).length;
+    const issueRoad=filtered.filter(row=>/jalan belum perkerasan|jalan rusak/i.test(String(row.catatan||""))).length;
+    const issueRth=filtered.filter(row=>/rth belum terbangun|rth beralih fungsi/i.test(String(row.catatan||""))).length;
+    paragraphs.push(`Isu kawasan yang teridentifikasi pada data aktif meliputi ${fmt(issueFlood)} perumahan dengan indikasi genangan/banjir, ${fmt(issueRoad)} perumahan dengan isu jalan, dan ${fmt(issueRth)} perumahan dengan isu RTH.`);
+  }else{
+    paragraphs.push("Modul Data Perumahan belum memiliki data pada workbook aktif.");
+  }
+
+  if(Number(SIRUMAH_RUNTIME.counts.BACKLOG_KECAMATAN||0)>0){
+    const backlog=sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
+    paragraphs.push(`Pada modul Backlog & MBR, Backlog Kepemilikan tercatat ${fmt(backlog)} unit untuk wilayah aktif. Backlog Hunian tingkat kota tercatat ${fmt(SIRUMAH_RUNTIME.backlogHunian)} unit. Data MBR hanya ditampilkan apabila telah tersedia sumber resmi dan hasil verifikasi.`);
+  }else{
+    paragraphs.push("Modul Backlog & MBR belum memiliki data pada workbook aktif; kondisi ini ditandai sebagai belum tersedia dan tidak dianggap sebagai angka nol resmi.");
+  }
+
+  if(Number(SIRUMAH_RUNTIME.counts.RTLH_RLH_KECAMATAN||0)>0){
+    const quality=filterAggregateRows(SIRUMAH_RUNTIME.rtlhAggregate);
+    const jumlah=sumRows(quality,"jumlah"), rtlh=sumRows(quality,"rtlh"), rlh=sumRows(quality,"rlh");
+    paragraphs.push(`Pada modul RTLH & RLH tercatat ${fmt(jumlah)} rumah, terdiri atas ${fmt(rtlh)} RTLH dan ${fmt(rlh)} RLH. Data individu RTLH hanya dapat dilihat pada Mode Internal.`);
+  }else{
+    paragraphs.push("Modul RTLH & RLH belum memiliki data agregat pada workbook aktif.");
+  }
+
+  const rusUnits=SIRUMAH_RUNTIME.rusunawaUnits || [];
+  const rusPayments=SIRUMAH_RUNTIME.rusunawaPayments || [];
+  const rusFacilities=SIRUMAH_RUNTIME.rusunawaFacilities || [];
+  if(rusUnits.length || rusPayments.length || rusFacilities.length){
+    const filled=rusUnits.filter(row=>String(row.status||"").toLowerCase().includes("terisi")).length;
+    const vacant=rusUnits.filter(row=>String(row.status||"").toLowerCase().includes("kosong")).length;
+    const target=rusPayments.reduce((sum,row)=>sum+Number(row.target||0),0);
+    const realization=rusPayments.reduce((sum,row)=>sum+Number(row.realization||0),0);
+    const highPriority=rusFacilities.filter(row=>/tinggi|darurat/i.test(String(row.priority||""))).length;
+    paragraphs.push(`Pada modul RUSUNAWA terdapat ${fmt(rusUnits.length)} unit, dengan ${fmt(filled)} unit terisi dan ${fmt(vacant)} unit kosong. Capaian retribusi sebesar ${pct(realization,target)}% dari target, serta terdapat ${fmt(highPriority)} komponen sarana prasarana berprioritas tinggi.`);
+  }else{
+    paragraphs.push("Modul RUSUNAWA belum memiliki data unit, retribusi, maupun sarana prasarana pada workbook aktif.");
+  }
+
+  if(SIRUMAH_LAYANAN_REMOTE.loaded){
+    const l=SIRUMAH_LAYANAN_REMOTE.summary;
+    paragraphs.push(`Rekap Layanan & Pengaduan dari Google Sheets mencatat ${fmt(l.total)} layanan: ${fmt(l.diterima)} diterima, ${fmt(l.diverifikasi)} diverifikasi, ${fmt(l.ditindaklanjuti)} ditindaklanjuti, dan ${fmt(l.selesai)} selesai.`);
+  }else{
+    paragraphs.push("Rekap Layanan & Pengaduan Google Sheets belum dimuat pada sesi dashboard ini.");
+  }
+
+  const collab=filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi || [],"lokasi");
+  if(collab.length){
+    const helped=collab.reduce((sum,row)=>sum+Number(row.rumah||row.terbantu||0),0);
+    paragraphs.push(`Modul Kolaborasi memuat ${fmt(collab.length)} kegiatan/dukungan dengan ${fmt(helped)} rumah atau penerima manfaat terdata.`);
+  }else{
+    paragraphs.push("Modul Kolaborasi belum memiliki data aktif.");
+  }
+
+  if(filtered.length){
+    const top=[...filtered].sort((a,b)=>b.score-a.score).slice(0,5).map((row,index)=>{
+      const m=priorityMatrix(row);
+      return `${index+1}. ${row.nama} — ${row.kecamatan}; skor ${m.total}/100 (${m.level}); Administrasi ${m.administrasi}, Teknis ${m.teknis}, Risiko ${m.risiko}, Penerima Manfaat ${m.manfaat}.`;
+    });
+    paragraphs.push(`Prioritas awal berdasarkan matriks dashboard:\n${top.join("\n")}`);
+  }else{
+    paragraphs.push("Belum ada data perumahan untuk menyusun ranking prioritas pada filter aktif.");
+  }
+
+  paragraphs.push("Laporan ini merupakan ringkasan otomatis. Validasi lapangan, status aset, kewenangan, dokumen pendukung, dan kesiapan anggaran tetap menjadi dasar penetapan tindak lanjut resmi.");
+  paragraphs.push("SIRUMAH Kota Pangkalpinang — Satu Data, Hunian Layak untuk Semua.");
+
+  const report=document.getElementById("reportText");
+  if(report) report.value=paragraphs.join("\n\n");
+}
+
+const loadLayananSummaryBeforeV44 = loadLayananSummary;
+loadLayananSummary = async function(options={}){
+  const result = await loadLayananSummaryBeforeV44(options);
+  try{ renderReportStats(); }catch(error){ console.error("Ringkasan laporan gagal diperbarui:",error); }
+  return result;
+};
+
+/* v44: Identitas, Integrasi, dan Laporan diselaraskan dengan sumber data serta menu SIRUMAH terbaru. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
