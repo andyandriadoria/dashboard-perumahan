@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v44 — Data Terpadu, Hunian Lebih Baik</title>
+  <title>SIRUMAH Kota Pangkalpinang v45 — Data Terpadu, Hunian Lebih Baik</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -1346,19 +1346,26 @@
           <div class="card-header">
             <div>
               <h3>Daftar Layanan dan Pengaduan</h3>
-              <p>Tabel ini menampilkan pengajuan yang dikirim dari browser pada sesi berjalan. Rekap keseluruhan tetap tersimpan permanen di Google Sheets.</p>
+              <p>Mode Internal memuat ulang daftar layanan langsung dari Google Sheets, termasuk status dan catatan tindak lanjut terbaru.</p>
             </div>
+            <button class="btn light small-action" type="button" onclick="reloadInternalLayananDetails()">Muat Ulang Daftar</button>
           </div>
+          <div id="layananListStatus" class="layanan-api-status loading" style="margin:14px 18px 0;">Masuk ke Mode Internal untuk memuat daftar layanan.</div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Tanggal</th>
-                  <th>Nama</th>
-                  <th>Jenis</th>
+                  <th>No./Tiket</th>
+                  <th>Nama Pemohon</th>
+                  <th>No. HP</th>
+                  <th>Tanggal Masuk</th>
+                  <th>Jenis Layanan</th>
                   <th>Kecamatan</th>
                   <th>Uraian</th>
                   <th>Status</th>
+                  <th>Catatan Tindak Lanjut</th>
+                  <th>Tanggal Update</th>
+                  <th>Operator</th>
                 </tr>
               </thead>
               <tbody id="layananTable"></tbody>
@@ -1766,7 +1773,7 @@ let publicMode = true;
 
 /*
   KONFIGURASI AKSES SIRUMAH
-  - PIN sementara v44 adalah 2026.
+  - PIN sementara v45 adalah 2026.
   - Nilai yang disimpan adalah hash SHA-256, bukan teks PIN.
   - hiddenSections dapat diisi nanti, contoh: ["integrasi", "laporan"].
   - Elemen dengan class .private-only otomatis tidak tampil pada Mode Publik.
@@ -2450,6 +2457,13 @@ function updateAccessModeUI(){
 
 function setAccessMode(mode,{render=true}={}){
   publicMode = mode !== "internal";
+  if(publicMode){
+    currentInternalPin = "";
+    SIRUMAH_LAYANAN_REMOTE.details = [];
+    SIRUMAH_LAYANAN_REMOTE.detailsLoaded = false;
+    SIRUMAH_LAYANAN_REMOTE.detailsError = "";
+    setLayananListStatus("loading", "Masuk ke Mode Internal untuk memuat daftar layanan.");
+  }
   updateAccessModeUI();
   if(render){
     try{ applyFilters(); }
@@ -2549,8 +2563,10 @@ async function submitInternalPin(event){
 
     failedInternalPinAttempts = 0;
     internalPinLockedUntil = 0;
+    currentInternalPin = pin;
     closeInternalPinModal();
     setAccessMode("internal");
+    await loadLayananDetails({pin,showAlert:false});
   }catch(err){
     if(error){ error.textContent = err.message || "Verifikasi PIN gagal."; error.classList.add("show"); }
   }finally{
@@ -2623,8 +2639,15 @@ const SIRUMAH_LAYANAN_REMOTE = {
   loaded: false,
   error: "",
   lastLoaded: "",
-  summary: { total:0, diterima:0, diverifikasi:0, ditindaklanjuti:0, selesai:0 }
+  summary: { total:0, diterima:0, diverifikasi:0, ditindaklanjuti:0, selesai:0 },
+  detailsLoading: false,
+  detailsLoaded: false,
+  detailsError: "",
+  detailsLastLoaded: "",
+  details: []
 };
+// PIN internal hanya disimpan di memori tab aktif dan tidak ditulis ke localStorage.
+let currentInternalPin = "";
 
 
 function selectedKecamatanProgram(){
@@ -2766,22 +2789,107 @@ async function loadLayananSummary(options={}){
   }
 }
 
+function setLayananListStatus(mode, message){
+  const el = document.getElementById("layananListStatus");
+  if(!el) return;
+  el.className = `layanan-api-status ${mode || ""}`.trim();
+  el.textContent = message || "";
+}
+
+function normalizeLayananDetail(row){
+  const source = row && typeof row === "object" ? row : {};
+  return {
+    id: clean(source.id || source.idLayanan || source.ticket || ""),
+    tanggal: clean(source.tanggal || source.tanggalMasuk || ""),
+    nama: clean(source.nama || source.namaPemohon || ""),
+    hp: clean(source.hp || source.noHp || source.nomorHp || ""),
+    jenis: clean(source.jenis || source.jenisLayanan || ""),
+    kecamatan: clean(source.kecamatan || ""),
+    uraian: clean(source.uraian || ""),
+    status: clean(source.status || "Diterima"),
+    catatan: clean(source.catatan || source.catatanTindakLanjut || ""),
+    tanggalUpdate: clean(source.tanggalUpdate || source.updatedAt || ""),
+    operator: clean(source.operator || "")
+  };
+}
+
+async function loadLayananDetails(options={}){
+  const pin = String(options.pin || currentInternalPin || "").trim();
+  const showAlert = Boolean(options.showAlert);
+  if(publicMode){
+    setLayananListStatus("loading", "Daftar rinci hanya tersedia pada Mode Internal.");
+    return false;
+  }
+  if(!pin){
+    setLayananListStatus("error", "PIN Mode Internal tidak tersedia. Keluar lalu masuk kembali ke Mode Internal.");
+    return false;
+  }
+  if(SIRUMAH_LAYANAN_REMOTE.detailsLoading) return false;
+  SIRUMAH_LAYANAN_REMOTE.detailsLoading = true;
+  setLayananListStatus("loading", "Mengambil daftar layanan terbaru dari Google Sheets…");
+  try{
+    const response = await fetch(SIRUMAH_LAYANAN_API_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action:"list", pin })
+    });
+    const text = await response.text();
+    const result = parseLayananApiResponse(text);
+    if(!response.ok || !result.success){
+      throw new Error(result.message || `HTTP ${response.status}`);
+    }
+    const sourceRows = Array.isArray(result.rows) ? result.rows : Array.isArray(result.data) ? result.data : [];
+    SIRUMAH_LAYANAN_REMOTE.details = sourceRows.map(normalizeLayananDetail);
+    SIRUMAH_LAYANAN_REMOTE.detailsLoaded = true;
+    SIRUMAH_LAYANAN_REMOTE.detailsError = "";
+    SIRUMAH_LAYANAN_REMOTE.detailsLastLoaded = new Date().toLocaleString("id-ID");
+    setLayananListStatus("success", `Daftar layanan dimuat dari Google Sheets pada ${SIRUMAH_LAYANAN_REMOTE.detailsLastLoaded}.`);
+    renderLayanan();
+    if(showAlert) alert("Daftar layanan berhasil dimuat dari Google Sheets.");
+    return true;
+  }catch(error){
+    console.error("Daftar layanan gagal dimuat:", error);
+    SIRUMAH_LAYANAN_REMOTE.detailsError = error.message || String(error);
+    setLayananListStatus("error", `Daftar layanan belum dapat dimuat: ${SIRUMAH_LAYANAN_REMOTE.detailsError}`);
+    renderLayanan();
+    if(showAlert) alert(`Daftar layanan belum berhasil dimuat.\n${SIRUMAH_LAYANAN_REMOTE.detailsError}`);
+    return false;
+  }finally{
+    SIRUMAH_LAYANAN_REMOTE.detailsLoading = false;
+  }
+}
+
+async function reloadInternalLayananDetails(){
+  if(publicMode){
+    alert("Daftar layanan hanya tersedia pada Mode Internal.");
+    return;
+  }
+  await loadLayananDetails({showAlert:true});
+}
+
 function renderLayanan(){
-  // Daftar rinci hanya berisi pengajuan yang berhasil dikirim pada sesi browser ini.
-  // Data pribadi seluruh pemohon tidak diambil kembali dari endpoint publik.
-  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.layanan);
+  const sourceRows = SIRUMAH_LAYANAN_REMOTE.detailsLoaded
+    ? SIRUMAH_LAYANAN_REMOTE.details
+    : SIRUMAH_PROGRAM.layanan;
+  const rows = filterByGlobalKec(sourceRows);
   const table = document.getElementById("layananTable");
   if(table){
-    table.innerHTML = rows.length ? rows.map(r => `
+    table.innerHTML = rows.length ? rows.map((r,index) => `
       <tr>
-        <td>${escapeHtml(r.tanggal)}</td>
-        <td><strong>${escapeHtml(r.nama)}</strong>${r.id ? `<br><small>${escapeHtml(r.id)}</small>` : ""}</td>
-        <td>${escapeHtml(r.jenis)}</td>
-        <td>${escapeHtml(r.kecamatan)}</td>
-        <td>${escapeHtml(r.uraian)}</td>
-        <td>${programBadge(r.status)}</td>
+        <td><strong>${fmt(index+1)}</strong>${r.id ? `<br><small>${escapeHtml(r.id)}</small>` : ""}</td>
+        <td><strong>${escapeHtml(r.nama || "-")}</strong></td>
+        <td>${escapeHtml(r.hp || "-")}</td>
+        <td>${escapeHtml(r.tanggal || "-")}</td>
+        <td>${escapeHtml(r.jenis || "-")}</td>
+        <td>${escapeHtml(r.kecamatan || "-")}</td>
+        <td>${escapeHtml(r.uraian || "-")}</td>
+        <td>${programBadge(r.status || "Diterima")}</td>
+        <td>${escapeHtml(r.catatan || "-")}</td>
+        <td>${escapeHtml(r.tanggalUpdate || "-")}</td>
+        <td>${escapeHtml(r.operator || "-")}</td>
       </tr>
-    `).join("") : `<tr><td colspan="6" class="empty">Belum ada layanan yang dikirim pada sesi ini.</td></tr>`;
+    `).join("") : `<tr><td colspan="11" class="empty">${SIRUMAH_LAYANAN_REMOTE.detailsLoaded ? "Belum ada layanan pada Google Sheets." : "Masuk ke Mode Internal untuk memuat daftar layanan dari Google Sheets."}</td></tr>`;
   }
 
   const localSummary = {
@@ -2874,14 +2982,21 @@ async function addLayanan(buttonEl){
       id: result.id || "",
       tanggal: today,
       nama,
+      hp: hpNormal,
       jenis,
       kecamatan,
       uraian,
-      status: "Diterima"
+      status: "Diterima",
+      catatan: "",
+      tanggalUpdate: today,
+      operator: ""
     });
     resetForm();
     renderLayanan();
     await loadLayananSummary({showAlert:false});
+    if(!publicMode && currentInternalPin){
+      await loadLayananDetails({pin:currentInternalPin,showAlert:false});
+    }
     alert(`Layanan berhasil disimpan.${result.id ? `\nNomor tiket: ${result.id}` : ""}`);
   }catch(error){
     console.error("Layanan gagal disimpan:", error);
@@ -5911,7 +6026,7 @@ function init(){
 }
 
 
-/* v44: pembaruan Integrasi dan Laporan mengikuti arsitektur, menu, dan sumber data terbaru SIRUMAH. */
+/* v45: daftar rinci layanan disinkronkan dari Google Sheets setelah autentikasi Mode Internal. */
 function reportSourceTextV44(){
   if(SIRUMAH_RUNTIME.source.mode !== "excel") return "Belum ada workbook aktif";
   const origin = SIRUMAH_RUNTIME.source.origin === "repository" ? "GitHub" : "Excel lokal";
@@ -6055,7 +6170,7 @@ loadLayananSummary = async function(options={}){
   return result;
 };
 
-/* v44: Identitas, Integrasi, dan Laporan diselaraskan dengan sumber data serta menu SIRUMAH terbaru. */
+/* v45: Daftar Layanan Mode Internal dimuat ulang dari Google Sheets dan tidak lagi bergantung pada sesi browser. */
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
