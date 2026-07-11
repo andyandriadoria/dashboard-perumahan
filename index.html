@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard SIRUMAH Terintegrasi v36 - Kota Pangkalpinang</title>
+  <title>Dashboard SIRUMAH Terintegrasi v37 - Kota Pangkalpinang</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -625,6 +625,35 @@
       .section-actionbar .btn{flex:1 1 180px}
     }
 
+
+    /* Integrasi Layanan & Pengaduan dengan Google Sheets — v37 */
+    .layanan-api-status{
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+      margin:0 0 14px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#f8fafc;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .layanan-api-status::before{
+      content:"";
+      width:9px;
+      height:9px;
+      margin-top:4px;
+      border-radius:999px;
+      background:#94a3b8;
+      flex:0 0 auto;
+    }
+    .layanan-api-status.loading::before{background:var(--orange)}
+    .layanan-api-status.success::before{background:var(--green)}
+    .layanan-api-status.error::before{background:var(--red)}
+    .btn.small-action{min-height:36px;padding:8px 11px;font-size:12px}
+
   </style>
 </head>
 
@@ -1056,12 +1085,13 @@
         <div class="grid two-col">
           <div class="card pad">
             <h3 style="margin-bottom:12px;">Form Input Layanan / Pengaduan</h3>
+            <div id="layananApiStatus" class="layanan-api-status loading">Menghubungkan rekap layanan ke Google Sheets…</div>
             <div class="form-grid">
               <label>Nama Pemohon
-                <input id="fNama" placeholder="Contoh: Budi" />
+                <input id="fNama" placeholder="Contoh: Budi" required />
               </label>
               <label>No. HP
-                <input id="fHp" placeholder="08xxxxxxxxxx" />
+                <input id="fHp" placeholder="08xxxxxxxxxx" inputmode="tel" required />
               </label>
               <label>Jenis Layanan
                 <select id="fJenis">
@@ -1084,11 +1114,11 @@
                 </select>
               </label>
               <label class="full">Uraian
-                <textarea id="fUraian" placeholder="Tuliskan uraian singkat..."></textarea>
+                <textarea id="fUraian" placeholder="Tuliskan uraian singkat..." required></textarea>
               </label>
               <div class="full">
-                <button class="btn" onclick="addLayanan()">Simpan Layanan</button>
-                <button class="btn light" onclick="resetForm()">Reset</button>
+                <button class="btn" type="button" onclick="addLayanan(this)">Simpan Layanan</button>
+                <button class="btn light" type="button" onclick="resetForm()">Reset</button>
               </div>
             </div>
           </div>
@@ -1097,8 +1127,9 @@
             <div class="card-header">
               <div>
                 <h3>Rekap Layanan</h3>
-                <p>Status tindak lanjut layanan masyarakat.</p>
+                <p>Rekap seluruh kecamatan yang dibaca langsung dari Google Sheets.</p>
               </div>
+              <button class="btn light small-action" type="button" onclick="loadLayananSummary({showAlert:true})">Muat Ulang Rekap</button>
             </div>
             <div class="stat-list" id="layananStats"></div>
           </div>
@@ -1108,7 +1139,7 @@
           <div class="card-header">
             <div>
               <h3>Daftar Layanan dan Pengaduan</h3>
-              <p>Data layanan tersimpan sementara di browser selama halaman belum di-refresh.</p>
+              <p>Tabel ini menampilkan pengajuan yang dikirim dari browser pada sesi berjalan. Rekap keseluruhan tetap tersimpan permanen di Google Sheets.</p>
             </div>
           </div>
           <div class="table-wrap">
@@ -2096,6 +2127,16 @@ const SIRUMAH_PROGRAM = {
   kolaborasi: []
 };
 
+// Web App Google Apps Script untuk menyimpan Layanan & Pengaduan.
+const SIRUMAH_LAYANAN_API_URL = "https://script.google.com/macros/s/AKfycbzfzJAwk_01oh-DaJSvySNz6tO-ynnIJj_JlCcgYSD2iZYG4lB7c7jYPsFIw3_qWCk41Q/exec";
+const SIRUMAH_LAYANAN_REMOTE = {
+  loading: false,
+  loaded: false,
+  error: "",
+  lastLoaded: "",
+  summary: { total:0, diterima:0, diverifikasi:0, ditindaklanjuti:0, selesai:0 }
+};
+
 
 function selectedKecamatanProgram(){
   const v = document.getElementById("globalKecamatan")?.value || "all";
@@ -2173,62 +2214,162 @@ function renderSubsidi(){
   `).join("") : `<tr><td colspan="7" class="empty">Tidak ada data rumah subsidi.</td></tr>`;
 }
 
+function setLayananApiStatus(mode, message){
+  const el = document.getElementById("layananApiStatus");
+  if(!el) return;
+  el.className = `layanan-api-status ${mode || ""}`.trim();
+  el.textContent = message || "";
+}
+
+function normalizeLayananSummary(value){
+  const source = value && typeof value === "object" ? value : {};
+  return {
+    total: Number(source.total || 0),
+    diterima: Number(source.diterima || 0),
+    diverifikasi: Number(source.diverifikasi || 0),
+    ditindaklanjuti: Number(source.ditindaklanjuti || 0),
+    selesai: Number(source.selesai || 0)
+  };
+}
+
+function parseLayananApiResponse(text){
+  try { return JSON.parse(text); }
+  catch(_){
+    const clean = String(text || "").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+    throw new Error(clean ? `Respons layanan bukan JSON: ${clean.slice(0,180)}` : "Respons layanan kosong.");
+  }
+}
+
+async function loadLayananSummary(options={}){
+  const showAlert = Boolean(options.showAlert);
+  if(SIRUMAH_LAYANAN_REMOTE.loading) return;
+  SIRUMAH_LAYANAN_REMOTE.loading = true;
+  setLayananApiStatus("loading", "Mengambil rekap layanan terbaru dari Google Sheets…");
+  try{
+    const url = new URL(SIRUMAH_LAYANAN_API_URL);
+    url.searchParams.set("action", "summary");
+    url.searchParams.set("_", String(Date.now()));
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      cache: "no-store",
+      redirect: "follow"
+    });
+    const text = await response.text();
+    const result = parseLayananApiResponse(text);
+    if(!response.ok || !result.success){
+      throw new Error(result.message || `HTTP ${response.status}`);
+    }
+    SIRUMAH_LAYANAN_REMOTE.summary = normalizeLayananSummary(result.summary);
+    SIRUMAH_LAYANAN_REMOTE.loaded = true;
+    SIRUMAH_LAYANAN_REMOTE.error = "";
+    SIRUMAH_LAYANAN_REMOTE.lastLoaded = new Date().toLocaleString("id-ID");
+    setLayananApiStatus("success", `Terhubung ke Google Sheets. Rekap terakhir dimuat ${SIRUMAH_LAYANAN_REMOTE.lastLoaded}.`);
+    renderLayanan();
+    if(showAlert) alert("Rekap layanan berhasil dimuat dari Google Sheets.");
+  }catch(error){
+    console.error("Rekap layanan gagal dimuat:", error);
+    SIRUMAH_LAYANAN_REMOTE.error = error.message || String(error);
+    setLayananApiStatus("error", `Google Sheets belum dapat dibaca: ${SIRUMAH_LAYANAN_REMOTE.error}`);
+    renderLayanan();
+    if(showAlert) alert(`Rekap layanan belum berhasil dimuat.\n${SIRUMAH_LAYANAN_REMOTE.error}`);
+  }finally{
+    SIRUMAH_LAYANAN_REMOTE.loading = false;
+  }
+}
+
 function renderLayanan(){
+  // Daftar rinci hanya berisi pengajuan yang berhasil dikirim pada sesi browser ini.
+  // Data pribadi seluruh pemohon tidak diambil kembali dari endpoint publik.
   const rows = filterByGlobalKec(SIRUMAH_PROGRAM.layanan);
   const table = document.getElementById("layananTable");
   if(table){
     table.innerHTML = rows.length ? rows.map(r => `
       <tr>
         <td>${escapeHtml(r.tanggal)}</td>
-        <td><strong>${escapeHtml(r.nama)}</strong></td>
+        <td><strong>${escapeHtml(r.nama)}</strong>${r.id ? `<br><small>${escapeHtml(r.id)}</small>` : ""}</td>
         <td>${escapeHtml(r.jenis)}</td>
         <td>${escapeHtml(r.kecamatan)}</td>
         <td>${escapeHtml(r.uraian)}</td>
         <td>${programBadge(r.status)}</td>
       </tr>
-    `).join("") : `<tr><td colspan="6" class="empty">Belum ada layanan.</td></tr>`;
+    `).join("") : `<tr><td colspan="6" class="empty">Belum ada layanan yang dikirim pada sesi ini.</td></tr>`;
   }
+
+  const localSummary = {
+    total: rows.length,
+    diterima: rows.filter(x => x.status === "Diterima").length,
+    diverifikasi: rows.filter(x => x.status === "Diverifikasi").length,
+    ditindaklanjuti: rows.filter(x => x.status === "Ditindaklanjuti").length,
+    selesai: rows.filter(x => x.status === "Selesai").length
+  };
+  const summaryData = SIRUMAH_LAYANAN_REMOTE.loaded ? SIRUMAH_LAYANAN_REMOTE.summary : localSummary;
   const stats = [
-    ["Total Layanan", rows.length],
-    ["Selesai", rows.filter(x => x.status === "Selesai").length],
-    ["Diverifikasi", rows.filter(x => x.status === "Diverifikasi").length],
-    ["Ditindaklanjuti", rows.filter(x => x.status === "Ditindaklanjuti").length]
+    ["Total Layanan", summaryData.total],
+    ["Diterima", summaryData.diterima],
+    ["Diverifikasi", summaryData.diverifikasi],
+    ["Ditindaklanjuti", summaryData.ditindaklanjuti],
+    ["Selesai", summaryData.selesai]
   ];
   const statEl = document.getElementById("layananStats");
   if(statEl) statEl.innerHTML = stats.map(s => `<div class="stat-row"><strong>${s[0]}</strong><span>${fmt(s[1])} layanan</span></div>`).join("");
 }
 
-function renderKolaborasi(){
-  const rows = filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi, "lokasi");
-  const el = document.getElementById("kolaborasiTable"); if(!el) return;
-  el.innerHTML = rows.length ? rows.map(r => `
-    <tr>
-      <td><strong>${escapeHtml(r.mitra)}</strong></td>
-      <td>${escapeHtml(r.dukungan)}</td>
-      <td>${escapeHtml(r.lokasi)}</td>
-      <td>${formatMoney(r.nilai)}</td>
-      <td>${fmt(r.rumah)}</td>
-      <td>${programBadge(r.status)}</td>
-    </tr>
-  `).join("") : `<tr><td colspan="6" class="empty">Belum ada kolaborasi pada wilayah ini.</td></tr>`;
-}
-
-function addLayanan(){
+async function addLayanan(buttonEl){
   const nama = document.getElementById("fNama")?.value.trim();
   const hp = document.getElementById("fHp")?.value.trim();
   const jenis = document.getElementById("fJenis")?.value;
   const kecamatan = document.getElementById("fKecamatan")?.value;
   const uraian = document.getElementById("fUraian")?.value.trim();
-  if(!nama || !uraian){ alert("Nama pemohon dan uraian wajib diisi."); return; }
-  const today = new Date().toISOString().slice(0,10);
-  SIRUMAH_PROGRAM.layanan.unshift({
-    tanggal: today,
-    nama: hp ? `${nama} (${hp})` : nama,
-    jenis, kecamatan, uraian, status: "Diverifikasi"
-  });
-  resetForm();
-  renderAll();
-  alert("Data layanan berhasil ditambahkan.");
+
+  if(!nama || !hp || !jenis || !kecamatan || !uraian){
+    alert("Nama pemohon, nomor HP, jenis layanan, kecamatan, dan uraian wajib diisi.");
+    return;
+  }
+  const hpNormal = hp.replace(/[\s().-]/g,"");
+  if(!/^\+?\d{8,16}$/.test(hpNormal)){
+    alert("Nomor HP belum valid. Gunakan 8–16 angka, boleh diawali tanda +.");
+    return;
+  }
+
+  const btn = buttonEl || document.querySelector('#layanan button[onclick^="addLayanan"]');
+  const oldText = btn?.textContent || "Simpan Layanan";
+  if(btn){ btn.disabled = true; btn.textContent = "Menyimpan…"; }
+  setLayananApiStatus("loading", "Mengirim layanan ke Google Sheets…");
+
+  try{
+    const response = await fetch(SIRUMAH_LAYANAN_API_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ nama, hp:hpNormal, jenis, kecamatan, uraian })
+    });
+    const text = await response.text();
+    const result = parseLayananApiResponse(text);
+    if(!response.ok || !result.success){
+      throw new Error(result.message || `HTTP ${response.status}`);
+    }
+
+    const today = new Date().toLocaleDateString("id-ID", {year:"numeric",month:"2-digit",day:"2-digit"});
+    SIRUMAH_PROGRAM.layanan.unshift({
+      id: result.id || "",
+      tanggal: today,
+      nama,
+      jenis,
+      kecamatan,
+      uraian,
+      status: "Diterima"
+    });
+    resetForm();
+    renderLayanan();
+    await loadLayananSummary({showAlert:false});
+    alert(`Layanan berhasil disimpan.${result.id ? `\nNomor tiket: ${result.id}` : ""}`);
+  }catch(error){
+    console.error("Layanan gagal disimpan:", error);
+    setLayananApiStatus("error", `Layanan belum berhasil disimpan: ${error.message || error}`);
+    alert(`Data layanan belum berhasil disimpan.\n${error.message || error}`);
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = oldText; }
+  }
 }
 function resetForm(){ ["fNama","fHp","fUraian"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; }); }
 function openAddDataForm(type){ alert("Fitur tambah data " + String(type).toUpperCase() + " dapat dikembangkan dengan form input khusus atau terhubung ke database SIRUMAH."); }
@@ -3971,7 +4112,7 @@ function renderRusunawa(){
 
 
 /* =========================================================
-   INTEGRASI DATABASE EXCEL SIRUMAH v36 — GITHUB READY + MATRIKS PRIORITAS + FREEZE KOLOM RESPONSIF
+   INTEGRASI DATABASE EXCEL SIRUMAH v37 — GITHUB READY + MATRIKS PRIORITAS + FREEZE KOLOM RESPONSIF
    Satu workbook dengan tujuh sheet resmi. Seluruh penerapan
    data bersifat atomik: dashboard tidak berubah bila validasi gagal.
    ========================================================= */
@@ -4792,7 +4933,7 @@ function setupResponsiveStickyColumns(){
 
 
 /* =========================================================
-   BERANDA EKSEKUTIF SIRUMAH v36
+   BERANDA EKSEKUTIF SIRUMAH v37
    ========================================================= */
 function openDashboardSectionV34(sectionId){
   const button = document.querySelector(`.nav button[data-section="${sectionId}"]`);
@@ -5084,7 +5225,7 @@ function renderAll(){
 
 
 /* =========================================================
-   AKSI KONTEKSTUAL PER MENU SIRUMAH v36
+   AKSI KONTEKSTUAL PER MENU SIRUMAH v37
    ========================================================= */
 let SIRUMAH_PRINT_TITLE_BACKUP = "";
 
@@ -5196,8 +5337,9 @@ function init(){
   initNavigation();
   setupResponsiveStickyColumns();
   updateExcelStatus();
-  // Setelah antarmuka siap, ambil workbook terbaru dari repository.
+  // Setelah antarmuka siap, ambil workbook dan rekap layanan terbaru.
   Promise.resolve().then(() => loadExcelFromRepository({showAlert:false}));
+  Promise.resolve().then(() => loadLayananSummary({showAlert:false}));
 }
 
 document.addEventListener("DOMContentLoaded", init);
