@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v60 — Satu Data, Hunian Layak untuk Semua</title>
+  <title>SIRUMAH Kota Pangkalpinang v61 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -924,7 +924,7 @@
     /* Penyesuaian v52: seluruh layout dua card dibuat seimbang 50:50 pada layar lebar. */
 
 
-    /* Beranda Publik dan Internal — v60 */
+    /* Beranda Publik dan Internal — v61 */
     .public-only{display:none!important}
     body.public-mode .public-only{display:block!important}
     body.public-mode .home-public-grid.public-only{display:grid!important}
@@ -952,7 +952,7 @@
     @media(max-width:760px){.home-summary-strip{grid-template-columns:1fr}.home-action-tabs button{flex:1 1 120px}}
 
 
-    /* Beranda tematik dan pembeda cakupan data — v60 */
+    /* Beranda tematik dan pembeda cakupan data — v61 */
     .home-kpi-wrapper{margin-bottom:18px}
     .home-kpi-intro{
       display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
@@ -1102,6 +1102,7 @@
       <div class="sheet-counts" id="excelSheetCounts"></div>
     </div>
 
+    <!-- Beranda v61: ringkas, tanpa analisis kecamatan dan kartu administrasi data. -->
     <section class="section active" id="beranda">
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
@@ -1111,21 +1112,6 @@
       <div class="executive-kpi-grid" id="kpiGrid"></div>
 
       <div class="home-primary-grid">
-        <div class="card">
-          <div class="card-header executive-card-header">
-            <div>
-              <h3>Analisis Kondisi Hunian per Kecamatan</h3>
-              <p id="berandaAnalysisDescription">Perbandingan indikator utama berdasarkan wilayah aktif.</p>
-            </div>
-            <select id="berandaAnalysisMode" class="compact-select" onchange="changeBerandaAnalysisMode()" aria-label="Pilihan analisis Beranda">
-              <option value="housing">RTLH &amp; Backlog</option>
-              <option value="psu">Status PSU</option>
-              <option value="progress">Unit Perumahan Terdata</option>
-            </select>
-          </div>
-          <div class="chart"><canvas id="kecamatanChart"></canvas></div>
-          <div class="chart-footnote" id="primaryChartNote"></div>
-        </div>
 
         <div class="card public-only">
           <div class="card-header">
@@ -1197,25 +1183,7 @@
           <div class="stat-list" id="rtlhPriorityHomeSummary"></div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Kualitas dan Kelengkapan Data</h3>
-              <p>Data yang masih memerlukan pelengkapan, survei, atau verifikasi.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="dataQualityList"></div>
-        </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Status PSU Perumahan</h3>
-              <p>Penyerahan PSU dan isu teknis yang teridentifikasi pada data aktif.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="psuInternalSummary"></div>
-        </div>
 
         <div class="card">
           <div class="card-header">
@@ -1227,25 +1195,7 @@
           <div class="stat-list" id="rusunawaHomeSummary"></div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Status Layanan dan Pengaduan</h3>
-              <p>Beban layanan aktif dan progres penyelesaiannya.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="layananInternalSummary"></div>
-        </div>
 
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Pembaruan Data Terakhir</h3>
-              <p>Status workbook dan jumlah data pada setiap modul utama.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="homeDataActivitySummary"></div>
-        </div>
       </div>
     </section>
 
