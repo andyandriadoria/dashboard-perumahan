@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v58 — Satu Data, Hunian Layak untuk Semua</title>
+  <title>SIRUMAH Kota Pangkalpinang v59 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -922,6 +922,35 @@
     .rtlh-priority-cell{min-width:132px;text-align:center}
 
     /* Penyesuaian v52: seluruh layout dua card dibuat seimbang 50:50 pada layar lebar. */
+
+
+    /* Beranda Publik dan Internal — v59 */
+    .public-only{display:none!important}
+    body.public-mode .public-only{display:block!important}
+    body.public-mode .home-public-grid.public-only{display:grid!important}
+    body.internal-mode .public-only{display:none!important}
+    .home-primary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:18px}
+    .home-public-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}
+    .home-internal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+    .home-primary-grid > *,.home-public-grid > *,.home-internal-grid > *{min-width:0}
+    body.internal-mode .executive-kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .home-action-tabs{display:flex;gap:7px;flex-wrap:wrap;padding:0 18px 3px}
+    .home-action-tabs button{border:1px solid #dbe7ec;background:#f8fafc;color:#475569;border-radius:999px;padding:7px 11px;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
+    .home-action-tabs button.active{background:#175b72;border-color:#175b72;color:#fff}
+    .home-action-content{padding-top:10px;min-height:280px}
+    .home-summary-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:12px}
+    .home-summary-box{border:1px solid #e2e8f0;background:#f8fafc;border-radius:13px;padding:11px}
+    .home-summary-box span{display:block;color:#64748b;font-size:11px;font-weight:800;line-height:1.35}
+    .home-summary-box strong{display:block;color:#0f3f50;font-size:23px;margin-top:5px}
+    .home-empty{padding:24px 14px;color:#64748b;text-align:center;font-size:12px}
+    .home-section-link{border:0;background:transparent;color:#175b72;font-weight:900;cursor:pointer;padding:8px 0 0;font-size:12px;text-align:left}
+    .home-inline-bad{color:#991b1b!important;font-weight:900}.home-inline-warn{color:#9a3412!important;font-weight:900}.home-inline-good{color:#166534!important;font-weight:900}
+    .home-sheet-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.home-sheet-chips .sheet-chip{font-size:10px}
+    .home-stat-note{display:block;color:#64748b;font-size:11px;line-height:1.4;margin-top:3px}
+    @media(max-width:1280px){body.internal-mode .executive-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-public-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:1000px){.home-primary-grid,.home-internal-grid{grid-template-columns:1fr}.home-public-grid{grid-template-columns:1fr}}
+    @media(max-width:760px){.home-summary-strip{grid-template-columns:1fr}.home-action-tabs button{flex:1 1 120px}}
+
 </style>
 </head>
 
@@ -1014,60 +1043,145 @@
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
       </div>
+
+      <div id="executiveStatusBar" class="executive-status" aria-live="polite"></div>
       <div class="executive-kpi-grid" id="kpiGrid"></div>
 
-      <div class="beranda-main-grid">
+      <div class="home-primary-grid">
         <div class="card">
           <div class="card-header executive-card-header">
             <div>
               <h3>Analisis Kondisi per Kecamatan</h3>
-              <p>Gunakan pilihan tampilan untuk melihat tingkat prioritas, status PSU, atau kebutuhan hunian.</p>
+              <p id="berandaAnalysisDescription">Perbandingan indikator utama berdasarkan wilayah aktif.</p>
             </div>
-            <select id="berandaAnalysisMode" class="compact-select" onchange="changeBerandaAnalysisMode()">
-              <option value="priority">Tingkat Prioritas</option>
+            <select id="berandaAnalysisMode" class="compact-select" onchange="changeBerandaAnalysisMode()" aria-label="Pilihan analisis Beranda">
+              <option value="housing">RTLH &amp; Backlog</option>
               <option value="psu">Status PSU</option>
-              <option value="housing">RTLH & Backlog</option>
+              <option value="progress">Pembangunan &amp; Hunian</option>
             </select>
           </div>
           <div class="chart"><canvas id="kecamatanChart"></canvas></div>
           <div class="chart-footnote" id="primaryChartNote"></div>
         </div>
 
+        <div class="card public-only">
+          <div class="card-header">
+            <div>
+              <h3>Status Penyerahan PSU</h3>
+              <p>Ringkasan penyerahan prasarana, sarana, dan utilitas perumahan.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="publicPsuSummary"></div>
+        </div>
+
         <div class="card attention-card private-only">
           <div class="card-header">
             <div>
-              <h3>Perlu Perhatian</h3>
-              <p>Prioritas tertinggi dan isu yang paling banyak ditemukan pada filter aktif.</p>
+              <h3>Perlu Tindak Lanjut</h3>
+              <p>Daftar ringkas persoalan operasional yang membutuhkan perhatian.</p>
             </div>
           </div>
-          <div class="attention-section">
-            <div class="attention-title">Perumahan prioritas</div>
-            <div class="attention-list" id="topPrioritas"></div>
+          <div class="home-action-tabs" id="homeActionTabs">
+            <button type="button" class="active" data-home-action-tab="rtlh" onclick="setHomeActionTabV59('rtlh')">RTLH</button>
+            <button type="button" data-home-action-tab="psu" onclick="setHomeActionTabV59('psu')">PSU</button>
+            <button type="button" data-home-action-tab="rusunawa" onclick="setHomeActionTabV59('rusunawa')">RUSUNAWA</button>
+            <button type="button" data-home-action-tab="layanan" onclick="setHomeActionTabV59('layanan')">Layanan</button>
           </div>
-          <div class="attention-section attention-issues-section">
-            <div class="attention-title">Ringkasan isu</div>
-            <div class="issue-chip-grid" id="catatanStats"></div>
-          </div>
-          <button class="attention-link" type="button" onclick="openDashboardSectionV34('psu')">Lihat matriks dan ranking lengkap →</button>
+          <div class="attention-section home-action-content" id="homeActionSummary"></div>
         </div>
       </div>
 
-      <div class="grid beranda-secondary-grid">
+      <div class="home-public-grid public-only">
         <div class="card">
           <div class="card-header">
             <div>
               <h3>Komposisi Kualitas Hunian</h3>
-              <p>Proporsi RTLH terhadap jumlah rumah dan posisi RLH pada wilayah aktif.</p>
+              <p>Proporsi RTLH dan RLH pada wilayah aktif.</p>
             </div>
           </div>
           <div class="housing-quality" id="housingQualitySummary"></div>
         </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Ringkasan RUSUNAWA</h3>
+              <p>Ketersediaan dan tingkat hunian unit secara umum.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="rusunawaPublicSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Layanan dan Pengaduan</h3>
+              <p>Ringkasan status layanan masyarakat tanpa menampilkan identitas pemohon.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="layananPublicSummary"></div>
+        </div>
       </div>
 
-      <div class="grid beranda-operational-grid">
+      <div class="home-internal-grid private-only">
         <div class="card">
-          <div class="card-header"><div><h3>Ringkasan RUSUNAWA</h3><p>Hunian, retribusi, dan sarpras prioritas seluruh RUSUNAWA.</p></div></div>
+          <div class="card-header">
+            <div>
+              <h3>Prioritas Penanganan RTLH</h3>
+              <p>Usulan Musrenbang dan Pokir DPRD berdasarkan skor dan kesiapan tindak lanjut.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="rtlhPriorityHomeSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Kualitas dan Kelengkapan Data</h3>
+              <p>Data yang masih memerlukan pelengkapan, survei, atau verifikasi.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="dataQualityList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Status PSU Perumahan</h3>
+              <p>Penyerahan PSU dan isu teknis yang teridentifikasi pada data aktif.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="psuInternalSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Operasional RUSUNAWA</h3>
+              <p>Hunian, kondisi unit, retribusi, serta sarana prasarana prioritas.</p>
+            </div>
+          </div>
           <div class="stat-list" id="rusunawaHomeSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Status Layanan dan Pengaduan</h3>
+              <p>Beban layanan aktif dan progres penyelesaiannya.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="layananInternalSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Pembaruan Data Terakhir</h3>
+              <p>Status workbook dan jumlah data pada setiap modul utama.</p>
+            </div>
+          </div>
+          <div class="stat-list" id="homeDataActivitySummary"></div>
         </div>
       </div>
     </section>
@@ -4886,7 +5000,7 @@ function renderRusunawa(){
 
 
 /* =========================================================
-   INTEGRASI DATABASE EXCEL SIRUMAH v58 — GITHUB READY + MATRIKS PRIORITAS + PAGINASI RTLH
+   INTEGRASI DATABASE EXCEL SIRUMAH v59 — GITHUB READY + MATRIKS PRIORITAS + PAGINASI RTLH
    Satu workbook dengan tujuh sheet resmi. Seluruh penerapan
    data bersifat atomik: dashboard tidak berubah bila validasi gagal.
    ========================================================= */
@@ -6974,6 +7088,486 @@ loadLayananSummary = async function(options={}){
 };
 
 /* v45: Daftar Layanan Mode Internal dimuat ulang dari Google Sheets dan tidak lagi bergantung pada sesi browser. */
+
+
+
+/* =========================================================
+   BERANDA PUBLIK DAN INTERNAL SIRUMAH v59
+   ========================================================= */
+let homeActionTabV59 = "rtlh";
+
+function selectedHomeKecamatanV59(){
+  return document.getElementById("globalKecamatan")?.value || "all";
+}
+
+function homeMatchesKecamatanV59(value){
+  const selected = selectedHomeKecamatanV59();
+  return selected === "all" || normalizeKecamatanName(value) === normalizeKecamatanName(selected);
+}
+
+function getHomeRTLHRowsV59(){
+  return (SIRUMAH_RUNTIME?.rtlhIndividuals || []).filter(row=>homeMatchesKecamatanV59(row.kecamatan));
+}
+
+function homeIsFinishedV59(row){
+  return /selesai/i.test(String(row?.statusPenanganan || row?.status || ""));
+}
+
+function homePriorityOrderV59(value){
+  return ({"Sangat Tinggi":0,"Tinggi":1,"Sedang":2,"Rendah":3,"Belum Dapat Ditentukan":4})[String(value||"")] ?? 5;
+}
+
+function homeFormatDateV59(value){
+  if(!value) return "Belum tersedia";
+  const date = value instanceof Date ? value : new Date(value);
+  if(!Number.isFinite(date.getTime())) return "Belum tersedia";
+  return new Intl.DateTimeFormat("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(date);
+}
+
+function homeServiceSummaryV59(){
+  const summary = SIRUMAH_LAYANAN_REMOTE?.summary || {};
+  return {
+    loaded:Boolean(SIRUMAH_LAYANAN_REMOTE?.loaded),
+    total:Number(summary.total||0),
+    diterima:Number(summary.diterima||0),
+    diverifikasi:Number(summary.diverifikasi||0),
+    ditindaklanjuti:Number(summary.ditindaklanjuti||0),
+    selesai:Number(summary.selesai||0)
+  };
+}
+
+function openHomeTargetV59(sectionId, filterValue=""){
+  if(sectionId === "data-perumahan" && filterValue){
+    const status = document.getElementById("filterStatus");
+    if(status) status.value = filterValue;
+    try{ applyFilters(); }catch(_){ }
+  }
+  const button = document.querySelector(`.nav button[data-section="${sectionId}"]`);
+  if(button) button.click();
+  if(sectionId === "rtlh" && filterValue){
+    const priority = document.getElementById("prioritasRTLH");
+    if(priority && [...priority.options].some(option=>option.value===filterValue)) priority.value = filterValue;
+    rtlhIndividualPage = 1;
+    try{ renderRTLH(); }catch(_){ }
+  }
+}
+
+function syncBerandaModeOptionsV59(){
+  const select = document.getElementById("berandaAnalysisMode");
+  if(!select) return;
+  const modeKey = publicMode ? "public" : "internal";
+  if(select.dataset.accessMode === modeKey) return;
+  const options = publicMode ? [
+    ["housing","RTLH & Backlog"],
+    ["psu","Status PSU"],
+    ["progress","Pembangunan & Hunian"]
+  ] : [
+    ["rtlhPriority","Prioritas RTLH"],
+    ["psu","Status PSU"],
+    ["housing","RTLH & Backlog"],
+    ["progress","Pembangunan & Hunian"]
+  ];
+  select.innerHTML = options.map(([value,label])=>`<option value="${value}">${label}</option>`).join("");
+  select.value = publicMode ? "housing" : "rtlhPriority";
+  select.dataset.accessMode = modeKey;
+  const description = document.getElementById("berandaAnalysisDescription");
+  if(description) description.textContent = publicMode
+    ? "Informasi agregat kebutuhan rumah, kualitas hunian, PSU, dan pembangunan per kecamatan."
+    : "Analisis operasional prioritas RTLH, PSU, kebutuhan hunian, dan progres per kecamatan.";
+}
+
+function renderExecutiveStatusV59(){
+  const el = document.getElementById("executiveStatusBar");
+  if(!el) return;
+  const selected = selectedHomeKecamatanV59();
+  const wilayah = selected === "all" ? "Kota Pangkalpinang" : `Kecamatan ${selected}`;
+  const source = SIRUMAH_RUNTIME?.source || {};
+  const loadedSheets = activeExcelSheetsV44();
+  const loadedAt = source.loadedAt ? homeFormatDateV59(source.loadedAt) : "Belum tersedia";
+  if(publicMode){
+    el.innerHTML = `
+      <span class="executive-status-label">RINGKASAN PUBLIK</span>
+      <span class="executive-status-pill info">📍 <strong>${escapeHtml(wilayah)}</strong></span>
+      <span class="executive-status-pill good">📊 Data agregat perumahan dan hunian</span>
+      <span class="executive-status-pill ${source.mode==="excel"?"good":"warn"}">🕒 Pembaruan: <strong>${escapeHtml(loadedAt)}</strong></span>`;
+    return;
+  }
+  const counts = SIRUMAH_RUNTIME?.counts || {};
+  const totalRows = Object.values(counts).reduce((sum,value)=>sum+Number(value||0),0);
+  const rtlhRows = getHomeRTLHRowsV59();
+  const incomplete = rtlhRows.filter(row=>!row.hasSkor).length;
+  const sourceLabel = source.mode === "excel" ? (source.origin === "repository" ? "Excel GitHub" : "Excel Lokal") : "Belum ada workbook";
+  el.innerHTML = `
+    <span class="executive-status-label">STATUS INTERNAL</span>
+    <span class="executive-status-pill info">📍 <strong>${escapeHtml(wilayah)}</strong></span>
+    <span class="executive-status-pill">🗄️ <strong>${escapeHtml(sourceLabel)}</strong></span>
+    <span class="executive-status-pill ${loadedSheets.length===SIRUMAH_SHEET_NAMES.length?"good":"warn"}">📑 Sheet: <strong>${loadedSheets.length}/${SIRUMAH_SHEET_NAMES.length}</strong></span>
+    <span class="executive-status-pill">🧾 Baris data: <strong>${fmt(totalRows)}</strong></span>
+    <span class="executive-status-pill ${incomplete?"warn":"good"}">🧱 RTLH belum lengkap: <strong>${fmt(incomplete)}</strong></span>
+    <span class="executive-status-pill ${source.loadedAt?"good":"warn"}">🕒 <strong>${escapeHtml(loadedAt)}</strong></span>`;
+}
+
+function renderKPI(){
+  const s = summary(filtered);
+  const backlog = sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
+  const qualityRows = filterAggregateRows(SIRUMAH_RUNTIME?.rtlhAggregate || []);
+  const totalHouses = sumRows(qualityRows,"jumlah");
+  const rtlhAggregate = sumRows(qualityRows,"rtlh");
+  const el = document.getElementById("kpiGrid");
+  if(!el) return;
+
+  let items;
+  if(publicMode){
+    items = [
+      {label:"Total Perumahan",value:s.total,note:"perumahan terdata",icon:"🏘️",tone:"primary",action:"openHomeTargetV59('data-perumahan')"},
+      {label:"Rumah Terbangun",value:s.terbangun,note:`${pct(s.terbangun,s.siteplan)}% dari site plan`,icon:"🏗️",tone:"success",action:"openHomeTargetV59('data-perumahan')"},
+      {label:"Rumah Terhuni",value:s.terhuni,note:`${pct(s.terhuni,s.terbangun)}% dari unit terbangun`,icon:"🏠",tone:"info",action:"openHomeTargetV59('data-perumahan')"},
+      {label:"PSU Sudah Diserahkan",value:s.sudah,note:`${pct(s.sudah,s.total)}% dari perumahan`,icon:"🛣️",tone:"success",action:"openHomeTargetV59('data-perumahan','SUDAH DISERAHKAN')"},
+      {label:"Backlog Kepemilikan",value:backlog,note:"kebutuhan kepemilikan rumah",icon:"🔑",tone:"purple",action:"openHomeTargetV59('backlog')"},
+      {label:"Rumah Tidak Layak Huni",value:rtlhAggregate,note:`${percentValue(rtlhAggregate,totalHouses)}% dari jumlah rumah`,icon:"🧱",tone:"warning",action:"openHomeTargetV59('rtlh')"}
+    ];
+  }else{
+    const rtlhRows = getHomeRTLHRowsV59();
+    const active = rtlhRows.filter(row=>!homeIsFinishedV59(row));
+    const veryHigh = active.filter(row=>row.tingkatPrioritas==="Sangat Tinggi").length;
+    const high = active.filter(row=>row.tingkatPrioritas==="Tinggi").length;
+    const adminIncomplete = active.filter(row=>["Sangat Tinggi","Tinggi"].includes(row.tingkatPrioritas) && /belum/i.test(row.statusAdministrasi)).length;
+    const undetermined = active.filter(row=>!row.hasSkor || row.tingkatPrioritas==="Belum Dapat Ditentukan").length;
+    const rus = getBerandaRusunawaV34();
+    const units = SIRUMAH_RUNTIME?.rusunawaUnits || [];
+    const unusable = units.filter(row=>/tidak dapat digunakan|perbaikan|rusak berat/i.test(`${row.status||""} ${row.condition||""}`)).length;
+    const service = homeServiceSummaryV59();
+    const pendingService = Math.max(0,service.total-service.selesai);
+    items = [
+      {label:"PSU Belum Diserahkan",value:s.belum,note:`${pct(s.belum,s.total)}% dari perumahan`,icon:"🛣️",tone:"danger",action:"openHomeTargetV59('psu')"},
+      {label:"RTLH Sangat Tinggi",value:veryHigh,note:"usulan aktif paling mendesak",icon:"🚨",tone:"danger",action:"openHomeTargetV59('rtlh','Sangat Tinggi')"},
+      {label:"RTLH Prioritas Tinggi",value:high,note:"usulan aktif prioritas berikutnya",icon:"⚠️",tone:"warning",action:"openHomeTargetV59('rtlh','Tinggi')"},
+      {label:"Prioritas Tinggi, Administrasi Belum Lengkap",value:adminIncomplete,note:"perlu percepatan dokumen",icon:"📄",tone:"purple",action:"openHomeTargetV59('rtlh')"},
+      {label:"RTLH Belum Dapat Dinilai",value:undetermined,note:"memerlukan pelengkapan atau survei",icon:"🔎",tone:"info",action:"openHomeTargetV59('rtlh','Belum Dapat Ditentukan')"},
+      {label:"Unit RUSUNAWA Kosong",value:rus.vacant,note:"potensi pemanfaatan unit",icon:"🚪",tone:"success",action:"openHomeTargetV59('rusunawa')"},
+      {label:"Unit Perlu Penanganan",value:unusable,note:"rusak, perbaikan, atau tidak dapat digunakan",icon:"🛠️",tone:"warning",action:"openHomeTargetV59('rusunawa')"},
+      {label:"Layanan Belum Selesai",value:pendingService,note:service.loaded?"layanan aktif yang masih diproses":"rekap layanan belum dimuat",icon:"☎️",tone:"info",action:"openHomeTargetV59('layanan')"}
+    ];
+  }
+
+  el.className = "executive-kpi-grid";
+  el.innerHTML = items.map(item=>`
+    <div class="executive-kpi ${item.tone}" role="button" tabindex="0" onclick="${item.action}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${item.action}}">
+      <div class="executive-kpi-head"><div class="executive-kpi-label">${escapeHtml(item.label)}</div><div class="executive-kpi-icon">${item.icon}</div></div>
+      <div class="executive-kpi-value">${fmt(item.value)}</div>
+      <div class="executive-kpi-note">${escapeHtml(item.note)} · klik untuk detail</div>
+    </div>`).join("");
+}
+
+function getRTLHPriorityByKecamatanV59(){
+  const map = new Map();
+  getHomeRTLHRowsV59().forEach(row=>{
+    const key = row.kecamatan || "Tidak diketahui";
+    if(!map.has(key)) map.set(key,{kecamatan:key,"Sangat Tinggi":0,"Tinggi":0,"Sedang":0,"Rendah":0,"Belum Dapat Ditentukan":0});
+    const level = row.tingkatPrioritas || "Belum Dapat Ditentukan";
+    if(!Object.prototype.hasOwnProperty.call(map.get(key),level)) map.get(key)[level] = 0;
+    map.get(key)[level] += 1;
+  });
+  return [...map.values()].sort((a,b)=>{
+    const weight = row=>row["Sangat Tinggi"]*5+row.Tinggi*4+row.Sedang*3+row.Rendah*2+row["Belum Dapat Ditentukan"];
+    return weight(b)-weight(a);
+  });
+}
+
+function changeBerandaAnalysisMode(){
+  renderPrimaryBerandaChartV34();
+}
+
+function renderPrimaryBerandaChartV34(){
+  syncBerandaModeOptionsV59();
+  const mode = document.getElementById("berandaAnalysisMode")?.value || (publicMode?"housing":"rtlhPriority");
+  const note = document.getElementById("primaryChartNote");
+  if(mode === "rtlhPriority"){
+    const rows = getRTLHPriorityByKecamatanV59();
+    drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+      {name:"Sangat Tinggi",values:rows.map(row=>row["Sangat Tinggi"])},
+      {name:"Tinggi",values:rows.map(row=>row.Tinggi)},
+      {name:"Sedang",values:rows.map(row=>row.Sedang)},
+      {name:"Rendah",values:rows.map(row=>row.Rendah)},
+      {name:"Belum Dinilai",values:rows.map(row=>row["Belum Dapat Ditentukan"])}
+    ]);
+    if(note) note.textContent = "Menampilkan jumlah usulan RTLH menurut tingkat prioritas hasil penilaian teknis, kerentanan penghuni, dan risiko keselamatan.";
+    return;
+  }
+  if(mode === "psu"){
+    const rows = groupByKecamatan(filtered);
+    drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+      {name:"PSU Sudah Diserahkan",values:rows.map(row=>row.sudah)},
+      {name:"PSU Belum Diserahkan",values:rows.map(row=>row.belum)}
+    ]);
+    if(note) note.textContent = "Memperlihatkan jumlah perumahan berdasarkan status penyerahan PSU pada setiap kecamatan.";
+    return;
+  }
+  if(mode === "progress"){
+    const rows = groupByKecamatan(filtered);
+    drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+      {name:"Site Plan",values:rows.map(row=>row.siteplan)},
+      {name:"Terbangun",values:rows.map(row=>row.terbangun)},
+      {name:"Terhuni",values:rows.map(row=>row.terhuni)}
+    ]);
+    if(note) note.textContent = "Membandingkan rencana unit, realisasi pembangunan, dan unit yang telah dihuni pada setiap kecamatan.";
+    return;
+  }
+  const rows = getAggregateHousingQualityRows();
+  drawBar("kecamatanChart",rows.map(row=>row.kecamatan),[
+    {name:"Backlog Kepemilikan",values:rows.map(row=>row.backlog)},
+    {name:"RTLH",values:rows.map(row=>row.rtlh)}
+  ]);
+  if(note) note.textContent = "Backlog menunjukkan kebutuhan kepemilikan rumah, sedangkan RTLH menunjukkan kualitas rumah yang perlu ditangani.";
+}
+
+function renderPublicPsuSummaryV59(){
+  const el = document.getElementById("publicPsuSummary");
+  if(!el) return;
+  const s = summary(filtered);
+  const pctDone = pct(s.sudah,s.total);
+  const groups = groupByKecamatan(filtered).sort((a,b)=>b.belum-a.belum).slice(0,3);
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>PSU Sudah Diserahkan</strong><br><span>${fmt(s.sudah)} dari ${fmt(s.total)} perumahan</span><div class="progress"><i style="width:${Math.min(pctDone,100)}%"></i></div></div><strong>${pctDone}%</strong></div>
+    <div class="stat-row"><strong>PSU Belum Diserahkan</strong><span>${fmt(s.belum)} perumahan</span></div>
+    ${groups.map(row=>`<div class="stat-row"><strong>${escapeHtml(row.kecamatan)}</strong><span>${fmt(row.belum)} belum diserahkan</span></div>`).join("")}
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('data-perumahan')">Lihat data perumahan →</button>`;
+}
+
+function renderRusunawaPublicV59(){
+  const el = document.getElementById("rusunawaPublicSummary");
+  if(!el) return;
+  const r = getBerandaRusunawaV34();
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>Tingkat Hunian</strong><br><span>${fmt(r.filled)} dari ${fmt(r.total)} unit terisi</span><div class="progress"><i style="width:${Math.min(r.occupancy,100)}%"></i></div></div><strong>${r.occupancy}%</strong></div>
+    <div class="stat-row"><strong>Total Unit</strong><span>${fmt(r.total)} unit</span></div>
+    <div class="stat-row"><strong>Unit Kosong</strong><span>${fmt(r.vacant)} unit</span></div>
+    <div class="stat-row"><strong>Dalam Perbaikan/Rusak</strong><span>${fmt(r.repair)} unit</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('rusunawa')">Buka informasi RUSUNAWA →</button>`;
+}
+
+function renderLayananPublicV59(){
+  const el = document.getElementById("layananPublicSummary");
+  if(!el) return;
+  const s = homeServiceSummaryV59();
+  if(!s.loaded){
+    el.innerHTML = `<div class="home-empty">Rekap Google Sheets sedang dimuat atau belum dapat dibaca.</div><button class="attention-link" style="margin:0 18px 18px" type="button" onclick="loadLayananSummary({showAlert:true})">Muat ulang rekap →</button>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="stat-row"><strong>Total Layanan</strong><span>${fmt(s.total)} layanan</span></div>
+    <div class="stat-row"><strong>Diterima</strong><span>${fmt(s.diterima)} layanan</span></div>
+    <div class="stat-row"><strong>Diverifikasi</strong><span>${fmt(s.diverifikasi)} layanan</span></div>
+    <div class="stat-row"><strong>Ditindaklanjuti</strong><span>${fmt(s.ditindaklanjuti)} layanan</span></div>
+    <div class="stat-row"><strong>Selesai</strong><span class="home-inline-good">${fmt(s.selesai)} layanan</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('layanan')">Buka layanan dan pengaduan →</button>`;
+}
+
+function setHomeActionTabV59(tab){
+  homeActionTabV59 = tab;
+  document.querySelectorAll("[data-home-action-tab]").forEach(button=>button.classList.toggle("active",button.dataset.homeActionTab===tab));
+  renderHomeActionSummaryV59();
+}
+
+function renderHomeActionSummaryV59(){
+  const el = document.getElementById("homeActionSummary");
+  if(!el) return;
+  document.querySelectorAll("[data-home-action-tab]").forEach(button=>button.classList.toggle("active",button.dataset.homeActionTab===homeActionTabV59));
+  if(homeActionTabV59 === "psu"){
+    const rows = [...filtered].filter(row=>String(row.statusPSU).includes("BELUM")).sort((a,b)=>b.score-a.score).slice(0,5);
+    el.innerHTML = `<div class="attention-title">PSU milik pengembang yang perlu ditindaklanjuti</div><div class="attention-list">${rows.length?rows.map((row,index)=>{
+      const matrix=priorityMatrix(row); return `<div class="attention-item" onclick="openHomeTargetV59('psu')"><div><strong>${index+1}. ${escapeHtml(row.nama)}</strong><small>${escapeHtml(row.kecamatan)} · ${escapeHtml(matrix.rincian.slice(0,3).join(" · ")||"PSU belum diserahkan")}</small></div><div class="attention-score">${matrix.total}</div></div>`;
+    }).join(""):`<div class="home-empty">Tidak ada PSU belum diserahkan pada filter aktif.</div>`}</div><button class="home-section-link" onclick="openHomeTargetV59('psu')">Buka matriks PSU →</button>`;
+    return;
+  }
+  if(homeActionTabV59 === "rusunawa"){
+    const units = SIRUMAH_RUNTIME?.rusunawaUnits || [];
+    const problemUnits = units.filter(row=>/perbaikan|rusak berat|tidak dapat digunakan/i.test(`${row.status||""} ${row.condition||""}`)).slice(0,5);
+    const facilities = (SIRUMAH_RUNTIME?.rusunawaFacilities || []).filter(row=>/tinggi|darurat|mendesak/i.test(String(row.priority||""))).slice(0,3);
+    const list = [
+      ...problemUnits.map(row=>({title:`${row.block} / Unit ${row.unit}`,note:`${row.status} · ${row.condition}`})),
+      ...facilities.map(row=>({title:row.component||"Sarana prasarana",note:`${row.condition||"-"} · Prioritas ${row.priority||"-"}`}))
+    ].slice(0,6);
+    el.innerHTML = `<div class="attention-title">Unit dan sarpras yang membutuhkan penanganan</div><div class="attention-list">${list.length?list.map((row,index)=>`<div class="attention-item" onclick="openHomeTargetV59('rusunawa')"><div><strong>${index+1}. ${escapeHtml(row.title)}</strong><small>${escapeHtml(row.note)}</small></div><div class="attention-score">!</div></div>`).join(""):`<div class="home-empty">Tidak ada unit atau sarpras berprioritas tinggi.</div>`}</div><button class="home-section-link" onclick="openHomeTargetV59('rusunawa')">Buka pengelolaan RUSUNAWA →</button>`;
+    return;
+  }
+  if(homeActionTabV59 === "layanan"){
+    const s = homeServiceSummaryV59();
+    el.innerHTML = `<div class="attention-title">Rekap beban layanan</div><div class="home-summary-strip">
+      <div class="home-summary-box"><span>Diterima</span><strong>${fmt(s.diterima)}</strong></div>
+      <div class="home-summary-box"><span>Diverifikasi</span><strong>${fmt(s.diverifikasi)}</strong></div>
+      <div class="home-summary-box"><span>Ditindaklanjuti</span><strong>${fmt(s.ditindaklanjuti)}</strong></div>
+      <div class="home-summary-box"><span>Selesai</span><strong>${fmt(s.selesai)}</strong></div>
+    </div>${s.loaded?"":`<div class="home-empty">Rekap Google Sheets belum dimuat.</div>`}<button class="home-section-link" onclick="openHomeTargetV59('layanan')">Buka layanan dan pengaduan →</button>`;
+    return;
+  }
+  const rows = getHomeRTLHRowsV59().filter(row=>!homeIsFinishedV59(row)).sort((a,b)=>homePriorityOrderV59(a.tingkatPrioritas)-homePriorityOrderV59(b.tingkatPrioritas)||(Number(b.skor||-1)-Number(a.skor||-1))).slice(0,5);
+  el.innerHTML = `<div class="attention-title">Usulan RTLH dengan urgensi tertinggi</div><div class="attention-list">${rows.length?rows.map((row,index)=>`<div class="attention-item" onclick="openHomeTargetV59('rtlh','${escapeHtml(row.tingkatPrioritas)}')"><div><strong>${index+1}. ${escapeHtml(row.nama)}</strong><small>${escapeHtml(row.kecamatan)} · ${escapeHtml(row.tingkatRisikoKeselamatan)} · ${escapeHtml(row.statusAdministrasi)}</small></div><div class="attention-score">${row.hasSkor?fmt(row.skor):"?"}</div></div>`).join(""):`<div class="home-empty">Belum ada data RTLH aktif.</div>`}</div><button class="home-section-link" onclick="openHomeTargetV59('rtlh')">Buka data individu RTLH →</button>`;
+}
+
+function renderRTLHPriorityHomeV59(){
+  const el = document.getElementById("rtlhPriorityHomeSummary");
+  if(!el) return;
+  const rows = getHomeRTLHRowsV59();
+  const active = rows.filter(row=>!homeIsFinishedV59(row));
+  const count = level=>active.filter(row=>row.tingkatPrioritas===level).length;
+  const highRisk = active.filter(row=>row.tingkatRisikoKeselamatan==="Risiko Tinggi/Darurat").length;
+  const incompleteAdmin = active.filter(row=>["Sangat Tinggi","Tinggi"].includes(row.tingkatPrioritas) && /belum/i.test(row.statusAdministrasi)).length;
+  el.innerHTML = `
+    <div class="stat-row"><strong>Usulan Aktif</strong><span>${fmt(active.length)} data</span></div>
+    <div class="stat-row clickable" onclick="openHomeTargetV59('rtlh','Sangat Tinggi')"><strong>Prioritas Sangat Tinggi</strong><span class="home-inline-bad">${fmt(count("Sangat Tinggi"))}</span></div>
+    <div class="stat-row clickable" onclick="openHomeTargetV59('rtlh','Tinggi')"><strong>Prioritas Tinggi</strong><span class="home-inline-warn">${fmt(count("Tinggi"))}</span></div>
+    <div class="stat-row"><strong>Risiko Tinggi/Darurat</strong><span class="home-inline-bad">${fmt(highRisk)}</span></div>
+    <div class="stat-row"><strong>Prioritas Tinggi, Administrasi Belum Lengkap</strong><span>${fmt(incompleteAdmin)}</span></div>
+    <div class="stat-row"><strong>Sudah Selesai</strong><span class="home-inline-good">${fmt(rows.filter(homeIsFinishedV59).length)}</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('rtlh')">Buka rincian RTLH →</button>`;
+}
+
+function renderDataQualityV34(){
+  const el = document.getElementById("dataQualityList");
+  if(!el) return;
+  const housingQuality = getBerandaDataQualityV34();
+  const rows = getHomeRTLHRowsV59();
+  const technicalIncomplete = rows.filter(row=>!row.hasSkorTeknis).length;
+  const mbrIncomplete = rows.filter(row=>row.skorMbr===null || row.skorMbr===undefined).length;
+  const vulnerabilityIncomplete = rows.filter(row=>row.skorFaktorRentan===null || row.skorFaktorRentan===undefined).length;
+  const riskIncomplete = rows.filter(row=>!row.hasSkorRisiko).length;
+  const fullIncomplete = rows.filter(row=>!row.hasSkor).length;
+  el.innerHTML = `
+    <div class="stat-row"><strong>Perumahan Tanpa Koordinat</strong><span class="${housingQuality.missingCoords?"home-inline-warn":"home-inline-good"}">${fmt(housingQuality.missingCoords)} data</span></div>
+    <div class="stat-row"><strong>RTLH — Penilaian Teknis Belum Lengkap</strong><span class="${technicalIncomplete?"home-inline-warn":"home-inline-good"}">${fmt(technicalIncomplete)}</span></div>
+    <div class="stat-row"><strong>RTLH — Status MBR Belum Dinilai</strong><span class="${mbrIncomplete?"home-inline-warn":"home-inline-good"}">${fmt(mbrIncomplete)}</span></div>
+    <div class="stat-row"><strong>RTLH — Faktor Kerentanan Belum Dinilai</strong><span class="${vulnerabilityIncomplete?"home-inline-warn":"home-inline-good"}">${fmt(vulnerabilityIncomplete)}</span></div>
+    <div class="stat-row"><strong>RTLH — Risiko Keselamatan Belum Dinilai</strong><span class="${riskIncomplete?"home-inline-warn":"home-inline-good"}">${fmt(riskIncomplete)}</span></div>
+    <div class="stat-row"><strong>RTLH — Skor Prioritas Belum Lengkap</strong><span class="${fullIncomplete?"home-inline-bad":"home-inline-good"}">${fmt(fullIncomplete)}</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('integrasi')">Buka pengelolaan data →</button>`;
+}
+
+function renderPsuInternalV59(){
+  const el = document.getElementById("psuInternalSummary");
+  if(!el) return;
+  const s = summary(filtered);
+  const flood = filtered.filter(row=>/banjir|genangan/i.test(row.catatan)).length;
+  const road = filtered.filter(row=>/jalan belum perkerasan|jalan rusak/i.test(row.catatan)).length;
+  const rth = filtered.filter(row=>/rth belum terbangun|rth beralih fungsi/i.test(row.catatan)).length;
+  const inactive = filtered.filter(row=>/pengembang tidak aktif/i.test(row.catatan)).length;
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>PSU Sudah Diserahkan</strong><br><span>${fmt(s.sudah)} dari ${fmt(s.total)} perumahan</span><div class="progress"><i style="width:${pct(s.sudah,s.total)}%"></i></div></div><strong>${pct(s.sudah,s.total)}%</strong></div>
+    <div class="stat-row"><strong>PSU Belum Diserahkan</strong><span class="home-inline-bad">${fmt(s.belum)}</span></div>
+    <div class="stat-row"><strong>Isu Jalan</strong><span>${fmt(road)} perumahan</span></div>
+    <div class="stat-row"><strong>RTH Belum/Beralih Fungsi</strong><span>${fmt(rth)} perumahan</span></div>
+    <div class="stat-row"><strong>Rawan Banjir/Genangan</strong><span>${fmt(flood)} perumahan</span></div>
+    <div class="stat-row"><strong>Pengembang Tidak Aktif</strong><span>${fmt(inactive)} perumahan</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('psu')">Buka matriks PSU →</button>`;
+}
+
+function renderRusunawaHomeV34(){
+  const el = document.getElementById("rusunawaHomeSummary");
+  if(!el) return;
+  const r = getBerandaRusunawaV34();
+  const units = SIRUMAH_RUNTIME?.rusunawaUnits || [];
+  const unusable = units.filter(row=>/tidak dapat digunakan/i.test(String(row.status||""))).length;
+  el.innerHTML = `
+    <div class="stat-row"><div><strong>Tingkat Hunian</strong><br><span>${fmt(r.filled)} dari ${fmt(r.total)} unit terisi</span><div class="progress"><i style="width:${Math.min(r.occupancy,100)}%"></i></div></div><strong>${r.occupancy}%</strong></div>
+    <div class="stat-row"><strong>Unit Kosong</strong><span>${fmt(r.vacant)} unit</span></div>
+    <div class="stat-row"><strong>Unit Perlu Perbaikan</strong><span class="${r.repair?"home-inline-warn":"home-inline-good"}">${fmt(r.repair)} unit</span></div>
+    <div class="stat-row"><strong>Tidak Dapat Digunakan</strong><span class="${unusable?"home-inline-bad":"home-inline-good"}">${fmt(unusable)} unit</span></div>
+    <div class="stat-row"><strong>Capaian Retribusi ${CURRENT_YEAR}</strong><span>${r.achievement===null?"Target belum tersedia":`${r.achievement}%`}</span></div>
+    <div class="stat-row"><strong>Sarpras Prioritas Tinggi</strong><span class="${r.highPriority?"home-inline-bad":"home-inline-good"}">${fmt(r.highPriority)} komponen</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="openHomeTargetV59('rusunawa')">Buka pengelolaan RUSUNAWA →</button>`;
+}
+
+function renderLayananInternalV59(){
+  const el = document.getElementById("layananInternalSummary");
+  if(!el) return;
+  const s = homeServiceSummaryV59();
+  const pending = Math.max(0,s.total-s.selesai);
+  el.innerHTML = `
+    <div class="stat-row"><strong>Total Layanan</strong><span>${s.loaded?fmt(s.total):"Belum dimuat"}</span></div>
+    <div class="stat-row"><strong>Diterima</strong><span>${fmt(s.diterima)}</span></div>
+    <div class="stat-row"><strong>Diverifikasi</strong><span>${fmt(s.diverifikasi)}</span></div>
+    <div class="stat-row"><strong>Ditindaklanjuti</strong><span>${fmt(s.ditindaklanjuti)}</span></div>
+    <div class="stat-row"><strong>Belum Selesai</strong><span class="${pending?"home-inline-warn":"home-inline-good"}">${fmt(pending)}</span></div>
+    <div class="stat-row"><strong>Selesai</strong><span class="home-inline-good">${fmt(s.selesai)}</span></div>
+    <button class="attention-link" style="margin:8px 0 0" type="button" onclick="loadLayananSummary({showAlert:true})">Muat ulang rekap →</button>`;
+}
+
+function renderHomeDataActivityV59(){
+  const el = document.getElementById("homeDataActivitySummary");
+  if(!el) return;
+  const source = SIRUMAH_RUNTIME?.source || {};
+  const counts = SIRUMAH_RUNTIME?.counts || {};
+  const active = activeExcelSheetsV44();
+  const sourceLabel = source.mode === "excel" ? `${source.origin==="repository"?"GitHub":"Excel lokal"}: ${source.fileName}` : "Belum ada workbook aktif";
+  el.innerHTML = `
+    <div class="stat-row"><strong>Sumber Workbook</strong><span>${escapeHtml(sourceLabel)}</span></div>
+    <div class="stat-row"><strong>Waktu Pemuatan</strong><span>${escapeHtml(homeFormatDateV59(source.loadedAt))}</span></div>
+    <div class="stat-row"><strong>Sheet Terisi</strong><span>${active.length} dari ${SIRUMAH_SHEET_NAMES.length}</span></div>
+    <div class="stat-row"><strong>Data Perumahan</strong><span>${fmt(counts.PERUMAHAN||0)} baris</span></div>
+    <div class="stat-row"><strong>Data Individu RTLH</strong><span>${fmt(counts.RTLH_INDIVIDU||0)} baris</span></div>
+    <div class="stat-row"><strong>Unit / Sarpras RUSUNAWA</strong><span>${fmt(counts.RUSUNAWA_UNIT||0)} / ${fmt(counts.RUSUNAWA_SARPRAS||0)}</span></div>
+    <div class="home-sheet-chips">${SIRUMAH_SHEET_NAMES.map(name=>`<span class="sheet-chip ${Number(counts[name]||0)>0?"ok":"warn"}">${escapeHtml(name.replace(/_/g," "))}: <b>${fmt(counts[name]||0)}</b></span>`).join("")}</div>`;
+}
+
+function renderCharts(){
+  renderPrimaryBerandaChartV34();
+  const aggregate = getAggregateHousingQualityRows();
+  if(document.getElementById("backlogChart")){
+    drawBar("backlogChart",aggregate.map(row=>row.kecamatan),[
+      {name:"Backlog Kepemilikan",values:aggregate.map(row=>row.backlog)},
+      {name:"RTLH",values:aggregate.map(row=>row.rtlh)}
+    ]);
+  }
+  const kolabRows = typeof filterByGlobalKec === "function" ? filterByGlobalKec(SIRUMAH_PROGRAM.kolaborasi,"lokasi") : [];
+  if(document.getElementById("kolabChart")) drawDonut("kolabChart",kolabRows.map(row=>Math.max(1,Math.round(Number(row.nilai||0)/1000000))),kolabRows.map(row=>row.mitra));
+}
+
+function renderAll(){
+  safeRenderSIRUMAH(renderExecutiveStatusV59,"Status Beranda");
+  safeRenderSIRUMAH(renderKPI,"KPI Beranda");
+  safeRenderSIRUMAH(renderPrimaryBerandaChartV34,"Analisis Beranda");
+  safeRenderSIRUMAH(renderPublicPsuSummaryV59,"PSU Publik");
+  safeRenderSIRUMAH(renderHousingQualityV34,"Kualitas Hunian");
+  safeRenderSIRUMAH(renderRusunawaPublicV59,"RUSUNAWA Publik");
+  safeRenderSIRUMAH(renderLayananPublicV59,"Layanan Publik");
+  safeRenderSIRUMAH(renderHomeActionSummaryV59,"Tindak Lanjut Internal");
+  safeRenderSIRUMAH(renderRTLHPriorityHomeV59,"Prioritas RTLH Internal");
+  safeRenderSIRUMAH(renderDataQualityV34,"Kualitas Data Internal");
+  safeRenderSIRUMAH(renderPsuInternalV59,"PSU Internal");
+  safeRenderSIRUMAH(renderRusunawaHomeV34,"RUSUNAWA Internal");
+  safeRenderSIRUMAH(renderLayananInternalV59,"Layanan Internal");
+  safeRenderSIRUMAH(renderHomeDataActivityV59,"Aktivitas Data Internal");
+  safeRenderSIRUMAH(renderTable,"Data Perumahan");
+  safeRenderSIRUMAH(renderCharts,"Grafik");
+  safeRenderSIRUMAH(renderPSU,"PSU");
+  safeRenderSIRUMAH(renderRanking,"Ranking");
+  safeRenderSIRUMAH(renderBacklog,"Backlog & MBR");
+  safeRenderSIRUMAH(renderRTLH,"RTLH & RLH");
+  safeRenderSIRUMAH(renderRusunawa,"RUSUNAWA");
+  safeRenderSIRUMAH(renderLayanan,"Layanan");
+  safeRenderSIRUMAH(renderKolaborasi,"Kolaborasi");
+  safeRenderSIRUMAH(renderReportStats,"Laporan");
+  safeRenderSIRUMAH(renderMap,"Peta");
+}
+
+const updateAccessModeUIBeforeV59 = updateAccessModeUI;
+updateAccessModeUI = function(){
+  updateAccessModeUIBeforeV59();
+  syncBerandaModeOptionsV59();
+};
+
+const loadLayananSummaryBeforeV59 = loadLayananSummary;
+loadLayananSummary = async function(options={}){
+  const result = await loadLayananSummaryBeforeV59(options);
+  try{
+    renderLayananPublicV59();
+    renderLayananInternalV59();
+    if(homeActionTabV59 === "layanan") renderHomeActionSummaryV59();
+    renderKPI();
+  }catch(error){ console.error("Beranda layanan gagal diperbarui:",error); }
+  return result;
+};
+
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
