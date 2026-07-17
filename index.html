@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v61 — Satu Data, Hunian Layak untuk Semua</title>
+  <title>SIRUMAH Kota Pangkalpinang v62 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -924,7 +924,7 @@
     /* Penyesuaian v52: seluruh layout dua card dibuat seimbang 50:50 pada layar lebar. */
 
 
-    /* Beranda Publik dan Internal — v61 */
+    /* Beranda Publik dan Internal — v62 */
     .public-only{display:none!important}
     body.public-mode .public-only{display:block!important}
     body.public-mode .home-public-grid.public-only{display:grid!important}
@@ -933,6 +933,7 @@
     .home-public-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}
     .home-internal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
     .home-primary-grid > *,.home-public-grid > *,.home-internal-grid > *{min-width:0}
+    .home-action-card{margin-top:18px}
     body.internal-mode .executive-kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
     .home-action-tabs{display:flex;gap:7px;flex-wrap:wrap;padding:0 18px 3px}
     .home-action-tabs button{border:1px solid #dbe7ec;background:#f8fafc;color:#475569;border-radius:999px;padding:7px 11px;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
@@ -952,7 +953,7 @@
     @media(max-width:760px){.home-summary-strip{grid-template-columns:1fr}.home-action-tabs button{flex:1 1 120px}}
 
 
-    /* Beranda tematik dan pembeda cakupan data — v61 */
+    /* Beranda tematik dan pembeda cakupan data — v62 */
     .home-kpi-wrapper{margin-bottom:18px}
     .home-kpi-intro{
       display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
@@ -1102,7 +1103,7 @@
       <div class="sheet-counts" id="excelSheetCounts"></div>
     </div>
 
-    <!-- Beranda v61: ringkas, tanpa analisis kecamatan dan kartu administrasi data. -->
+    <!-- Beranda v62: hanya KPI tematik dan tindak lanjut internal. -->
     <section class="section active" id="beranda">
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
@@ -1111,91 +1112,20 @@
       <div id="executiveStatusBar" class="executive-status" aria-live="polite"></div>
       <div class="executive-kpi-grid" id="kpiGrid"></div>
 
-      <div class="home-primary-grid">
-
-        <div class="card public-only">
-          <div class="card-header">
-            <div>
-              <h3>Status Prasarana Perumahan (PSU)</h3>
-              <p>Status penyerahan prasarana, sarana, dan utilitas pada kawasan perumahan yang terdata.</p>
-            </div>
+      <div class="card attention-card private-only home-action-card">
+        <div class="card-header">
+          <div>
+            <h3>Perlu Tindak Lanjut</h3>
+            <p>Daftar ringkas persoalan operasional yang membutuhkan perhatian.</p>
           </div>
-          <div class="stat-list" id="publicPsuSummary"></div>
         </div>
-
-        <div class="card attention-card private-only">
-          <div class="card-header">
-            <div>
-              <h3>Perlu Tindak Lanjut</h3>
-              <p>Daftar ringkas persoalan operasional yang membutuhkan perhatian.</p>
-            </div>
-          </div>
-          <div class="home-action-tabs" id="homeActionTabs">
-            <button type="button" class="active" data-home-action-tab="rtlh" onclick="setHomeActionTabV59('rtlh')">Hunian Prioritas</button>
-            <button type="button" data-home-action-tab="psu" onclick="setHomeActionTabV59('psu')">Prasarana</button>
-            <button type="button" data-home-action-tab="rusunawa" onclick="setHomeActionTabV59('rusunawa')">Hunian Sewa</button>
-            <button type="button" data-home-action-tab="layanan" onclick="setHomeActionTabV59('layanan')">Layanan</button>
-          </div>
-          <div class="attention-section home-action-content" id="homeActionSummary"></div>
+        <div class="home-action-tabs" id="homeActionTabs">
+          <button type="button" class="active" data-home-action-tab="rtlh" onclick="setHomeActionTabV59('rtlh')">Hunian Prioritas</button>
+          <button type="button" data-home-action-tab="psu" onclick="setHomeActionTabV59('psu')">Prasarana</button>
+          <button type="button" data-home-action-tab="rusunawa" onclick="setHomeActionTabV59('rusunawa')">Hunian Sewa</button>
+          <button type="button" data-home-action-tab="layanan" onclick="setHomeActionTabV59('layanan')">Layanan</button>
         </div>
-      </div>
-
-      <div class="home-public-grid public-only">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Komposisi Kualitas Hunian</h3>
-              <p>Proporsi RTLH dan RLH pada wilayah aktif.</p>
-            </div>
-          </div>
-          <div class="housing-quality" id="housingQualitySummary"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Ringkasan RUSUNAWA</h3>
-              <p>Ketersediaan dan tingkat hunian unit secara umum.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="rusunawaPublicSummary"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Layanan dan Pengaduan</h3>
-              <p>Ringkasan status layanan masyarakat tanpa menampilkan identitas pemohon.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="layananPublicSummary"></div>
-        </div>
-      </div>
-
-      <div class="home-internal-grid private-only">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Prioritas Penanganan RTLH</h3>
-              <p>Usulan Musrenbang dan Pokir DPRD berdasarkan skor dan kesiapan tindak lanjut.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="rtlhPriorityHomeSummary"></div>
-        </div>
-
-
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>Operasional RUSUNAWA</h3>
-              <p>Hunian, kondisi unit, retribusi, serta sarana prasarana prioritas.</p>
-            </div>
-          </div>
-          <div class="stat-list" id="rusunawaHomeSummary"></div>
-        </div>
-
-
+        <div class="attention-section home-action-content" id="homeActionSummary"></div>
       </div>
     </section>
 
