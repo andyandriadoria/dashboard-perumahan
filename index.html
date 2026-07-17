@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang v59 — Satu Data, Hunian Layak untuk Semua</title>
+  <title>SIRUMAH Kota Pangkalpinang v60 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -924,7 +924,7 @@
     /* Penyesuaian v52: seluruh layout dua card dibuat seimbang 50:50 pada layar lebar. */
 
 
-    /* Beranda Publik dan Internal — v59 */
+    /* Beranda Publik dan Internal — v60 */
     .public-only{display:none!important}
     body.public-mode .public-only{display:block!important}
     body.public-mode .home-public-grid.public-only{display:grid!important}
@@ -950,6 +950,69 @@
     @media(max-width:1280px){body.internal-mode .executive-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-public-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:1000px){.home-primary-grid,.home-internal-grid{grid-template-columns:1fr}.home-public-grid{grid-template-columns:1fr}}
     @media(max-width:760px){.home-summary-strip{grid-template-columns:1fr}.home-action-tabs button{flex:1 1 120px}}
+
+
+    /* Beranda tematik dan pembeda cakupan data — v60 */
+    .home-kpi-wrapper{margin-bottom:18px}
+    .home-kpi-intro{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
+      margin:2px 0 14px;padding:0 2px
+    }
+    .home-kpi-intro h3{font-size:20px;color:#0f3f50;margin-bottom:5px}
+    .home-kpi-intro p{max-width:850px;color:#64748b;font-size:13px;line-height:1.55}
+    .home-kpi-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .home-kpi-group{
+      --theme-accent:#175b72;--theme-soft:#f0f7f9;--theme-dark:#0f3f50;--theme-border:#c5dce4;
+      position:relative;overflow:hidden;border:1px solid var(--theme-border);border-radius:19px;
+      background:linear-gradient(145deg,#fff 0%,var(--theme-soft) 100%);box-shadow:var(--shadow);padding:18px
+    }
+    .home-kpi-group:after{
+      content:"";position:absolute;right:-42px;top:-48px;width:145px;height:145px;border-radius:50%;
+      background:color-mix(in srgb,var(--theme-accent) 9%,transparent);pointer-events:none
+    }
+    .home-kpi-group.theme-housing{--theme-accent:#2563eb;--theme-soft:#eff6ff;--theme-dark:#1e3a8a;--theme-border:#bfdbfe}
+    .home-kpi-group.theme-infrastructure{--theme-accent:#d97706;--theme-soft:#fffbeb;--theme-dark:#92400e;--theme-border:#fde68a}
+    .home-kpi-group.theme-quality{--theme-accent:#ea580c;--theme-soft:#fff7ed;--theme-dark:#9a3412;--theme-border:#fed7aa}
+    .home-kpi-group.theme-rusunawa{--theme-accent:#7c3aed;--theme-soft:#f5f3ff;--theme-dark:#5b21b6;--theme-border:#ddd6fe}
+    .home-kpi-group.theme-service{--theme-accent:#16a34a;--theme-soft:#f0fdf4;--theme-dark:#166534;--theme-border:#bbf7d0}
+    .home-kpi-group.wide{grid-column:1/-1}
+    .home-kpi-group-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px;position:relative;z-index:1}
+    .home-kpi-group-title{display:flex;align-items:flex-start;gap:11px;min-width:0}
+    .home-kpi-group-icon{
+      width:40px;height:40px;display:grid;place-items:center;border-radius:13px;flex:0 0 auto;
+      background:color-mix(in srgb,var(--theme-accent) 13%,#fff);font-size:21px
+    }
+    .home-kpi-group h4{color:var(--theme-dark);font-size:16px;margin:0 0 4px}
+    .home-kpi-group-description{color:#64748b;font-size:11px;line-height:1.45;max-width:550px}
+    .home-kpi-scope{
+      display:inline-flex;align-items:center;min-height:27px;padding:5px 9px;border-radius:999px;
+      border:1px solid var(--theme-border);background:rgba(255,255,255,.78);color:var(--theme-dark);
+      font-size:9px;font-weight:950;letter-spacing:.45px;text-transform:uppercase;white-space:nowrap
+    }
+    .home-kpi-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;position:relative;z-index:1}
+    .home-kpi-group.wide .home-kpi-mini-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .home-kpi-metric{
+      min-width:0;min-height:104px;padding:13px;border:1px solid color-mix(in srgb,var(--theme-accent) 17%,#e2e8f0);
+      border-left:4px solid var(--theme-accent);border-radius:14px;background:rgba(255,255,255,.84);
+      cursor:pointer;text-align:left;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease
+    }
+    .home-kpi-metric:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(15,23,42,.08);border-color:var(--theme-accent)}
+    .home-kpi-metric:focus-visible{outline:3px solid color-mix(in srgb,var(--theme-accent) 24%,transparent);outline-offset:2px}
+    .home-kpi-metric-label{display:block;color:#64748b;font-size:11px;font-weight:850;line-height:1.35;margin-bottom:7px}
+    .home-kpi-metric-value{display:block;color:#0f3f50;font-size:25px;font-weight:950;line-height:1.05;letter-spacing:-.5px}
+    .home-kpi-metric-note{display:block;color:#64748b;font-size:10px;line-height:1.4;margin-top:7px}
+    .home-kpi-metric.alert{border-left-color:#dc2626}
+    .home-kpi-metric.alert .home-kpi-metric-value{color:#991b1b}
+    .home-kpi-group-note{
+      position:relative;z-index:1;margin-top:12px;padding:10px 11px;border-radius:12px;
+      background:rgba(255,255,255,.72);border:1px dashed var(--theme-border);color:#475569;font-size:10px;line-height:1.5
+    }
+    @media(max-width:1180px){.home-kpi-group.wide .home-kpi-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:900px){.home-kpi-groups{grid-template-columns:1fr}.home-kpi-group.wide{grid-column:auto}}
+    @media(max-width:560px){
+      .home-kpi-intro{flex-direction:column}.home-kpi-mini-grid,.home-kpi-group.wide .home-kpi-mini-grid{grid-template-columns:1fr}
+      .home-kpi-group-head{flex-direction:column}.home-kpi-scope{white-space:normal}
+    }
 
 </style>
 </head>
@@ -1051,13 +1114,13 @@
         <div class="card">
           <div class="card-header executive-card-header">
             <div>
-              <h3>Analisis Kondisi per Kecamatan</h3>
+              <h3>Analisis Kondisi Hunian per Kecamatan</h3>
               <p id="berandaAnalysisDescription">Perbandingan indikator utama berdasarkan wilayah aktif.</p>
             </div>
             <select id="berandaAnalysisMode" class="compact-select" onchange="changeBerandaAnalysisMode()" aria-label="Pilihan analisis Beranda">
               <option value="housing">RTLH &amp; Backlog</option>
               <option value="psu">Status PSU</option>
-              <option value="progress">Pembangunan &amp; Hunian</option>
+              <option value="progress">Unit Perumahan Terdata</option>
             </select>
           </div>
           <div class="chart"><canvas id="kecamatanChart"></canvas></div>
@@ -1067,8 +1130,8 @@
         <div class="card public-only">
           <div class="card-header">
             <div>
-              <h3>Status Penyerahan PSU</h3>
-              <p>Ringkasan penyerahan prasarana, sarana, dan utilitas perumahan.</p>
+              <h3>Status Prasarana Perumahan (PSU)</h3>
+              <p>Status penyerahan prasarana, sarana, dan utilitas pada kawasan perumahan yang terdata.</p>
             </div>
           </div>
           <div class="stat-list" id="publicPsuSummary"></div>
@@ -1082,9 +1145,9 @@
             </div>
           </div>
           <div class="home-action-tabs" id="homeActionTabs">
-            <button type="button" class="active" data-home-action-tab="rtlh" onclick="setHomeActionTabV59('rtlh')">RTLH</button>
-            <button type="button" data-home-action-tab="psu" onclick="setHomeActionTabV59('psu')">PSU</button>
-            <button type="button" data-home-action-tab="rusunawa" onclick="setHomeActionTabV59('rusunawa')">RUSUNAWA</button>
+            <button type="button" class="active" data-home-action-tab="rtlh" onclick="setHomeActionTabV59('rtlh')">Hunian Prioritas</button>
+            <button type="button" data-home-action-tab="psu" onclick="setHomeActionTabV59('psu')">Prasarana</button>
+            <button type="button" data-home-action-tab="rusunawa" onclick="setHomeActionTabV59('rusunawa')">Hunian Sewa</button>
             <button type="button" data-home-action-tab="layanan" onclick="setHomeActionTabV59('layanan')">Layanan</button>
           </div>
           <div class="attention-section home-action-content" id="homeActionSummary"></div>
@@ -7160,20 +7223,20 @@ function syncBerandaModeOptionsV59(){
   const options = publicMode ? [
     ["housing","RTLH & Backlog"],
     ["psu","Status PSU"],
-    ["progress","Pembangunan & Hunian"]
+    ["progress","Unit Perumahan Terdata"]
   ] : [
     ["rtlhPriority","Prioritas RTLH"],
     ["psu","Status PSU"],
     ["housing","RTLH & Backlog"],
-    ["progress","Pembangunan & Hunian"]
+    ["progress","Unit Perumahan Terdata"]
   ];
   select.innerHTML = options.map(([value,label])=>`<option value="${value}">${label}</option>`).join("");
   select.value = publicMode ? "housing" : "rtlhPriority";
   select.dataset.accessMode = modeKey;
   const description = document.getElementById("berandaAnalysisDescription");
   if(description) description.textContent = publicMode
-    ? "Informasi agregat kebutuhan rumah, kualitas hunian, PSU, dan pembangunan per kecamatan."
-    : "Analisis operasional prioritas RTLH, PSU, kebutuhan hunian, dan progres per kecamatan.";
+    ? "Informasi agregat kebutuhan rumah, kualitas hunian, prasarana perumahan, dan unit pada perumahan terdata."
+    : "Analisis operasional kebutuhan dan kelayakan hunian, prasarana perumahan, hunian sewa, dan unit pada perumahan terdata.";
 }
 
 function renderExecutiveStatusV59(){
@@ -7207,24 +7270,113 @@ function renderExecutiveStatusV59(){
     <span class="executive-status-pill ${source.loadedAt?"good":"warn"}">🕒 <strong>${escapeHtml(loadedAt)}</strong></span>`;
 }
 
+function homeMetricHtmlV60(item){
+  const display = item.display !== undefined ? item.display : fmt(item.value || 0);
+  const action = item.action || "";
+  const alertClass = item.alert ? " alert" : "";
+  return `
+    <div class="home-kpi-metric${alertClass}" role="button" tabindex="0"
+         onclick="${action}"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${action}}">
+      <span class="home-kpi-metric-label">${escapeHtml(item.label)}</span>
+      <strong class="home-kpi-metric-value">${escapeHtml(String(display))}</strong>
+      <span class="home-kpi-metric-note">${escapeHtml(item.note || "Klik untuk melihat data lengkap")}</span>
+    </div>`;
+}
+
+function homeGroupHtmlV60(group){
+  const wideClass = group.wide ? " wide" : "";
+  return `
+    <section class="home-kpi-group ${group.theme}${wideClass}" aria-label="${escapeHtml(group.title)}">
+      <div class="home-kpi-group-head">
+        <div class="home-kpi-group-title">
+          <div class="home-kpi-group-icon" aria-hidden="true">${group.icon}</div>
+          <div>
+            <h4>${escapeHtml(group.title)}</h4>
+            <div class="home-kpi-group-description">${escapeHtml(group.description)}</div>
+          </div>
+        </div>
+        <span class="home-kpi-scope">${escapeHtml(group.scope)}</span>
+      </div>
+      <div class="home-kpi-mini-grid">${group.items.map(homeMetricHtmlV60).join("")}</div>
+      ${group.note ? `<div class="home-kpi-group-note">${escapeHtml(group.note)}</div>` : ""}
+    </section>`;
+}
+
 function renderKPI(){
   const s = summary(filtered);
   const backlog = sumRows(getBacklogKepemilikanVerifiedRows(),"backlog");
   const qualityRows = filterAggregateRows(SIRUMAH_RUNTIME?.rtlhAggregate || []);
   const totalHouses = sumRows(qualityRows,"jumlah");
   const rtlhAggregate = sumRows(qualityRows,"rtlh");
+  const rlhAggregate = Math.max(0,sumRows(qualityRows,"rlh") || (totalHouses-rtlhAggregate));
+  const rus = getBerandaRusunawaV34();
+  const service = homeServiceSummaryV59();
   const el = document.getElementById("kpiGrid");
   if(!el) return;
 
-  let items;
+  let groups = [];
+  let introTitle = "Ringkasan Perumahan dan Hunian Kota Pangkalpinang";
+  let introText = "Data ditampilkan menurut tema dan cakupan agar angka perumahan terdata tidak tertukar dengan gambaran hunian seluruh kota.";
+
   if(publicMode){
-    items = [
-      {label:"Total Perumahan",value:s.total,note:"perumahan terdata",icon:"🏘️",tone:"primary",action:"openHomeTargetV59('data-perumahan')"},
-      {label:"Rumah Terbangun",value:s.terbangun,note:`${pct(s.terbangun,s.siteplan)}% dari site plan`,icon:"🏗️",tone:"success",action:"openHomeTargetV59('data-perumahan')"},
-      {label:"Rumah Terhuni",value:s.terhuni,note:`${pct(s.terhuni,s.terbangun)}% dari unit terbangun`,icon:"🏠",tone:"info",action:"openHomeTargetV59('data-perumahan')"},
-      {label:"PSU Sudah Diserahkan",value:s.sudah,note:`${pct(s.sudah,s.total)}% dari perumahan`,icon:"🛣️",tone:"success",action:"openHomeTargetV59('data-perumahan','SUDAH DISERAHKAN')"},
-      {label:"Backlog Kepemilikan",value:backlog,note:"kebutuhan kepemilikan rumah",icon:"🔑",tone:"purple",action:"openHomeTargetV59('backlog')"},
-      {label:"Rumah Tidak Layak Huni",value:rtlhAggregate,note:`${percentValue(rtlhAggregate,totalHouses)}% dari jumlah rumah`,icon:"🧱",tone:"warning",action:"openHomeTargetV59('rtlh')"}
+    groups = [
+      {
+        theme:"theme-housing",icon:"🏘️",title:"Perumahan Terdata di SIRUMAH",
+        description:"Kawasan perumahan yang telah tercatat dalam database SIRUMAH.",
+        scope:"Cakupan: Perumahan Terdata",
+        note:"Angka rencana unit, unit terbangun, dan unit terhuni hanya mencakup kawasan perumahan yang terdata, bukan seluruh rumah di Kota Pangkalpinang.",
+        items:[
+          {label:"Jumlah Perumahan Terdata",value:s.total,note:"kawasan perumahan aktif",action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Rencana Unit",value:s.siteplan,note:"unit sesuai site plan",action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Unit Terbangun",value:s.terbangun,note:`${pct(s.terbangun,s.siteplan)}% dari rencana unit`,action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Unit Terhuni",value:s.terhuni,note:`${pct(s.terhuni,s.terbangun)}% dari unit terbangun`,action:"openHomeTargetV59('data-perumahan')"}
+        ]
+      },
+      {
+        theme:"theme-infrastructure",icon:"🛣️",title:"Prasarana Perumahan",
+        description:"Status penyerahan prasarana, sarana, dan utilitas pada perumahan terdata.",
+        scope:"Cakupan: PSU Perumahan",
+        items:[
+          {label:"PSU Sudah Diserahkan",value:s.sudah,note:`${pct(s.sudah,s.total)}% dari perumahan terdata`,action:"openHomeTargetV59('data-perumahan','SUDAH DISERAHKAN')"},
+          {label:"PSU Belum Diserahkan",value:s.belum,note:`${pct(s.belum,s.total)}% dari perumahan terdata`,action:"openHomeTargetV59('data-perumahan','BELUM DISERAHKAN')",alert:s.belum>0},
+          {label:"Persentase Penyerahan",display:`${pct(s.sudah,s.total)}%`,note:"dibanding jumlah perumahan terdata",action:"openHomeTargetV59('psu')"},
+          {label:"Perumahan dengan Data PSU",value:s.sudah+s.belum,note:"status PSU yang tercatat",action:"openHomeTargetV59('psu')"}
+        ]
+      },
+      {
+        theme:"theme-quality",icon:"🏠",title:"Kebutuhan dan Kelayakan Hunian",
+        description:"Gambaran kebutuhan rumah dan kualitas hunian masyarakat secara agregat.",
+        scope:"Cakupan: Kota Pangkalpinang",
+        items:[
+          {label:"Backlog Kepemilikan",value:backlog,note:"kebutuhan kepemilikan rumah",action:"openHomeTargetV59('backlog')"},
+          {label:"Rumah Tidak Layak Huni",value:rtlhAggregate,note:`${percentValue(rtlhAggregate,totalHouses)}% dari rumah terdata agregat`,action:"openHomeTargetV59('rtlh')",alert:rtlhAggregate>0},
+          {label:"Rumah Layak Huni",value:rlhAggregate,note:"data agregat kecamatan",action:"openHomeTargetV59('rtlh')"},
+          {label:"Persentase RTLH",display:`${percentValue(rtlhAggregate,totalHouses)}%`,note:"terhadap jumlah rumah agregat",action:"openHomeTargetV59('rtlh')"}
+        ]
+      },
+      {
+        theme:"theme-rusunawa",icon:"🏢",title:"Hunian Sewa RUSUNAWA",
+        description:"Ketersediaan dan pemanfaatan unit hunian sewa yang dikelola Pemerintah Kota.",
+        scope:"Cakupan: RUSUNAWA",
+        items:[
+          {label:"Total Unit",value:rus.total,note:"unit hunian sewa terdata",action:"openHomeTargetV59('rusunawa')"},
+          {label:"Unit Terisi",value:rus.filled,note:"unit sedang dihuni",action:"openHomeTargetV59('rusunawa')"},
+          {label:"Unit Kosong",value:rus.vacant,note:"unit belum dihuni",action:"openHomeTargetV59('rusunawa')"},
+          {label:"Tingkat Hunian",display:`${rus.occupancy}%`,note:"perbandingan unit terisi dan total unit",action:"openHomeTargetV59('rusunawa')"}
+        ]
+      },
+      {
+        theme:"theme-service",icon:"☎️",title:"Layanan dan Pengaduan",
+        description:"Ringkasan layanan masyarakat tanpa menampilkan identitas pemohon.",
+        scope:"Cakupan: Layanan SIRUMAH",wide:true,
+        items:[
+          {label:"Total Layanan",display:service.loaded?fmt(service.total):"—",note:service.loaded?"layanan tercatat":"rekap layanan belum dimuat",action:"openHomeTargetV59('layanan')"},
+          {label:"Diverifikasi",value:service.diverifikasi,note:"telah melalui verifikasi",action:"openHomeTargetV59('layanan')"},
+          {label:"Ditindaklanjuti",value:service.ditindaklanjuti,note:"sedang atau telah ditangani",action:"openHomeTargetV59('layanan')"},
+          {label:"Selesai",value:service.selesai,note:"layanan telah diselesaikan",action:"openHomeTargetV59('layanan')"}
+        ]
+      }
     ];
   }else{
     const rtlhRows = getHomeRTLHRowsV59();
@@ -7233,30 +7385,82 @@ function renderKPI(){
     const high = active.filter(row=>row.tingkatPrioritas==="Tinggi").length;
     const adminIncomplete = active.filter(row=>["Sangat Tinggi","Tinggi"].includes(row.tingkatPrioritas) && /belum/i.test(row.statusAdministrasi)).length;
     const undetermined = active.filter(row=>!row.hasSkor || row.tingkatPrioritas==="Belum Dapat Ditentukan").length;
-    const rus = getBerandaRusunawaV34();
+    const notes = filtered.map(row=>String(row.catatan||"").toLocaleLowerCase("id-ID"));
+    const roadIssues = notes.filter(note=>/jalan belum perkerasan|jalan rusak/.test(note)).length;
+    const rthIssues = notes.filter(note=>/rth belum terbangun|rth beralih fungsi/.test(note)).length;
+    const floodIssues = notes.filter(note=>/banjir|genangan/.test(note)).length;
+    const inactiveDevelopers = notes.filter(note=>/pengembang tidak aktif/.test(note)).length;
     const units = SIRUMAH_RUNTIME?.rusunawaUnits || [];
-    const unusable = units.filter(row=>/tidak dapat digunakan|perbaikan|rusak berat/i.test(`${row.status||""} ${row.condition||""}`)).length;
-    const service = homeServiceSummaryV59();
+    const unitAttention = units.filter(row=>/tidak dapat digunakan|perbaikan|rusak berat/i.test(`${row.status||""} ${row.condition||""}`)).length;
     const pendingService = Math.max(0,service.total-service.selesai);
-    items = [
-      {label:"PSU Belum Diserahkan",value:s.belum,note:`${pct(s.belum,s.total)}% dari perumahan`,icon:"🛣️",tone:"danger",action:"openHomeTargetV59('psu')"},
-      {label:"RTLH Sangat Tinggi",value:veryHigh,note:"usulan aktif paling mendesak",icon:"🚨",tone:"danger",action:"openHomeTargetV59('rtlh','Sangat Tinggi')"},
-      {label:"RTLH Prioritas Tinggi",value:high,note:"usulan aktif prioritas berikutnya",icon:"⚠️",tone:"warning",action:"openHomeTargetV59('rtlh','Tinggi')"},
-      {label:"Prioritas Tinggi, Administrasi Belum Lengkap",value:adminIncomplete,note:"perlu percepatan dokumen",icon:"📄",tone:"purple",action:"openHomeTargetV59('rtlh')"},
-      {label:"RTLH Belum Dapat Dinilai",value:undetermined,note:"memerlukan pelengkapan atau survei",icon:"🔎",tone:"info",action:"openHomeTargetV59('rtlh','Belum Dapat Ditentukan')"},
-      {label:"Unit RUSUNAWA Kosong",value:rus.vacant,note:"potensi pemanfaatan unit",icon:"🚪",tone:"success",action:"openHomeTargetV59('rusunawa')"},
-      {label:"Unit Perlu Penanganan",value:unusable,note:"rusak, perbaikan, atau tidak dapat digunakan",icon:"🛠️",tone:"warning",action:"openHomeTargetV59('rusunawa')"},
-      {label:"Layanan Belum Selesai",value:pendingService,note:service.loaded?"layanan aktif yang masih diproses":"rekap layanan belum dimuat",icon:"☎️",tone:"info",action:"openHomeTargetV59('layanan')"}
+
+    introTitle = "Ringkasan Pengendalian Perumahan dan Hunian";
+    introText = "Indikator operasional dikelompokkan berdasarkan persoalan yang perlu ditangani, bukan berdasarkan struktur organisasi pengelola data.";
+    groups = [
+      {
+        theme:"theme-housing",icon:"🏘️",title:"Perumahan Terdata",
+        description:"Kelengkapan dan pemanfaatan data kawasan perumahan dalam SIRUMAH.",
+        scope:"Cakupan: Perumahan Terdata",
+        items:[
+          {label:"Jumlah Perumahan",value:s.total,note:"sesuai filter wilayah",action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Unit Terbangun",value:s.terbangun,note:`${pct(s.terbangun,s.siteplan)}% dari rencana`,action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Unit Terhuni",value:s.terhuni,note:`${pct(s.terhuni,s.terbangun)}% dari terbangun`,action:"openHomeTargetV59('data-perumahan')"},
+          {label:"Tanpa Koordinat",value:Math.max(0,s.total-s.coords),note:"perlu pelengkapan lokasi",action:"openHomeTargetV59('data-perumahan')",alert:(s.total-s.coords)>0}
+        ]
+      },
+      {
+        theme:"theme-infrastructure",icon:"🛣️",title:"Prasarana dan Lingkungan Perumahan",
+        description:"Status penyerahan PSU dan isu teknis pada kawasan perumahan terdata.",
+        scope:"Cakupan: PSU Perumahan",
+        items:[
+          {label:"PSU Belum Diserahkan",value:s.belum,note:`${pct(s.belum,s.total)}% dari perumahan`,action:"openHomeTargetV59('psu')",alert:s.belum>0},
+          {label:"Isu Jalan",value:roadIssues,note:"belum perkerasan atau rusak",action:"openHomeTargetV59('psu')",alert:roadIssues>0},
+          {label:"Isu RTH",value:rthIssues,note:"belum terbangun atau beralih fungsi",action:"openHomeTargetV59('psu')",alert:rthIssues>0},
+          {label:"Banjir/Genangan",value:floodIssues,note:`pengembang tidak aktif: ${fmt(inactiveDevelopers)}`,action:"openHomeTargetV59('psu')",alert:floodIssues>0}
+        ]
+      },
+      {
+        theme:"theme-quality",icon:"🏠",title:"Kebutuhan dan Kelayakan Hunian",
+        description:"Prioritas usulan RTLH berdasarkan kondisi teknis, kerentanan penghuni, dan risiko keselamatan.",
+        scope:"Cakupan: Hunian Kota",
+        items:[
+          {label:"Prioritas Sangat Tinggi",value:veryHigh,note:"usulan aktif paling mendesak",action:"openHomeTargetV59('rtlh','Sangat Tinggi')",alert:veryHigh>0},
+          {label:"Prioritas Tinggi",value:high,note:"usulan aktif prioritas berikutnya",action:"openHomeTargetV59('rtlh','Tinggi')",alert:high>0},
+          {label:"Administrasi Belum Lengkap",value:adminIncomplete,note:"pada prioritas tinggi/sangat tinggi",action:"openHomeTargetV59('rtlh')",alert:adminIncomplete>0},
+          {label:"Belum Dapat Dinilai",value:undetermined,note:"perlu survei atau pelengkapan",action:"openHomeTargetV59('rtlh','Belum Dapat Ditentukan')",alert:undetermined>0}
+        ]
+      },
+      {
+        theme:"theme-rusunawa",icon:"🏢",title:"Hunian Sewa dan Pengelolaan Aset",
+        description:"Pemanfaatan unit, kondisi bangunan, retribusi, dan sarana prasarana hunian sewa.",
+        scope:"Cakupan: RUSUNAWA",
+        items:[
+          {label:"Total Unit",value:rus.total,note:"unit hunian sewa terdata",action:"openHomeTargetV59('rusunawa')"},
+          {label:"Unit Kosong",value:rus.vacant,note:"potensi pemanfaatan unit",action:"openHomeTargetV59('rusunawa')"},
+          {label:"Unit Perlu Penanganan",value:unitAttention,note:"rusak, perbaikan, atau tidak dapat digunakan",action:"openHomeTargetV59('rusunawa')",alert:unitAttention>0},
+          {label:"Sarpras Prioritas Tinggi",value:rus.highPriority,note:`capaian retribusi: ${rus.achievement===null?"belum tersedia":rus.achievement+"%"}`,action:"openHomeTargetV59('rusunawa')",alert:rus.highPriority>0}
+        ]
+      },
+      {
+        theme:"theme-service",icon:"☎️",title:"Layanan dan Pengaduan",
+        description:"Beban layanan aktif dan progres penyelesaian permohonan masyarakat.",
+        scope:"Cakupan: Layanan SIRUMAH",wide:true,
+        items:[
+          {label:"Total Layanan",display:service.loaded?fmt(service.total):"—",note:service.loaded?"layanan tercatat":"rekap belum dimuat",action:"openHomeTargetV59('layanan')"},
+          {label:"Belum Selesai",value:pendingService,note:"masih dalam proses",action:"openHomeTargetV59('layanan')",alert:pendingService>0},
+          {label:"Ditindaklanjuti",value:service.ditindaklanjuti,note:"telah masuk proses penanganan",action:"openHomeTargetV59('layanan')"},
+          {label:"Selesai",value:service.selesai,note:"layanan telah diselesaikan",action:"openHomeTargetV59('layanan')"}
+        ]
+      }
     ];
   }
 
-  el.className = "executive-kpi-grid";
-  el.innerHTML = items.map(item=>`
-    <div class="executive-kpi ${item.tone}" role="button" tabindex="0" onclick="${item.action}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${item.action}}">
-      <div class="executive-kpi-head"><div class="executive-kpi-label">${escapeHtml(item.label)}</div><div class="executive-kpi-icon">${item.icon}</div></div>
-      <div class="executive-kpi-value">${fmt(item.value)}</div>
-      <div class="executive-kpi-note">${escapeHtml(item.note)} · klik untuk detail</div>
-    </div>`).join("");
+  el.className = "home-kpi-wrapper";
+  el.innerHTML = `
+    <div class="home-kpi-intro">
+      <div><h3>${escapeHtml(introTitle)}</h3><p>${escapeHtml(introText)}</p></div>
+    </div>
+    <div class="home-kpi-groups">${groups.map(homeGroupHtmlV60).join("")}</div>`;
 }
 
 function getRTLHPriorityByKecamatanV59(){
@@ -7310,7 +7514,7 @@ function renderPrimaryBerandaChartV34(){
       {name:"Terbangun",values:rows.map(row=>row.terbangun)},
       {name:"Terhuni",values:rows.map(row=>row.terhuni)}
     ]);
-    if(note) note.textContent = "Membandingkan rencana unit, realisasi pembangunan, dan unit yang telah dihuni pada setiap kecamatan.";
+    if(note) note.textContent = "Membandingkan rencana unit, unit terbangun, dan unit terhuni khusus pada kawasan perumahan yang terdata di setiap kecamatan.";
     return;
   }
   const rows = getAggregateHousingQualityRows();
