@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SIRUMAH Kota Pangkalpinang — Satu Data, Hunian Layak untuk Semua</title>
+  <title>SIRUMAH Kota Pangkalpinang v66 — Satu Data, Hunian Layak untuk Semua</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -735,6 +735,13 @@
     .filters select{min-width:180px}
     .rtlh-individual-filters select{flex:1 1 230px;min-width:220px}
     .rtlh-individual-filters input{flex:2 1 360px}
+    .rtlh-record-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+    .rtlh-record-tabs button{border:1px solid #cbd5e1;background:#fff;color:#475569;border-radius:999px;padding:9px 14px;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:.18s ease}
+    .rtlh-record-tabs button:hover{border-color:#175b72;color:#175b72}
+    .rtlh-record-tabs button.active{background:#175b72;border-color:#175b72;color:#fff;box-shadow:0 5px 12px rgba(23,91,114,.18)}
+    .rtlh-record-tabs .rtlh-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:24px;margin-left:6px;padding:2px 7px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:10px}
+    .rtlh-record-tabs button.active .rtlh-tab-count{background:rgba(255,255,255,.2);color:#fff}
+    @media(max-width:680px){.rtlh-record-tabs button{flex:1 1 150px}}
     #rtlhIndividualPageInfo{font-weight:700;color:#334155;text-align:center}
     @media(max-width:1100px){.form-grid{grid-template-columns:1fr}}
 
@@ -933,7 +940,7 @@
     /* Penyesuaian v52: seluruh layout dua card dibuat seimbang 50:50 pada layar lebar. */
 
 
-    /* Beranda Publik dan Internal — v65 */
+    /* Beranda Publik dan Internal — v66 */
     .public-only{display:none!important}
     body.public-mode .public-only{display:block!important}
     body.public-mode .home-public-grid.public-only{display:grid!important}
@@ -962,7 +969,7 @@
     @media(max-width:760px){.home-summary-strip{grid-template-columns:1fr}.home-action-tabs button{flex:1 1 120px}}
 
 
-    /* Beranda tematik dan pembeda cakupan data — v65 */
+    /* Beranda tematik dan pembeda cakupan data — v66 */
     .home-kpi-wrapper{margin-bottom:18px}
     .home-kpi-intro{
       display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
@@ -1112,7 +1119,7 @@
       <div class="sheet-counts" id="excelSheetCounts"></div>
     </div>
 
-    <!-- Beranda v65: penyelarasan KPI publik dan internal serta istilah PSU Perumahan. -->
+    <!-- Beranda v66: pemisahan usulan aktif dan riwayat penanganan RTLH. -->
     <section class="section active" id="beranda">
       <div class="section-actionbar">
         <button class="btn light" type="button" onclick="printDashboardSection('beranda','Beranda SIRUMAH')">Cetak / PDF Beranda</button>
@@ -1290,6 +1297,11 @@
     <div class="stat-list" id="rtlhSourceList"></div>
   </div>
 
+  <div class="rtlh-record-tabs private-only" id="rtlhRecordTabs" aria-label="Pilihan tampilan data RTLH">
+    <button type="button" class="active" data-rtlh-record-view="active" onclick="setRTLHIndividualViewV66('active')">Usulan Aktif <span class="rtlh-tab-count" id="rtlhActiveCount">0</span></button>
+    <button type="button" data-rtlh-record-view="history" onclick="setRTLHIndividualViewV66('history')">Riwayat Penanganan <span class="rtlh-tab-count" id="rtlhHistoryCount">0</span></button>
+  </div>
+
   <div class="filters private-only rtlh-individual-filters">
     <input id="searchRTLH" placeholder="Cari nama, alamat, kecamatan, material, kerentanan, atau risiko..." oninput="resetRTLHIndividualPageAndRender()" />
     <select id="prioritasRTLH" onchange="resetRTLHIndividualPageAndRender()" aria-label="Filter tingkat prioritas RTLH">
@@ -1303,8 +1315,8 @@
   <div class="card private-only">
     <div class="card-header">
       <div>
-        <h3>Data Individu RTLH — Usulan Musrenbang dan Pokir DPRD</h3>
-        <p>Data internal by name by address. Faktor kerentanan penghuni dan risiko keselamatan yang dipilih pada Excel ditampilkan sebagai daftar, lalu poinnya dihitung otomatis.</p>
+        <h3 id="rtlhIndividualTableTitle">Data Usulan Aktif RTLH — Musrenbang dan Pokir DPRD</h3>
+        <p id="rtlhIndividualTableDescription">Menampilkan usulan yang masih memerlukan tindak lanjut. Data berstatus Selesai Ditangani dipindahkan otomatis ke Riwayat Penanganan.</p>
       </div>
     </div>
     <div class="table-wrap">
@@ -2154,12 +2166,13 @@ function priorityLevelBadge(level){
 
 function badge(status){
   const s = String(status || "");
+  const upper = s.toUpperCase();
   let c = "blue";
-  if(s.includes("SUDAH") || s === "Selesai" || s === "Baik") c = "green";
-  else if(s.includes("BELUM") || s.includes("Prioritas")) c = "red";
-  else if(s.includes("RTH") || s.includes("Jalan")) c = "orange";
-  else if(s.includes("Lama")) c = "purple";
-  return `<span class="badge ${c}">${s}</span>`;
+  if(upper.includes("SUDAH") || upper.startsWith("SELESAI") || upper === "BAIK") c = "green";
+  else if(upper.includes("BELUM") || upper.includes("PRIORITAS")) c = "red";
+  else if(upper.includes("RTH") || upper.includes("JALAN")) c = "orange";
+  else if(upper.includes("LAMA")) c = "purple";
+  return `<span class="badge ${c}">${escapeHtml(s)}</span>`;
 }
 
 function noteBadges(text){
@@ -3259,7 +3272,14 @@ function renderCharts(){
   drawDonut("statusChart", [s.sudah,s.belum], ["Sudah PSU","Belum PSU"], ["#16a34a","#dc2626"]);
 
   const pk = programKecamatanRows();
-  const statusCounts = ["Belum Diverifikasi", "Sudah Diverifikasi", "Masuk Prioritas", "Dalam Pelaksanaan", "Selesai"].map(st => filterByGlobalKec(SIRUMAH_PROGRAM.rtlh).filter(x=>x.status===st).length);
+  const rtlhStatusRows = filterByGlobalKec(SIRUMAH_PROGRAM.rtlh);
+  const statusCounts = [
+    rtlhStatusRows.filter(x=>x.status==="Belum Diverifikasi").length,
+    rtlhStatusRows.filter(x=>x.status==="Sudah Diverifikasi").length,
+    rtlhStatusRows.filter(x=>x.status==="Masuk Prioritas").length,
+    rtlhStatusRows.filter(x=>x.status==="Dalam Pelaksanaan").length,
+    rtlhStatusRows.filter(x=>/^selesai(?: ditangani)?$/i.test(String(x.status||""))).length
+  ];
   drawDonut("sirStatusChart", statusCounts, ["Belum", "Verif", "Prioritas", "Berjalan", "Selesai"], ["#dc2626", "#d97706", "#7c3aed", "#2563eb", "#16a34a"]);
   drawBar("backlogChart", pk.map(x=>x.nama), [
     {name:"Backlog", values:pk.map(x=>x.backlog), color:"#2563eb"},
@@ -5328,6 +5348,11 @@ function rtlhPriorityLevel(total,item){
   return "Rendah";
 }
 
+function normalizeRTLHHandlingStatusV66(value){
+  const text = sirText(value);
+  return /^selesai$/i.test(text) ? "Selesai Ditangani" : text;
+}
+
 function buildRTLHIndividualsFromExcel(rows){
   const vulnerabilityDefinitions = [
     {key:"RENTAN_LANSIA",label:"Lansia"},
@@ -5355,7 +5380,7 @@ function buildRTLHIndividualsFromExcel(rows){
     const kelurahan = titleCaseWords(rowValue(row,"KELURAHAN"));
     const alamat = sirText(rowValue(row,"ALAMAT"));
     const verification = sirText(rowValue(row,"STATUS_VERIFIKASI"));
-    const handling = sirText(rowValue(row,"STATUS_PENANGANAN"));
+    const handling = normalizeRTLHHandlingStatusV66(rowValue(row,"STATUS_PENANGANAN"));
     const catatan = sirText(rowValue(row,"CATATAN_VERIFIKASI","KONDISI_RUMAH")) || "-";
     const statusMbr = sirText(rowValue(row,"STATUS_MBR")) || "Belum Dinilai";
 
@@ -5619,6 +5644,7 @@ function applyRuntimeData(runtime){
   RUSUNAWA_DATA.facilities = runtime.rusunawaFacilities.map(row => ({...row}));
   populateFilters();
   populateRusunawaFilter();
+  rtlhIndividualViewMode = "active";
   populateRTLHIndividualFilters();
   rtlhIndividualPage = 1;
   page = 1;
@@ -5948,6 +5974,54 @@ function rtlhPriorityBadge(value){
 
 let rtlhIndividualPage = 1;
 const rtlhIndividualPageSize = 10;
+let rtlhIndividualViewMode = "active";
+
+function rtlhIsCompletedV66(row){
+  const value = String(row?.statusPenanganan || row?.status || "").trim();
+  return /^selesai(?: ditangani)?$/i.test(value);
+}
+
+function getRTLHRowsByViewV66(rows){
+  return (Array.isArray(rows) ? rows : []).filter(row => rtlhIndividualViewMode === "history" ? rtlhIsCompletedV66(row) : !rtlhIsCompletedV66(row));
+}
+
+function updateRTLHIndividualViewUIV66(){
+  const allRows = Array.isArray(SIRUMAH_RUNTIME.rtlhIndividuals) ? SIRUMAH_RUNTIME.rtlhIndividuals : [];
+  const selected = document.getElementById("globalKecamatan")?.value || "all";
+  const scopedRows = allRows.filter(row => selected === "all" || normalizeKecamatanName(row.kecamatan) === normalizeKecamatanName(selected));
+  const activeCount = scopedRows.filter(row => !rtlhIsCompletedV66(row)).length;
+  const historyCount = scopedRows.filter(rtlhIsCompletedV66).length;
+  const activeCountEl = document.getElementById("rtlhActiveCount");
+  const historyCountEl = document.getElementById("rtlhHistoryCount");
+  if(activeCountEl) activeCountEl.textContent = fmt(activeCount);
+  if(historyCountEl) historyCountEl.textContent = fmt(historyCount);
+  document.querySelectorAll("[data-rtlh-record-view]").forEach(button => {
+    button.classList.toggle("active", button.dataset.rtlhRecordView === rtlhIndividualViewMode);
+  });
+
+  const title = document.getElementById("rtlhIndividualTableTitle");
+  const description = document.getElementById("rtlhIndividualTableDescription");
+  if(rtlhIndividualViewMode === "history"){
+    if(title) title.textContent = "Riwayat Penanganan RTLH — Musrenbang dan Pokir DPRD";
+    if(description) description.textContent = "Menampilkan data yang telah berstatus Selesai Ditangani dan tetap disimpan sebagai riwayat penanganan.";
+  }else{
+    if(title) title.textContent = "Data Usulan Aktif RTLH — Musrenbang dan Pokir DPRD";
+    if(description) description.textContent = "Menampilkan usulan yang masih memerlukan tindak lanjut. Data berstatus Selesai Ditangani dipindahkan otomatis ke Riwayat Penanganan.";
+  }
+}
+
+function setRTLHIndividualViewV66(mode){
+  rtlhIndividualViewMode = mode === "history" ? "history" : "active";
+  rtlhIndividualPage = 1;
+  const search = document.getElementById("searchRTLH");
+  const priority = document.getElementById("prioritasRTLH");
+  const status = document.getElementById("statusRTLH");
+  if(search) search.value = "";
+  if(priority) priority.value = "Semua";
+  if(status) status.value = "Semua";
+  populateRTLHIndividualFilters();
+  renderRTLHIndividualsV28();
+}
 
 function rtlhPrioritySortIndex(value){
   const order = ["Sangat Tinggi","Tinggi","Sedang","Rendah","Belum Dapat Ditentukan"];
@@ -5958,7 +6032,8 @@ function rtlhPrioritySortIndex(value){
 function populateRTLHIndividualFilters(){
   const prioritySelect = document.getElementById("prioritasRTLH");
   const statusSelect = document.getElementById("statusRTLH");
-  const rows = Array.isArray(SIRUMAH_RUNTIME.rtlhIndividuals) ? SIRUMAH_RUNTIME.rtlhIndividuals : [];
+  const allRows = Array.isArray(SIRUMAH_RUNTIME.rtlhIndividuals) ? SIRUMAH_RUNTIME.rtlhIndividuals : [];
+  const rows = getRTLHRowsByViewV66(allRows);
 
   if(prioritySelect){
     const current = prioritySelect.value || "Semua";
@@ -6005,6 +6080,7 @@ function getFilteredRTLHIndividuals(){
   const selected = document.getElementById("globalKecamatan")?.value || "all";
 
   return SIRUMAH_RUNTIME.rtlhIndividuals.filter(row => {
+    const matchView = rtlhIndividualViewMode === "history" ? rtlhIsCompletedV66(row) : !rtlhIsCompletedV66(row);
     const text = [
       row.nama,row.alamat,row.kelurahan,row.kecamatan,row.jenisUsulan,
       row.tipeKonstruksi,row.materialAtap,row.kondisiAtap,row.materialDinding,row.kondisiDinding,
@@ -6016,8 +6092,13 @@ function getFilteredRTLHIndividuals(){
     const matchKecamatan = selected === "all" || normalizeKecamatanName(row.kecamatan) === normalizeKecamatanName(selected);
     const matchPriority = priority === "Semua" || row.tingkatPrioritas === priority;
     const matchStatus = status === "Semua" || row.status === status;
-    return matchKecamatan && matchPriority && matchStatus && (!q || text.includes(q));
+    return matchView && matchKecamatan && matchPriority && matchStatus && (!q || text.includes(q));
   }).sort((a,b) => {
+    if(rtlhIndividualViewMode === "history"){
+      const yearDiff = Number(b.tahunPenanganan || 0) - Number(a.tahunPenanganan || 0);
+      if(yearDiff) return yearDiff;
+      return String(a.nama || "").localeCompare(String(b.nama || ""),"id");
+    }
     const priorityDiff = rtlhPrioritySortIndex(a.tingkatPrioritas) - rtlhPrioritySortIndex(b.tingkatPrioritas);
     if(priorityDiff) return priorityDiff;
     const scoreA = a.hasSkor ? Number(a.skor || 0) : -1;
@@ -6027,6 +6108,7 @@ function getFilteredRTLHIndividuals(){
 }
 
 function renderRTLHIndividualsV28(){
+  updateRTLHIndividualViewUIV66();
   const rows = getFilteredRTLHIndividuals();
   const totalPages = Math.max(1, Math.ceil(rows.length / rtlhIndividualPageSize));
   rtlhIndividualPage = Math.min(Math.max(1, rtlhIndividualPage), totalPages);
@@ -6056,7 +6138,7 @@ function renderRTLHIndividualsV28(){
       <td class="rtlh-total-score-cell"><strong>${row.hasSkor ? fmt(row.skor) : "-"}</strong><small>${row.hasSkor ? "dari 100" : "penilaian belum lengkap"}</small></td>
       <td class="rtlh-priority-cell">${rtlhPriorityBadge(row.tingkatPrioritas)}</td>
       <td>${programBadge(row.status)}</td>
-    </tr>`).join("") : `<tr><td colspan="19" class="empty-state">Belum ada data individu RTLH sesuai filter.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="19" class="empty-state">${rtlhIndividualViewMode === "history" ? "Belum ada riwayat penanganan sesuai filter." : "Belum ada usulan aktif RTLH sesuai filter."}</td></tr>`;
 
   const pagination = document.getElementById("rtlhIndividualPagination");
   const pageInfo = document.getElementById("rtlhIndividualPageInfo");
